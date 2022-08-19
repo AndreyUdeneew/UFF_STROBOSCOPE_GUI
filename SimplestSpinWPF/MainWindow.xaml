@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimplestSpinWPF"
         mc:Ignorable="d"
-        Title="test" Height="919.275" Width="840" Closing="Window_Closing">
+        Title="test" Height="919.275" Width="840" Closing="Window_Closing" WindowStyle="None" WindowStartupLocation="CenterScreen" WindowState="Maximized">
 
 
 
-    <Grid Margin="0,0,0,1" Background="DarkGray">
+    <Grid Margin="0,0,0,1" Background="Black">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1"/>
             <ColumnDefinition Width="1"/>
@@ -22,15 +22,33 @@
             <RowDefinition Height="30"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Button x:Name="button" Content="Start" Grid.Column="4" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
-        <Button x:Name="button1" Content="Stop" Grid.Column="4" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="54" Click="button1_Click" Height="20"/>
-        <Button x:Name="button2" Content="Props" Grid.Column="4" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="54" Height="20" Click="button2_Click"/>
-        <Image x:Name="CC" Grid.Column="2"  RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="2" >
-        </Image>
+        <Button Background="DarkGray" x:Name="button" Content="Start" Grid.Column="4" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
+        <Button Background="DarkGray" x:Name="button1" Content="Stop" Grid.Column="4" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="54" Click="button1_Click" Height="20"/>
+        <Button Background="DarkGray" x:Name="button2" Content="Props" Grid.Column="4" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="54" Height="20" Click="button2_Click"/>
+        <Image x:Name="CC"  RenderTransformOrigin="0.5,0.5" Margin="-18,0,20,0" Grid.ColumnSpan="4" />
         <DockPanel x:Name="LayoutLeft" Grid.Column="0" Grid.ColumnSpan="2"  >
         </DockPanel>
-        <CheckBox x:Name="DrawDiffCheckBox" Content="Diff" Grid.Column="4" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top"/>
-        <Slider x:Name="AmplificationSlider" Grid.Column="4" HorizontalAlignment="Left" Height="180" Margin="20,105,0,0" VerticalAlignment="Top" Width="29" Orientation="Vertical" Minimum="-3" Maximum="3" SmallChange="1"/>
+        <CheckBox x:Name="DrawDiffCheckBox" Content="Fluor" Grid.Column="4" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" Foreground="Gray"/>
+        <Slider x:Name="AmplificationSlider" Grid.Column="4" HorizontalAlignment="Left" Height="180" Margin="20,105,0,0" VerticalAlignment="Top" Width="29" Orientation="Vertical" Minimum="-3" Maximum="3" SmallChange="1" Foreground="Gray"/>
+        <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonGreen" Content="Green" Grid.Column="4" HorizontalAlignment="Left" Margin="20,296,0,0" VerticalAlignment="Top" IsThreeState="False" IsChecked="True" Background="#FFBFBFBF"/>
+        <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonRed" Content="Red" Grid.Column="4" HorizontalAlignment="Center" Margin="0,316,0,0" VerticalAlignment="Top"  Background="#FFB0B0B0"/>
+        <!--<CheckBox x:Name="checkBoxGray" Content="In gray" Grid.Column="4" HorizontalAlignment="Left" Margin="9,459,0,0" VerticalAlignment="Top" Foreground="Gray" IsThreeState="False" IsChecked="true"/>-->
+        <Button Background="DarkGray"  x:Name="button3" Content="Quit" Grid.Column="4" HorizontalAlignment="Left" Margin="10,521,0,0" VerticalAlignment="Top" Width="54" Click="button3_Click"/>
+        <Button x:Name="button4" Content="Save" Grid.Column="4" HorizontalAlignment="Left" Height="20" Margin="10,496,0,0" VerticalAlignment="Top" Width="54" Click="button4_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
+        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonR2G"  Content="R/G" HorizontalAlignment="Left" Margin="20,336,0,0" VerticalAlignment="Top"/>
+        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonOxy"  Content="Oxy" HorizontalAlignment="Left" Margin="20,356,0,0" VerticalAlignment="Top"/>
+        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonColor"  Content="Color" HorizontalAlignment="Left" Margin="20,391,0,0" VerticalAlignment="Top" IsChecked="True" RenderTransformOrigin="0.5,0.5" Width="73">
+            <RadioButton.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleX="0.965"/>
+                    <RotateTransform/>
+                    <TranslateTransform X="0.126"/>
+                </TransformGroup>
+            </RadioButton.RenderTransform>
+        </RadioButton>
+        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonGray"  Content="In gray" HorizontalAlignment="Left" Margin="20,410,0,0" VerticalAlignment="Top"/>
+        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonHeatmap"  Content="Pseudo" HorizontalAlignment="Left" Margin="20,429,0,0" VerticalAlignment="Top"/>
     </Grid>
 
 </Window>
