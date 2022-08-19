@@ -1,0 +1,36 @@
+﻿<Window x:Class="SimplestSpinWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SimplestSpinWPF"
+        mc:Ignorable="d"
+        Title="test" Height="919.275" Width="840" Closing="Window_Closing">
+
+
+
+    <Grid Margin="0,0,0,1" Background="DarkGray">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1"/>
+            <ColumnDefinition Width="1"/>
+            <ColumnDefinition Width="101*"/>
+            <ColumnDefinition Width="274*"/>
+            <ColumnDefinition Width="80" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="30"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Button x:Name="button" Content="Start" Grid.Column="4" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
+        <Button x:Name="button1" Content="Stop" Grid.Column="4" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="54" Click="button1_Click" Height="20"/>
+        <Button x:Name="button2" Content="Props" Grid.Column="4" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="54" Height="20" Click="button2_Click"/>
+        <Image x:Name="CC" Grid.Column="2"  RenderTransformOrigin="0.5,0.5" Grid.ColumnSpan="2" >
+        </Image>
+        <DockPanel x:Name="LayoutLeft" Grid.Column="0" Grid.ColumnSpan="2"  >
+        </DockPanel>
+        <CheckBox x:Name="DrawDiffCheckBox" Content="Diff" Grid.Column="4" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top"/>
+        <Slider x:Name="AmplificationSlider" Grid.Column="4" HorizontalAlignment="Left" Height="180" Margin="20,105,0,0" VerticalAlignment="Top" Width="29" Orientation="Vertical" Minimum="-3" Maximum="3" SmallChange="1"/>
+    </Grid>
+
+</Window>
