@@ -141,7 +141,8 @@ namespace SimplestSpinWPF
         public BitmapSource heatmapR2G = null;
         public BitmapSource heatmapRed = null;
         public BitmapSource heatmapGreen = null;
-        public Bitmap heatmap = null;
+        public BitmapSource PSEUDO = null;
+        public BitmapSource HeatMap = null;
 
         public long PrevImageSum = 0;
         private void GetImages()
@@ -202,6 +203,8 @@ namespace SimplestSpinWPF
             Title = "STROBE II: Reads count:" + i.ToString() + " last sum:" + LastImageSum.ToString();
         }
 
+
+
         unsafe public long FindSum(BitmapSource bs)
         {
             if (bs == null)
@@ -257,7 +260,7 @@ namespace SimplestSpinWPF
             bool R2G = (bool)radioButtonR2G.IsChecked;
             //bool Grayed = (bool)checkBoxGray.IsChecked;
             bool Grayed = (bool)radioButtonGray.IsChecked;
-            bool Heatmap = (bool)radioButtonHeatmap.IsChecked;
+            bool pseudo = (bool)radioButtonHeatmap.IsChecked;
 
             int amp = (int)(AmplificationSlider.Value);
             long L = (int)wb1.Width * (int)wb1.Height * 3;
@@ -282,9 +285,11 @@ namespace SimplestSpinWPF
                     }
                     //amp = amp +;
                     //dif = difRed >> difGreen;
-                    difDouble = (difRed / difGreen)*10;
+                    difDouble = (difRed / difGreen) * 10;
                     dif = (int)difDouble;
                 }
+
+
 
                 if (dif < 0)
                     dif = -dif;
@@ -304,18 +309,33 @@ namespace SimplestSpinWPF
                 if (Grayed)
                     bb[b] = res; bb[r] = res;
 
-                //if (Heatmap)
-                //{
-                //    heatmap = BitmapFromWriteableBitmap(wb);
-                //    //int val = (int)(dif);
-                //    if (g > 231) g = 231;
-                //    int R, G, B;
-                //    HsvToRgb(dif, 1, 1, out R, out G, out B);
-                //    Color cc = Color.FromArgb(R, G, B);
-                //    heatmap.SetPixel(100, 100, cc);
-                //}
-            }
+                if (pseudo)
+                {
 
+                    //    //heatmap = BitmapFromWriteableBitmap(wb);
+                    //    //for (int i = 0; i < 1440; i++)
+                    //    //    for (int j = 0; j < 1080; j++)
+                    //    //    {
+                    //            //int val = (int)(dif);
+                    //            if (dif > 231) dif = 231;
+                    //int R, G, B;
+                    //HsvToRgb(dif, 1, 1, out R, out G, out B);
+                    //Color cc = Color.FromArgb(R, G, B);
+                    //            bb[g] = int(cc);
+
+                    //            //PSEUDO = Convert(heatmap);
+                    //        //}
+                    //myBitmap = new Bitmap BitmapFromWriteableBitmap(wb);
+                    //for (int Xcount = 0; Xcount < 100; Xcount++)
+                    //{
+                    //    for (int Ycount = 0; Ycount < 100; Ycount++)
+                    //    {
+                    //        myBitmap.SetPixel(Xcount, Ycount, Color.Black);
+                    //    }
+                    //}
+                }
+            }
+            //wb.WritePixels(new Int32Rect(0, 0, (int)wb1.Width, (int)wb1.Height), heatmap, (int)wb1.Width * 3, 0);
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
         }
@@ -325,6 +345,43 @@ namespace SimplestSpinWPF
             if (i < 0) return 0;
             if (i > 255) return 255;
             return i;
+        }
+
+        unsafe public Bitmap Heatmap(BitmapSource bs)
+        {
+            WriteableBitmap heatmap;
+
+            heatmap = new WriteableBitmap(bs);
+            //heatmap = FindColoredDifference(convertedImage, PrevConvertedImage);
+            //Bitmap b = BitmapFromWriteableBitmap(FindColoredDifference(convertedImage, PrevConvertedImage));
+            heatmap.Lock();
+            byte* bb = (byte*)heatmap.BackBuffer.ToPointer();
+            long L = (int)heatmap.Width * (int)heatmap.Height * 3;
+            Color[] colors = new Color[L/3];
+            Bitmap b = new Bitmap((int)heatmap.Width, (int)heatmap.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            for (int i = 0; i < heatmap.Width; i++)
+            {
+                for (int j = 0; j < heatmap.Height; j++)
+                {
+
+
+                    int g = bb[j];
+                    if (g > 231) g = 231;
+                    int R, G, B;
+                    HsvToRgb(g, 1, 1, out R, out G, out B);
+                    
+                    colors[j] = Color.FromArgb(R, G, B);
+                    b.SetPixel(i, j, colors[j]);
+
+
+                }
+            }
+            //heatmap = b;
+            //heatmap = bitmap2bitmasource(b);
+            heatmap.Unlock();
+            //return heatmap;
+            //return null;
+            return b;
         }
 
         void HsvToRgb(double h, double S, double V, out int r, out int g, out int b)
@@ -431,6 +488,23 @@ namespace SimplestSpinWPF
             return bmp;
         }
 
+        public static BitmapSource bitmap2bitmasource(System.Drawing.Bitmap bitmap)
+        {
+            var bitmapData = bitmap.LockBits(
+                new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmap.PixelFormat);
+
+            var bitmapSource = BitmapSource.Create(
+                bitmapData.Width, bitmapData.Height,
+                bitmap.HorizontalResolution, bitmap.VerticalResolution,
+                PixelFormats.Bgr24, null,
+                bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, bitmapData.Stride);
+
+            bitmap.UnlockBits(bitmapData);
+
+            return bitmapSource;
+        }
+
         private void button_Click(object sender, RoutedEventArgs e)
         {
             if (SpinCamColor == null)
@@ -501,18 +575,7 @@ namespace SimplestSpinWPF
 
         private void button4_Click(object sender, RoutedEventArgs e)    //Save button
         {
-
-            //if (Heatmap)
-            //{
-            //    heatmap = BitmapFromWriteableBitmap(wb);
-            //    //int val = (int)(dif);
-            //    if (g > 231) g = 231;
-            //    int R, G, B;
-            //    HsvToRgb(dif, 1, 1, out R, out G, out B);
-            //    Color cc = Color.FromArgb(R, G, B);
-            //    heatmap.SetPixel(100, 100, cc);
-            //}
-
+            bool pseudo = (bool)radioButtonHeatmap.IsChecked;
             try
             {
                 BitmapEncoder encoder = new PngBitmapEncoder();
@@ -548,6 +611,24 @@ namespace SimplestSpinWPF
             catch (Exception ex)
             {
                 MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            if (pseudo)
+            {
+                
+                DateTime d = DateTime.Now;
+                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Pseudo " + ((bool)radioButtonGreen.IsChecked ? "green" : "red") + "_Coef" + (int)(AmplificationSlider.Value))
+                    );
+                //Bitmap myBitmap = new Bitmap(@"C:\MEDIA\test.png");
+                Bitmap myBitmap = Heatmap(FindColoredDifference(convertedImage, PrevConvertedImage));
+                myBitmap.Save(Filename, System.Drawing.Imaging.ImageFormat.Png);
+                // Draw myBitmap to the screen.
+                //e.Graphics.DrawImage(myBitmap, 0, 0, myBitmap.Width,
+                //    myBitmap.Height);
+
+                // Set each pixel in myBitmap to black.
+
             }
         }
     }
