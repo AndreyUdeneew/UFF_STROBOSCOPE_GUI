@@ -131,6 +131,7 @@ namespace SimplestSpinWPF
         const int PortSpeed = 115200;
         bool Refreshing = false;
         int i = 0;
+        int additionalCoef = 10;
         long LastImageSum = 0;
         public BitmapSource convertedImage = null;
         public BitmapSource PrevConvertedImage = null;
@@ -197,7 +198,7 @@ namespace SimplestSpinWPF
             }
             else
             {
-                CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage);
+                CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 0);
             }
 
             Title = "STROBE II: Reads count:" + i.ToString() + " last sum:" + LastImageSum.ToString();
@@ -223,8 +224,21 @@ namespace SimplestSpinWPF
             return Sum;
         }
 
-        unsafe public WriteableBitmap FindColoredDifference(BitmapSource bs1, BitmapSource bs2)
+        unsafe public WriteableBitmap FindColoredDifference(BitmapSource bs1, BitmapSource bs2, byte mode)
         {
+            bool GreenFlu = (bool)radioButtonGreen.IsChecked;
+            bool RedFlu = (bool)radioButtonRed.IsChecked;
+            bool R2G = (bool)radioButtonR2G.IsChecked;
+            bool Grayed = (bool)radioButtonGray.IsChecked;
+            bool pseudo = (bool)radioButtonHeatmap.IsChecked;
+
+            if (mode == 1)
+                GreenFlu = true;
+            if (mode == 2)
+                RedFlu = true;
+            if (mode == 3)
+                R2G = true;
+
             if (bs1 == null)
                 return null;
 
@@ -255,16 +269,8 @@ namespace SimplestSpinWPF
             int temp;
             byte res = 0;
 
-            bool GreenFlu = (bool)radioButtonGreen.IsChecked;
-            bool RedFlu = (bool)radioButtonRed.IsChecked;
-            bool R2G = (bool)radioButtonR2G.IsChecked;
-            //bool Grayed = (bool)checkBoxGray.IsChecked;
-            bool Grayed = (bool)radioButtonGray.IsChecked;
-            bool pseudo = (bool)radioButtonHeatmap.IsChecked;
-
             int amp = (int)(AmplificationSlider.Value);
             long L = (int)wb1.Width * (int)wb1.Height * 3;
-
 
             for (int b = 0, g = 1, r = 2; b < L; b += 3, r += 3, g += 3)
             {
@@ -272,7 +278,6 @@ namespace SimplestSpinWPF
                     dif = (bb1[g] - bb2[g]);
                 if (RedFlu)
                     dif = (bb1[r] - bb2[r]);
-
 
                 if (R2G)
                 {
@@ -285,12 +290,10 @@ namespace SimplestSpinWPF
                     }
                     //amp = amp +;
                     //dif = difRed >> difGreen;
-                    difDouble = (difRed / difGreen) * 10;
+                    difDouble = (difRed / difGreen) * additionalCoef;
                     dif = (int)difDouble;
                 }
-
-
-
+                
                 if (dif < 0)
                     dif = -dif;
 
@@ -308,32 +311,6 @@ namespace SimplestSpinWPF
 
                 if (Grayed)
                     bb[b] = res; bb[r] = res;
-
-                if (pseudo)
-                {
-
-                    //    //heatmap = BitmapFromWriteableBitmap(wb);
-                    //    //for (int i = 0; i < 1440; i++)
-                    //    //    for (int j = 0; j < 1080; j++)
-                    //    //    {
-                    //            //int val = (int)(dif);
-                    //            if (dif > 231) dif = 231;
-                    //int R, G, B;
-                    //HsvToRgb(dif, 1, 1, out R, out G, out B);
-                    //Color cc = Color.FromArgb(R, G, B);
-                    //            bb[g] = int(cc);
-
-                    //            //PSEUDO = Convert(heatmap);
-                    //        //}
-                    //myBitmap = new Bitmap BitmapFromWriteableBitmap(wb);
-                    //for (int Xcount = 0; Xcount < 100; Xcount++)
-                    //{
-                    //    for (int Ycount = 0; Ycount < 100; Ycount++)
-                    //    {
-                    //        myBitmap.SetPixel(Xcount, Ycount, Color.Black);
-                    //    }
-                    //}
-                }
             }
             //wb.WritePixels(new Int32Rect(0, 0, (int)wb1.Width, (int)wb1.Height), heatmap, (int)wb1.Width * 3, 0);
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
@@ -357,30 +334,38 @@ namespace SimplestSpinWPF
             heatmap.Lock();
             byte* bb = (byte*)heatmap.BackBuffer.ToPointer();
             long L = (int)heatmap.Width * (int)heatmap.Height * 3;
-            Color[] colors = new Color[L/3];
+            int[] pixel = new int[(int)heatmap.Width * (int)heatmap.Height * 3]; 
+            //Color color = new Color;
             Bitmap b = new Bitmap((int)heatmap.Width, (int)heatmap.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            for (int i = 0; i < heatmap.Width; i++)
+
+            for (int bl = 0, g = 1, r = 2; bl < L; bl += 3, r += 3, g += 3)
             {
-                for (int j = 0; j < heatmap.Height; j++)
+                pixel[g] = bb[g]; 
+            }
+            
+                int[,] a = new int[(int)heatmap.Width, (int)heatmap.Height];
+
+            for (int i = 0; i < (int)heatmap.Width; ++i)
+                for (int j = 0; j < (int)heatmap.Height; ++j)
                 {
-
-
-                    int g = bb[j];
-                    if (g > 231) g = 231;
+                    a[i, j] = pixel[i * (int)heatmap.Height + j];
+                }
+            for (int i = 0; i < (int)heatmap.Width; i++)
+            {
+                for (int j = 0; j < (int)heatmap.Height; j++)
+                {
+                    //int g = pixel[i,j];
+                    if (a[i,j] > 231) a[i,j] = 231;
                     int R, G, B;
-                    HsvToRgb(g, 1, 1, out R, out G, out B);
-                    
-                    colors[j] = Color.FromArgb(R, G, B);
-                    b.SetPixel(i, j, colors[j]);
+                    HsvToRgb(a[i,j], 1, 1, out R, out G, out B);
+
+                    Color cc = Color.FromArgb(R, G, B);
+                    b.SetPixel(i, j, cc);
 
 
                 }
             }
-            //heatmap = b;
-            //heatmap = bitmap2bitmasource(b);
             heatmap.Unlock();
-            //return heatmap;
-            //return null;
             return b;
         }
 
@@ -576,24 +561,11 @@ namespace SimplestSpinWPF
         private void button4_Click(object sender, RoutedEventArgs e)    //Save button
         {
             bool pseudo = (bool)radioButtonHeatmap.IsChecked;
-            try
-            {
-                BitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create((BitmapSource)CC.Source));
-                DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo " + ((bool)radioButtonGreen.IsChecked ? "green" : "red") + "_Coef" + (int)(AmplificationSlider.Value))
-                    );
-                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
-                {
-                    encoder.Save(fileStream);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            bool GreenFlu = (bool)radioButtonGreen.IsChecked;
+            bool RedFlu = (bool)radioButtonRed.IsChecked;
+            bool R2G = (bool)radioButtonR2G.IsChecked;
+            bool Grayed = (bool)radioButtonGray.IsChecked;
+
             try
             {
                 BitmapEncoder encoder = new PngBitmapEncoder();
@@ -601,7 +573,7 @@ namespace SimplestSpinWPF
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("White " + ((bool)radioButtonGreen.IsChecked ? "green" : "red") + "_Coef" + (int)(AmplificationSlider.Value))
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("White" + "_Coef" + (int)(AmplificationSlider.Value))
                     );
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
@@ -612,6 +584,64 @@ namespace SimplestSpinWPF
             {
                 MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            try
+            {
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create((FindColoredDifference(convertedImage, PrevConvertedImage, 1))));
+                DateTime d = DateTime.Now;
+                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value))
+                    );
+                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                {
+                    encoder.Save(fileStream);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            try
+            {
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create((FindColoredDifference(convertedImage, PrevConvertedImage, 2))));
+                DateTime d = DateTime.Now;
+                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value))
+                    );
+                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                {
+                    encoder.Save(fileStream);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            try
+            {
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create((FindColoredDifference(convertedImage, PrevConvertedImage, 3))));
+                DateTime d = DateTime.Now;
+                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef)
+                    );
+                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                {
+                    encoder.Save(fileStream);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
             if (pseudo)
             {
                 
@@ -621,7 +651,7 @@ namespace SimplestSpinWPF
                     !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Pseudo " + ((bool)radioButtonGreen.IsChecked ? "green" : "red") + "_Coef" + (int)(AmplificationSlider.Value))
                     );
                 //Bitmap myBitmap = new Bitmap(@"C:\MEDIA\test.png");
-                Bitmap myBitmap = Heatmap(FindColoredDifference(convertedImage, PrevConvertedImage));
+                Bitmap myBitmap = Heatmap(FindColoredDifference(convertedImage, PrevConvertedImage, 0));
                 myBitmap.Save(Filename, System.Drawing.Imaging.ImageFormat.Png);
                 // Draw myBitmap to the screen.
                 //e.Graphics.DrawImage(myBitmap, 0, 0, myBitmap.Width,
