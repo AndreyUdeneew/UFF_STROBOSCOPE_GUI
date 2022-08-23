@@ -334,7 +334,7 @@ namespace SimplestSpinWPF
             heatmap.Lock();
             byte* bb = (byte*)heatmap.BackBuffer.ToPointer();
             long L = (int)heatmap.Width * (int)heatmap.Height * 3;
-            int[] pixel = new int[(int)heatmap.Width * (int)heatmap.Height * 3]; 
+            int[] pixel = new int[L]; 
             //Color color = new Color;
             Bitmap b = new Bitmap((int)heatmap.Width, (int)heatmap.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
@@ -348,23 +348,31 @@ namespace SimplestSpinWPF
             for (int i = 0; i < (int)heatmap.Width; ++i)
                 for (int j = 0; j < (int)heatmap.Height; ++j)
                 {
-                    a[i, j] = pixel[i * (int)heatmap.Height + j];
+                    a[i, j] = pixel[i * (int)heatmap.Width + j];
                 }
+
+            double max = double.MinValue, min = double.MaxValue;
             for (int i = 0; i < (int)heatmap.Width; i++)
-            {
                 for (int j = 0; j < (int)heatmap.Height; j++)
                 {
-                    //int g = pixel[i,j];
-                    if (a[i,j] > 231) a[i,j] = 231;
+                    if (a[i, j] > max && a[i, j] < 40 * L) max = a[i, j];
+                    if (a[i, j] < min) min = a[i, j];
+
+                }
+            double d = max - min;
+
+            for (int i = 0; i < (int)heatmap.Width; i++)
+                for (int j = 0; j < (int)heatmap.Height; j++)
+                {
+                    a[i, j] = (int)((1.0 - (a[i, j] - min) / d) * 130.0);
+                    if (a[i, j] > 231) a[i, j] = 231;
                     int R, G, B;
                     HsvToRgb(a[i,j], 1, 1, out R, out G, out B);
 
                     Color cc = Color.FromArgb(R, G, B);
                     b.SetPixel(i, j, cc);
-
-
                 }
-            }
+            
             heatmap.Unlock();
             return b;
         }
