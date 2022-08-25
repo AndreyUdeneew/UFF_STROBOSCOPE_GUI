@@ -22,6 +22,8 @@ using System.Threading;
 using System.Windows.Threading;
 using Color = System.Drawing.Color;
 using System.IO;
+using System.Runtime.InteropServices;
+using System.Drawing.Imaging;
 
 namespace SimplestSpinWPF
 {
@@ -342,7 +344,7 @@ namespace SimplestSpinWPF
             long L = (int)heatmap.Width * (int)heatmap.Height * 3;
             long arrCount = 0;
             long nPixels = (int)heatmap.Width * (int)heatmap.Height;
-            int[] pixel = new int[L];
+            byte[] pixel = new byte[nPixels*3];
             int[] REDS = new int[L];
             int[] GREENS = new int[L];
             int[] BLUES = new int[L];
@@ -358,7 +360,7 @@ namespace SimplestSpinWPF
                 double delta = max - min;
                 if (bbTest[g] > max && bbTest[g] < 40 * nPixels) max = bbTest[g];
                 if (bbTest[g] < min) min = bbTest[g];
-
+                pixel[g] = bbTest[g];
                 //bb[g] = (int)((1.0 - bb[g] - min) / delta) * 130.0);
                 //if (bb[g] > 231) bb[g] = 231;
 
@@ -405,15 +407,24 @@ namespace SimplestSpinWPF
             //Console.WriteLine($"Массив a[i,j] отнормирован, длина = {a.Length}, ранг = {a.Rank}");
             //Console.WriteLine($"d = {d}, max = {max}, min = {min}");
             //arrCount = 0;
-            for (int i = 0; i < (int)heatmap.Width; i++)
-                for (int j = 0; j < (int)heatmap.Height; j++)
-                {
-                    Color cc = Color.FromArgb(REDS_2D[j, i], GREENS_2D[j, i], BLUES_2D[j, i]);
-                    b.SetPixel(i, j, cc);
-                    //arrCount++;
-                    //Console.WriteLine($"arrCount = {arrCount}");
-                    //Console.WriteLine($"i = {i}, j = {j}, a[i, j] = {a[i, j]}, R = {R}, G = {G}, B = {B}");
-                }
+            //for (int i = 0; i < (int)heatmap.Width; i++)
+            //    for (int j = 0; j < (int)heatmap.Height; j++)
+            //    {
+            //        Color cc = Color.FromArgb(REDS_2D[j, i], GREENS_2D[j, i], BLUES_2D[j, i]);
+            //        b.SetPixel(i, j, cc);
+            //        //arrCount++;
+            //        //Console.WriteLine($"arrCount = {arrCount}");
+            //        //Console.WriteLine($"i = {i}, j = {j}, a[i, j] = {a[i, j]}, R = {R}, G = {G}, B = {B}");
+            //    }
+            //for (int i = 0; i < (int)heatmap.Height; i++)
+            //{
+            //    Marshal.Copy(data,
+            //        i * (int)heatmap.Height,
+            //        bmpData.Scan0 + i * bmpData.Stride,
+            //        (int)heatmap.Width * 3);
+            //}
+            b = ByteToImage((int)heatmap.Width, (int)heatmap.Height, pixel);
+
             //Console.WriteLine($"Цвета выставлены!");
             //heatmap.Unlock();
             //Console.WriteLine("Метод отработал!");
@@ -424,6 +435,22 @@ namespace SimplestSpinWPF
             //return b;
             //return wbTest;
             return bsOut;
+        }
+
+        private Bitmap ByteToImage(int w, int h, byte[] pixels)
+        {
+            var bmp = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            byte bpp = 3;
+            var BoundsRect = new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height);
+            BitmapData bmpData = bmp.LockBits(BoundsRect,
+                                            ImageLockMode.WriteOnly,
+                                            bmp.PixelFormat);
+            // copy line by line:
+            for (int y = 0; y < h; y++)
+                Marshal.Copy(pixels, y * w * bpp, bmpData.Scan0 + bmpData.Stride * y, w * bpp);
+            bmp.UnlockBits(bmpData);
+
+            return bmp;
         }
 
         private static T[,] Make2DArray<T>(T[] input, int height, int width)
