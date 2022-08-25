@@ -808,7 +808,7 @@ namespace SimplestSpinWPF
             //if (pseudo)
             //{
 
-            DateTime d = DateTime.Now;
+            //DateTime d = DateTime.Now;
             //    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
             //        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
             //        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Pseudo " + ((bool)radioButtonGreen.IsChecked ? "green" : "red") + "_Coef" + (int)(AmplificationSlider.Value))
