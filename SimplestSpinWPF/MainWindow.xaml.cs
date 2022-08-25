@@ -144,6 +144,7 @@ namespace SimplestSpinWPF
         public BitmapSource heatmapGreen = null;
         public BitmapSource PSEUDO = null;
         public BitmapSource HeatMap = null;
+        public BitmapSource bsOut = null;
 
         public long PrevImageSum = 0;
         private void GetImages()
@@ -218,7 +219,7 @@ namespace SimplestSpinWPF
             long L = (int)wb.Width * (int)wb.Height * 3;
             for (int i = 0; i < L; i += 3)
                 //for (int x = 0, i = 0; x < wb.Width; x++)
-                //    for (int y = 0; y < wb.Height; y++)
+                //for (int y = 0; y < wb.Height; y++)
                 Sum += bb[i];
             wb.Unlock();
             return Sum;
@@ -314,7 +315,7 @@ namespace SimplestSpinWPF
             }
             //wb.WritePixels(new Int32Rect(0, 0, (int)wb1.Width, (int)wb1.Height), heatmap, (int)wb1.Width * 3, 0);
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
-            return wb;
+            return wb1;
         }
 
         int Clamp(int i)
@@ -324,57 +325,134 @@ namespace SimplestSpinWPF
             return i;
         }
 
-        unsafe public Bitmap Heatmap(BitmapSource bs)
+        unsafe public BitmapSource Heatmap(BitmapSource bs)
         {
             WriteableBitmap heatmap;
+            WriteableBitmap wbTest;
+
 
             heatmap = new WriteableBitmap(bs);
+            wbTest = new WriteableBitmap(bs);
+
             //heatmap = FindColoredDifference(convertedImage, PrevConvertedImage);
             //Bitmap b = BitmapFromWriteableBitmap(FindColoredDifference(convertedImage, PrevConvertedImage));
             heatmap.Lock();
             byte* bb = (byte*)heatmap.BackBuffer.ToPointer();
+            byte* bbTest = (byte*)wbTest.BackBuffer.ToPointer();
             long L = (int)heatmap.Width * (int)heatmap.Height * 3;
-            int[] pixel = new int[L]; 
-            //Color color = new Color;
-            Bitmap b = new Bitmap((int)heatmap.Width, (int)heatmap.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            long arrCount = 0;
+            long nPixels = (int)heatmap.Width * (int)heatmap.Height;
+            int[] pixel = new int[L];
+            int[] REDS = new int[L];
+            int[] GREENS = new int[L];
+            int[] BLUES = new int[L];
 
+            //Color color = new Color;
+            Bitmap b = new Bitmap((int)heatmap.Width, (int)heatmap.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            //return b;
+            double max = double.MinValue, min = double.MaxValue;
             for (int bl = 0, g = 1, r = 2; bl < L; bl += 3, r += 3, g += 3)
             {
-                pixel[g] = bb[g]; 
+                bbTest[g] = bb[g];
+                //int R, G, B;
+                double delta = max - min;
+                if (bbTest[g] > max && bbTest[g] < 40 * nPixels) max = bbTest[g];
+                if (bbTest[g] < min) min = bbTest[g];
+
+                //bb[g] = (int)((1.0 - bb[g] - min) / delta) * 130.0);
+                //if (bb[g] > 231) bb[g] = 231;
+
+                HsvToRgb(bbTest[g], 1, 1, out REDS[g], out GREENS[g], out BLUES[g]);
+                
+                //b.SetPixel(i, j, cc);
+                //bbTest[g] = bb[g];
+                //arrCount++;
+                //Console.WriteLine($"arrCount = {arrCount}");
+                //Console.WriteLine($"bl = {bl}, g = {g}, pixel[g] = {pixel[g]}, bb[g] = {bb[g]}");
             }
-            
-                int[,] a = new int[(int)heatmap.Width, (int)heatmap.Height];
+            var REDS_2D = Make2DArray(REDS, (int)heatmap.Height, (int)heatmap.Width);
+            var GREENS_2D = Make2DArray(GREENS, (int)heatmap.Height, (int)heatmap.Width);
+            var BLUES_2D = Make2DArray(BLUES, (int)heatmap.Height, (int)heatmap.Width);
+            arrCount = 0;
+            Console.WriteLine($"Массив pixel заполнен, длина = {pixel.Length}, ранг = {pixel.Rank}");
+            //Console.WriteLine($"Исходный массив кадра, длина = {bb.Length}, ранг = {bb.Rank}");
+            //Console.WriteLine($"Size of pixel = {sizeof(pixel)}");
+            //int[,] a = new int[(int)heatmap.Width, (int)heatmap.Height];
+            //Console.WriteLine($"Массив a[i,j] объявлнен, длина = {a.Length}, ранг = {a.Rank}");
 
-            for (int i = 0; i < (int)heatmap.Width; ++i)
-                for (int j = 0; j < (int)heatmap.Height; ++j)
-                {
-                    a[i, j] = pixel[i * (int)heatmap.Width + j];
-                }
-
-            double max = double.MinValue, min = double.MaxValue;
+            //for (int i = 0; i < (int)heatmap.Width; ++i)
+            //    for (int j = 0; j < (int)heatmap.Height; ++j)
+            //    {
+            //        a[i, j] = pixel[j * (int)heatmap.Width + i];
+            //        //Console.WriteLine($"i = {i}, j = {j}, a[i,j] = {a[i, j]}");
+            //        //a[i, j] =heatmap[i,j];
+            //        //arrCount++;
+            //        //Console.WriteLine($"arrCount = {arrCount}");
+            //    }
+            //Console.WriteLine($"Массив a[i,j] заполнен, длина = {a.Length}, ранг = {a.Rank}");
+            //arrCount = 0;
+            //double max = double.MinValue, min = double.MaxValue;
+            //for (int i = 0; i < (int)heatmap.Width; i++)
+            //    for (int j = 0; j < (int)heatmap.Height; j++)
+            //    {
+            //        if (a[i, j] > max && a[i, j] < 40 * nPixels) max = a[i, j];
+            //        if (a[i, j] < min) min = a[i, j];
+            //        //Console.WriteLine($"i = {i}, j = {j}, a[i,j] = {a[i, j]}");
+            //        //arrCount++;
+            //        //Console.WriteLine($"arrCount = {arrCount}");
+            //    }
+            //double d = max - min;
+            //Console.WriteLine($"Массив a[i,j] отнормирован, длина = {a.Length}, ранг = {a.Rank}");
+            //Console.WriteLine($"d = {d}, max = {max}, min = {min}");
+            //arrCount = 0;
             for (int i = 0; i < (int)heatmap.Width; i++)
                 for (int j = 0; j < (int)heatmap.Height; j++)
                 {
-                    if (a[i, j] > max && a[i, j] < 40 * L) max = a[i, j];
-                    if (a[i, j] < min) min = a[i, j];
-
-                }
-            double d = max - min;
-
-            for (int i = 0; i < (int)heatmap.Width; i++)
-                for (int j = 0; j < (int)heatmap.Height; j++)
-                {
-                    a[i, j] = (int)((1.0 - (a[i, j] - min) / d) * 130.0);
-                    if (a[i, j] > 231) a[i, j] = 231;
-                    int R, G, B;
-                    HsvToRgb(a[i,j], 1, 1, out R, out G, out B);
-
-                    Color cc = Color.FromArgb(R, G, B);
+                    Color cc = Color.FromArgb(REDS_2D[j, i], GREENS_2D[j, i], BLUES_2D[j, i]);
                     b.SetPixel(i, j, cc);
+                    //arrCount++;
+                    //Console.WriteLine($"arrCount = {arrCount}");
+                    //Console.WriteLine($"i = {i}, j = {j}, a[i, j] = {a[i, j]}, R = {R}, G = {G}, B = {B}");
                 }
-            
-            heatmap.Unlock();
-            return b;
+            //Console.WriteLine($"Цвета выставлены!");
+            //heatmap.Unlock();
+            //Console.WriteLine("Метод отработал!");
+            //b.Save(@"C:\MEDIA\test.bmp");
+
+            bsOut = Convert(b);
+
+            //return b;
+            //return wbTest;
+            return bsOut;
+        }
+
+        private static T[,] Make2DArray<T>(T[] input, int height, int width)
+        {
+            T[,] output = new T[height, width];
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    output[i, j] = input[i * width + j];
+                }
+            }
+            return output;
+        }
+
+        public BitmapSource Convert(System.Drawing.Bitmap bitmap)
+        {
+            var bitmapData = bitmap.LockBits(
+                new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmap.PixelFormat);
+
+            var bitmapSource = BitmapSource.Create(
+                bitmapData.Width, bitmapData.Height,
+                bitmap.HorizontalResolution, bitmap.VerticalResolution,
+                PixelFormats.Bgr24, null,
+                bitmapData.Scan0, bitmapData.Stride * bitmapData.Height, bitmapData.Stride);
+
+            bitmap.UnlockBits(bitmapData);
+            return bitmapSource;
         }
 
         void HsvToRgb(double h, double S, double V, out int r, out int g, out int b)
@@ -480,6 +558,19 @@ namespace SimplestSpinWPF
             }
             return bmp;
         }
+
+        //public void DrawImage2FloatRectF(PaintEventArgs e)
+        //{
+        //    float x = 100.0F;
+        //    float y = 100.0F;
+
+        //    // Create rectangle for source image.
+        //    RectangleF srcRect = new RectangleF(50.0F, 50.0F, 150.0F, 150.0F);
+        //    GraphicsUnit units = GraphicsUnit.Pixel;
+
+        //    // Draw image to screen.
+        //    e.Graphics.DrawImage(b, x, y, srcRect, units);
+        //}
 
         public static BitmapSource bitmap2bitmasource(System.Drawing.Bitmap bitmap)
         {
@@ -650,24 +741,58 @@ namespace SimplestSpinWPF
                 MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            if (pseudo)
+            try
             {
-                
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(FindColoredDifference(convertedImage, PrevConvertedImage, 3)));
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Pseudo " + ((bool)radioButtonGreen.IsChecked ? "green" : "red") + "_Coef" + (int)(AmplificationSlider.Value))
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "HeatmapDebug" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef)
                     );
-                //Bitmap myBitmap = new Bitmap(@"C:\MEDIA\test.png");
-                Bitmap myBitmap = Heatmap(FindColoredDifference(convertedImage, PrevConvertedImage, 0));
-                myBitmap.Save(Filename, System.Drawing.Imaging.ImageFormat.Png);
-                // Draw myBitmap to the screen.
-                //e.Graphics.DrawImage(myBitmap, 0, 0, myBitmap.Width,
-                //    myBitmap.Height);
-
-                // Set each pixel in myBitmap to black.
-
+                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                {
+                    encoder.Save(fileStream);
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            try
+            {
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(Heatmap(FindColoredDifference(convertedImage, PrevConvertedImage, 0))));
+                DateTime d = DateTime.Now;
+                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "HeatmapDebug" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef)
+                    );
+                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                {
+                    encoder.Save(fileStream);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            //if (pseudo)
+            //{
+
+            //    DateTime d = DateTime.Now;
+            //    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+            //        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+            //        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Pseudo " + ((bool)radioButtonGreen.IsChecked ? "green" : "red") + "_Coef" + (int)(AmplificationSlider.Value))
+            //        );
+            //    //Bitmap myBitmap = new Bitmap(@"C:\MEDIA\test.png");
+            //    Bitmap myBitmap = Heatmap(FindColoredDifference(convertedImage, PrevConvertedImage, 0));
+            //    myBitmap.Save(Filename, System.Drawing.Imaging.ImageFormat.Png);
+            //    // Draw myBitmap to the screen.
+
+
+            //}
         }
     }
 }
