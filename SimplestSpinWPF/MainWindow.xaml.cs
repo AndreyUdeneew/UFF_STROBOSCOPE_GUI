@@ -465,22 +465,25 @@ namespace SimplestSpinWPF
         //}
         public Bitmap GetDataPicture(int w, int h, byte[] data)
         {
-            Bitmap pic = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            Bitmap pic = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
             for (int x = 0; x < w; x++)
             {
                 for (int y = 0; y < h; y++)
                 {
                     int arrayIndex = y * w + x;
+                    int R, G, B;
+                    HsvToRgb(data[y * h + x], 1, 1, out R, out G, out B);
                     Color c = Color.FromArgb(
-                       data[arrayIndex],
-                       data[arrayIndex + 1],
-                       data[arrayIndex + 2],
-                       data[arrayIndex + 3]
+                       data[arrayIndex], R, G, B
+                       //data[arrayIndex + 1],
+                       //data[arrayIndex + 2],
+                       //data[arrayIndex + 3]
                     );
                     pic = ByteToImage(1440, 1080, data);
+                    pic.SetPixel(x, y, c);
                     pic.Save(@"C:\MEDIA\test1.bmp");
-                    //pic.SetPixel(x, y, c);
+
                 }
             }
 
@@ -489,7 +492,7 @@ namespace SimplestSpinWPF
 
         private Bitmap ByteToImage(int w, int h, byte[] pixels)
         {
-            var bmp = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            var bmp = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             byte bpp = 3;
             var BoundsRect = new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(BoundsRect,
