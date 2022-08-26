@@ -22,8 +22,8 @@ using System.Threading;
 using System.Windows.Threading;
 using Color = System.Drawing.Color;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace SimplestSpinWPF
 {
@@ -221,7 +221,7 @@ namespace SimplestSpinWPF
             long L = (int)wb.Width * (int)wb.Height * 3;
             for (int i = 0; i < L; i += 3)
                 //for (int x = 0, i = 0; x < wb.Width; x++)
-                //for (int y = 0; y < wb.Height; y++)
+                //    for (int y = 0; y < wb.Height; y++)
                 Sum += bb[i];
             wb.Unlock();
             return Sum;
@@ -296,7 +296,7 @@ namespace SimplestSpinWPF
                     difDouble = (difRed / difGreen) * additionalCoef;
                     dif = (int)difDouble;
                 }
-                
+
                 if (dif < 0)
                     dif = -dif;
 
@@ -317,7 +317,7 @@ namespace SimplestSpinWPF
             }
             //wb.WritePixels(new Int32Rect(0, 0, (int)wb1.Width, (int)wb1.Height), heatmap, (int)wb1.Width * 3, 0);
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
-            return wb1;
+            return wb;
         }
 
         int Clamp(int i)
@@ -344,7 +344,7 @@ namespace SimplestSpinWPF
             long L = (int)heatmap.Width * (int)heatmap.Height * 3;
             long arrCount = 0;
             long nPixels = (int)heatmap.Width * (int)heatmap.Height;
-            byte[] pixel = new byte[nPixels*3];
+            byte[] pixel = new byte[nPixels * 3];
             int[] REDS = new int[L];
             int[] GREENS = new int[L];
             int[] BLUES = new int[L];
@@ -364,19 +364,22 @@ namespace SimplestSpinWPF
                 //bb[g] = (int)((1.0 - bb[g] - min) / delta) * 130.0);
                 //if (bb[g] > 231) bb[g] = 231;
 
-                HsvToRgb(bbTest[g], 1, 1, out REDS[g], out GREENS[g], out BLUES[g]);
-                
+                HsvToRgb(pixel[g], 1, 1, out REDS[g], out GREENS[g], out BLUES[g]);
+                //Color[] cc[g] = Color.FromArgb(REDS, GREENS[g], BLUES[g]);
+
                 //b.SetPixel(i, j, cc);
                 //bbTest[g] = bb[g];
                 //arrCount++;
                 //Console.WriteLine($"arrCount = {arrCount}");
                 //Console.WriteLine($"bl = {bl}, g = {g}, pixel[g] = {pixel[g]}, bb[g] = {bb[g]}");
             }
-            var REDS_2D = Make2DArray(REDS, (int)heatmap.Height, (int)heatmap.Width);
-            var GREENS_2D = Make2DArray(GREENS, (int)heatmap.Height, (int)heatmap.Width);
-            var BLUES_2D = Make2DArray(BLUES, (int)heatmap.Height, (int)heatmap.Width);
-            arrCount = 0;
-            Console.WriteLine($"Массив pixel заполнен, длина = {pixel.Length}, ранг = {pixel.Rank}");
+            //b = ByteToImage((int)heatmap.Width, (int)heatmap.Height, pixel);
+            b = GetDataPicture((int)heatmap.Width, (int)heatmap.Height, pixel);
+            //var REDS_2D = Make2DArray(REDS, (int)heatmap.Height, (int)heatmap.Width);
+            //var GREENS_2D = Make2DArray(GREENS, (int)heatmap.Height, (int)heatmap.Width);
+            //var BLUES_2D = Make2DArray(BLUES, (int)heatmap.Height, (int)heatmap.Width);
+            //arrCount = 0;
+            //Console.WriteLine($"Массив pixel заполнен, длина = {pixel.Length}, ранг = {pixel.Rank}");
             //Console.WriteLine($"Исходный массив кадра, длина = {bb.Length}, ранг = {bb.Rank}");
             //Console.WriteLine($"Size of pixel = {sizeof(pixel)}");
             //int[,] a = new int[(int)heatmap.Width, (int)heatmap.Height];
@@ -415,7 +418,7 @@ namespace SimplestSpinWPF
             //        //arrCount++;
             //        //Console.WriteLine($"arrCount = {arrCount}");
             //        //Console.WriteLine($"i = {i}, j = {j}, a[i, j] = {a[i, j]}, R = {R}, G = {G}, B = {B}");
-            //    }
+            //}
             //for (int i = 0; i < (int)heatmap.Height; i++)
             //{
             //    Marshal.Copy(data,
@@ -423,23 +426,70 @@ namespace SimplestSpinWPF
             //        bmpData.Scan0 + i * bmpData.Stride,
             //        (int)heatmap.Width * 3);
             //}
-            b = ByteToImage((int)heatmap.Width, (int)heatmap.Height, pixel);
+
 
             //Console.WriteLine($"Цвета выставлены!");
-            //heatmap.Unlock();
+            heatmap.Unlock();
             //Console.WriteLine("Метод отработал!");
             //b.Save(@"C:\MEDIA\test.bmp");
 
             bsOut = Convert(b);
+
+            //b.HGetRedImage(bsOut);
 
             //return b;
             //return wbTest;
             return bsOut;
         }
 
+
+        //public Bitmap GetRedImage(BitmapSource sourceImage)
+        //{
+        //    Bitmap input_bmp = new Bitmap(sourceImage);
+        //    Bitmap redBmp = new Bitmap((int)sourceImage.Width, (int)sourceImage.Height, , System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            
+        //        for (int x = 0; x < input_bmp.Width; x++)
+        //        {
+        //            for (int y = 0; y < input_bmp.Height; y++)
+        //            {
+        //                Color pxl = input_bmp.GetPixel(x, y);
+        //                Color redPxl = Color.FromArgb(pxl.R, 0, 0);
+
+        //                redBmp.SetPixel(x, y, redPxl);
+        //            }
+        //        }
+
+        //        redBmp.Save(@"C:\MEDIA\test.bmp");
+            
+        //    return redBmp;
+        //}
+        public Bitmap GetDataPicture(int w, int h, byte[] data)
+        {
+            Bitmap pic = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+
+            for (int x = 0; x < w; x++)
+            {
+                for (int y = 0; y < h; y++)
+                {
+                    int arrayIndex = y * w + x;
+                    Color c = Color.FromArgb(
+                       data[arrayIndex],
+                       data[arrayIndex + 1],
+                       data[arrayIndex + 2],
+                       data[arrayIndex + 3]
+                    );
+                    pic = ByteToImage(1440, 1080, data);
+                    pic.Save(@"C:\MEDIA\test1.bmp");
+                    //pic.SetPixel(x, y, c);
+                }
+            }
+
+            return pic;
+        }
+
         private Bitmap ByteToImage(int w, int h, byte[] pixels)
         {
-            var bmp = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            var bmp = new Bitmap(w, h, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
             byte bpp = 3;
             var BoundsRect = new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height);
             BitmapData bmpData = bmp.LockBits(BoundsRect,
@@ -449,7 +499,7 @@ namespace SimplestSpinWPF
             for (int y = 0; y < h; y++)
                 Marshal.Copy(pixels, y * w * bpp, bmpData.Scan0 + bmpData.Stride * y, w * bpp);
             bmp.UnlockBits(bmpData);
-
+            bmp.Save(@"C:\MEDIA\test2.bmp");
             return bmp;
         }
 
@@ -585,19 +635,6 @@ namespace SimplestSpinWPF
             }
             return bmp;
         }
-
-        //public void DrawImage2FloatRectF(PaintEventArgs e)
-        //{
-        //    float x = 100.0F;
-        //    float y = 100.0F;
-
-        //    // Create rectangle for source image.
-        //    RectangleF srcRect = new RectangleF(50.0F, 50.0F, 150.0F, 150.0F);
-        //    GraphicsUnit units = GraphicsUnit.Pixel;
-
-        //    // Draw image to screen.
-        //    e.Graphics.DrawImage(b, x, y, srcRect, units);
-        //}
 
         public static BitmapSource bitmap2bitmasource(System.Drawing.Bitmap bitmap)
         {
@@ -767,25 +804,6 @@ namespace SimplestSpinWPF
             {
                 MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            try
-            {
-                BitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(FindColoredDifference(convertedImage, PrevConvertedImage, 3)));
-                DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "HeatmapDebug" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef)
-                    );
-                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
-                {
-                    encoder.Save(fileStream);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
             try
             {
                 BitmapEncoder encoder = new PngBitmapEncoder();
@@ -804,11 +822,10 @@ namespace SimplestSpinWPF
             {
                 MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
             //if (pseudo)
             //{
 
-            //DateTime d = DateTime.Now;
+            //    DateTime d = DateTime.Now;
             //    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
             //        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
             //        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Pseudo " + ((bool)radioButtonGreen.IsChecked ? "green" : "red") + "_Coef" + (int)(AmplificationSlider.Value))
@@ -817,7 +834,10 @@ namespace SimplestSpinWPF
             //    Bitmap myBitmap = Heatmap(FindColoredDifference(convertedImage, PrevConvertedImage, 0));
             //    myBitmap.Save(Filename, System.Drawing.Imaging.ImageFormat.Png);
             //    // Draw myBitmap to the screen.
+            //    //e.Graphics.DrawImage(myBitmap, 0, 0, myBitmap.Width,
+            //    //    myBitmap.Height);
 
+            //    // Set each pixel in myBitmap to black.
 
             //}
         }
