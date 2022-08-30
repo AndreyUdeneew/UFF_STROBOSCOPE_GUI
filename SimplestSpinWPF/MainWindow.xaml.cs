@@ -314,12 +314,12 @@ namespace SimplestSpinWPF
             if (LastImageSum < PrevImageSum)
             {
                 wb = new WriteableBitmap(bs1);
-                background = wb2;
+                background = wb1;
             }
             else
             {
                 wb = new WriteableBitmap(bs2);
-                background = wb1;
+                background = wb2;
             }
             wb1.Lock(); wb2.Lock(); wb.Lock();
             byte* bb1 = (byte*)wb1.BackBuffer.ToPointer();
