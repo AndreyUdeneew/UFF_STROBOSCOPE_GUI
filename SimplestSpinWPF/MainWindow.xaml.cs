@@ -349,7 +349,7 @@ namespace SimplestSpinWPF
             int firstCursorPixel;
             double FI = 0;
 
-            firstCursorPixel = width * ((height / 2) - (wCursor / 2)) * 3;
+            firstCursorPixel = (width * ((height / 2) - (wCursor / 2)) * 3) + (width/2)*3;
             checkNpixelsInCursor = 0;
             for (int b = 0, g = 1, r = 2; b < L; b += 3, r += 3, g += 3)
             {
@@ -370,16 +370,16 @@ namespace SimplestSpinWPF
                     difDouble = (difRed/ difGreen) * additionalCoef;
                     dif = (int)difDouble;
                         
-                        if ((g >= (firstCursorPixel + width * 0) && g < (firstCursorPixel + width * 0 + wCursor * 3))
-                            || (g >= (firstCursorPixel + width * 1) && g < (firstCursorPixel + width * 1 + wCursor * 3))
-                            || (g >= (firstCursorPixel + width * 2) && g < (firstCursorPixel + width * 2 + wCursor * 3))
-                            || (g >= (firstCursorPixel + width * 3) && g < (firstCursorPixel + width * 3 + wCursor * 3))
-                            || (g >= (firstCursorPixel + width * 4) && g < (firstCursorPixel + width * 4 + wCursor * 3))
-                            || (g >= (firstCursorPixel + width * 5) && g < (firstCursorPixel + width * 5 + wCursor * 3))
-                            || (g >= (firstCursorPixel + width * 6) && g < (firstCursorPixel + width * 6 + wCursor * 3))
-                            || (g >= (firstCursorPixel + width * 7) && g < (firstCursorPixel + width * 7 + wCursor * 3))
-                            || (g >= (firstCursorPixel + width * 8) && g < (firstCursorPixel + width * 8 + wCursor * 3))
-                            || (g >= (firstCursorPixel + width * 9) && g < (firstCursorPixel + width * 9 + wCursor * 3)))
+                        if ((g >= (firstCursorPixel + width * 3 * 0) && g < (firstCursorPixel + width * 3 * 0 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 3 * 1) && g < (firstCursorPixel + width * 3 * 1 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 3 * 2) && g < (firstCursorPixel + width * 3 * 2 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 3 * 3) && g < (firstCursorPixel + width * 3 * 3 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 3 * 4) && g < (firstCursorPixel + width * 3 * 4 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 3 * 5) && g < (firstCursorPixel + width * 3 * 5 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 3 * 6) && g < (firstCursorPixel + width * 3 * 6 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 3 * 7) && g < (firstCursorPixel + width * 3 * 7 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 3 * 8) && g < (firstCursorPixel + width * 3 * 8 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 3 * 9) && g < (firstCursorPixel + width * 3 * 9 + wCursor * 3)))
                         {
                             SummRed += difRed;
                             SummGreen += difGreen;
