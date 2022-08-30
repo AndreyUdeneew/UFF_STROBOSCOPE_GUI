@@ -133,7 +133,7 @@ namespace SimplestSpinWPF
         const int PortSpeed = 115200;
         bool Refreshing = false;
         int i = 0;
-        int additionalCoef = 10;
+        int additionalCoef = 5;
         long LastImageSum = 0;
         public BitmapSource convertedImage = null;
         public BitmapSource PrevConvertedImage = null;
@@ -227,6 +227,67 @@ namespace SimplestSpinWPF
             return Sum;
         }
 
+        //unsafe public long FindSumInsideCursor(BitmapSource bs)
+        //{
+        //    if (bs == null)
+        //        return -1;
+
+        //    WriteableBitmap wb = new WriteableBitmap(bs);
+        //    wb.Lock();
+        //    byte* bb = (byte*)wb.BackBuffer.ToPointer();
+        //    long Sum = 0;
+        //    long L = (int)wb.Width * (int)wb.Height * 3;
+        //    //for (int i = (int)((L / 2)-5000); i < (int)((L / 2) + 5000); i += 3)
+        //    for (int x = 0, i = 0; x < wb.Width; x++)
+        //        for (int y = 0; y < wb.Height; y++)
+        //            Sum += bb[i];
+        //    //for (int i = 0; i < (int)heatmap.Width; ++i)
+        //    //    for (int j = 0; j < (int)heatmap.Height; ++j)
+        //    //    {
+        //    //        a[i, j] = pixel[j * (int)heatmap.Width + i];
+        //    //        //Console.WriteLine($"i = {i}, j = {j}, a[i,j] = {a[i, j]}");
+        //    //        //a[i, j] =heatmap[i,j];
+        //    //        //arrCount++;
+        //    //        //Console.WriteLine($"arrCount = {arrCount}");
+        //    //    }
+        //    wb.Unlock();
+        //    Console.WriteLine($"SumInsideCursor = {Sum}");
+        //    return Sum;
+        //}
+
+        //unsafe public long FindSumInsideCursor(BitmapSource bs)
+        //{
+        //    if (bs == null)
+        //        return -1;
+        //    WriteableBitmap wb = new WriteableBitmap(bs);
+        //    wb.Lock();
+        //    byte* bb = (byte*)wb.BackBuffer.ToPointer();
+        //    long sum = 0;
+        //    long l = (int)wb.Width * (int)wb.Height * 3;
+
+        //    long Sum = 0;
+        //    wb.Lock();
+
+
+        //    b = ByteToImage((int)bb.Width, (int)bb.Height, bb);
+        //    for (int x = 0, i = 0; x < wb.Width; x++)
+        //        for (int y = 0; y < wb.Height; y++)
+        //            Sum += bb[i];
+        //    //for (int i = 0; i < (int)heatmap.Width; ++i)
+        //    //    for (int j = 0; j < (int)heatmap.Height; ++j)
+        //    //    {
+        //    //        a[i, j] = pixel[j * (int)heatmap.Width + i];
+        //    //        //Console.WriteLine($"i = {i}, j = {j}, a[i,j] = {a[i, j]}");
+        //    //        //a[i, j] =heatmap[i,j];
+        //    //        //arrCount++;
+        //    //        //Console.WriteLine($"arrCount = {arrCount}");
+        //    //    }
+        //    //b.Unlock();
+        //    Console.WriteLine($"SumInsideCursor = {Sum}");
+        //    return Sum;
+        //}
+
+
         unsafe public WriteableBitmap FindColoredDifference(BitmapSource bs1, BitmapSource bs2, byte mode)
         {
             bool GreenFlu = (bool)radioButtonGreen.IsChecked;
@@ -275,6 +336,16 @@ namespace SimplestSpinWPF
             int amp = (int)(AmplificationSlider.Value);
             long L = (int)wb1.Width * (int)wb1.Height * 3;
 
+            double SummRed = 0;
+            double SummGreen = 0;
+            int w, h;
+            int wCursor = 10;
+            int hCursor = 10;
+            int firstCursorPixel;
+            double FI = 0;
+
+            firstCursorPixel = (int)wb1.Width * (((int)wb1.Height / 2) - (wCursor / 2)) * 3;
+
             for (int b = 0, g = 1, r = 2; b < L; b += 3, r += 3, g += 3)
             {
                 if (GreenFlu)
@@ -285,16 +356,29 @@ namespace SimplestSpinWPF
                 if (R2G)
                 {
                     difRed = bb1[r] - bb2[r];
-                    difGreen = bb1[g] - bb2[g];
+                    difGreen= bb1[g] - bb2[g];
 
                     if (difGreen == 0)
                     {
                         difGreen = 1;
                     }
-                    //amp = amp +;
-                    //dif = difRed >> difGreen;
-                    difDouble = (difRed / difGreen) * additionalCoef;
+                    difDouble = (difRed/ difGreen) * additionalCoef;
                     dif = (int)difDouble;
+                        
+                        if (g >= (firstCursorPixel) && g < (firstCursorPixel + wCursor * 3))
+                           //(g >= (firstCursorPixel + firstCursorPixel * 2) && g < ((firstCursorPixel + firstCursorPixel * 2) + wCursor * 3)) ||
+                           //(g >= (firstCursorPixel + firstCursorPixel * 3) && g < (firstCursorPixel + firstCursorPixel * 3) + wCursor * 3)) ||
+                           //(g >= (firstCursorPixel + firstCursorPixel * 4) && g < ((firstCursorPixel + firstCursorPixel * 4) + wCursor * 3)) ||
+                           //(g >= (firstCursorPixel + firstCursorPixel * 5) && g < ((firstCursorPixel + firstCursorPixel * 5) + wCursor * 3)) ||
+                           //(g >= (firstCursorPixel + firstCursorPixel * 6) && g < ((firstCursorPixel + firstCursorPixel * 6) + wCursor * 3)) ||
+                           //(g >= (firstCursorPixel + firstCursorPixel * 7) && g < ((firstCursorPixel + firstCursorPixel * 7) + wCursor * 3)) ||
+                           //(g >= (firstCursorPixel + firstCursorPixel * 8) && g < ((firstCursorPixel + firstCursorPixel * 8) + wCursor * 3)) ||
+                           //(g >= (firstCursorPixel + firstCursorPixel * 9) && g < ((firstCursorPixel + firstCursorPixel * 9) + wCursor * 3)) ||
+                           //(g >= (firstCursorPixel + firstCursorPixel * 10) && g < ((firstCursorPixel + firstCursorPixel * 10) + wCursor * 3))
+                        {
+                            SummRed += difRed;
+                            SummGreen += difGreen;
+                        }
                 }
 
                 if (dif < 0)
@@ -315,8 +399,11 @@ namespace SimplestSpinWPF
                 if (Grayed)
                     bb[b] = res; bb[r] = res;
             }
+            FI = SummRed / SummGreen;
+            Console.WriteLine($"FI = {FI}");
             //wb.WritePixels(new Int32Rect(0, 0, (int)wb1.Width, (int)wb1.Height), heatmap, (int)wb1.Width * 3, 0);
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
+            //FindSumInsideCursor(convertedImage);
             return wb;
         }
 
@@ -348,12 +435,13 @@ namespace SimplestSpinWPF
             int[] REDS = new int[L];
             int[] GREENS = new int[L];
             int[] BLUES = new int[L];
+            int[,] a = new int[(int)heatmap.Width, (int)heatmap.Height];
 
             //Color color = new Color;
             Bitmap b = new Bitmap((int)heatmap.Width, (int)heatmap.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
             //return b;
             double max = double.MinValue, min = double.MaxValue;
-            for (int bl = 0, g = 1, r = 2; bl < L; bl += 3, r += 3, g += 3)
+            for (int bl = 0, g = 1, r = 2; r < L; bl += 3, r += 3, g += 3)
             {
                 bbTest[g] = bb[g];
                 //int R, G, B;
@@ -385,15 +473,15 @@ namespace SimplestSpinWPF
             //int[,] a = new int[(int)heatmap.Width, (int)heatmap.Height];
             //Console.WriteLine($"Массив a[i,j] объявлнен, длина = {a.Length}, ранг = {a.Rank}");
 
-            //for (int i = 0; i < (int)heatmap.Width; ++i)
-            //    for (int j = 0; j < (int)heatmap.Height; ++j)
-            //    {
-            //        a[i, j] = pixel[j * (int)heatmap.Width + i];
-            //        //Console.WriteLine($"i = {i}, j = {j}, a[i,j] = {a[i, j]}");
-            //        //a[i, j] =heatmap[i,j];
-            //        //arrCount++;
-            //        //Console.WriteLine($"arrCount = {arrCount}");
-            //    }
+            for (int i = 0; i < (int)heatmap.Width; ++i)
+                for (int j = 0; j < (int)heatmap.Height; ++j)
+                {
+                    a[i, j] = pixel[j * (int)heatmap.Width + i];
+                    //Console.WriteLine($"i = {i}, j = {j}, a[i,j] = {a[i, j]}");
+                    //a[i, j] =heatmap[i,j];
+                    //arrCount++;
+                    //Console.WriteLine($"arrCount = {arrCount}");
+                }
             //Console.WriteLine($"Массив a[i,j] заполнен, длина = {a.Length}, ранг = {a.Rank}");
             //arrCount = 0;
             //double max = double.MinValue, min = double.MaxValue;
@@ -480,15 +568,42 @@ namespace SimplestSpinWPF
                        //data[arrayIndex + 2],
                        //data[arrayIndex + 3]
                     );
-                    pic = ByteToImage(1440, 1080, data);
+                    //
                     pic.SetPixel(x, y, c);
-                    pic.Save(@"C:\MEDIA\test1.bmp");
+                    
 
                 }
             }
-
+            pic.Save(@"C:\MEDIA\test1.bmp");
+            //pic = ByteToImage(1440, 1080, data);
+            pic = ChangeColor(pic);
             return pic;
         }
+
+
+
+        public static Bitmap ChangeColor(Bitmap scrBitmap)
+       {
+          //You can change your new color here. Red,Green,LawnGreen any..
+          Color newColor = Color.RosyBrown;
+          Color actualColor;            
+          //make an empty bitmap the same size as scrBitmap
+          Bitmap newBitmap = new Bitmap(scrBitmap.Width, scrBitmap.Height);
+          for (int i = 0; i < scrBitmap.Width; i++)
+          {
+             for (int j = 0; j < scrBitmap.Height; j++)
+             {
+                //get the pixel from the scrBitmap image
+                actualColor = scrBitmap.GetPixel(i, j);
+                // > 150 because.. Images edges can be of low pixel colr. if we set all pixel color to new then there will be no smoothness left.
+                //if (actualColor.A > 150)
+                    newBitmap.SetPixel(i, j, newColor);
+                //else
+                //    newBitmap.SetPixel(i, j, actualColor);
+             }
+          }            
+          return newBitmap;
+       }
 
         private Bitmap ByteToImage(int w, int h, byte[] pixels)
         {
@@ -807,24 +922,24 @@ namespace SimplestSpinWPF
             {
                 MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            try
-            {
-                BitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(Heatmap(FindColoredDifference(convertedImage, PrevConvertedImage, 0))));
-                DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "HeatmapDebug" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef)
-                    );
-                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
-                {
-                    encoder.Save(fileStream);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            //try
+            //{
+            //    BitmapEncoder encoder = new PngBitmapEncoder();
+            //    encoder.Frames.Add(BitmapFrame.Create(Heatmap(FindColoredDifference(convertedImage, PrevConvertedImage, 0))));
+            //    DateTime d = DateTime.Now;
+            //    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+            //        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+            //        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "HeatmapDebug" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef)
+            //        );
+            //    using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+            //    {
+            //        encoder.Save(fileStream);
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //}
             //if (pseudo)
             //{
 
