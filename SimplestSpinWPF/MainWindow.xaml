@@ -49,7 +49,8 @@
         </RadioButton>
         <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonGray"  Content="In gray" HorizontalAlignment="Left" Margin="20,447,0,0" VerticalAlignment="Top"/>
         <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonHeatmap"  Content="Pseudo" HorizontalAlignment="Left" Margin="20,466,0,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>
+        <TextBox x:Name="FI_textbox" Grid.Column="4" HorizontalAlignment="Left" Margin="10,562,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="80" FontSize="20"/>
+        <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
     </Grid>
 
 </Window>
