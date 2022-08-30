@@ -338,6 +338,8 @@ namespace SimplestSpinWPF
 
             int amp = (int)(AmplificationSlider.Value);
             long L = (int)wb1.Width * (int)wb1.Height * 3;
+            int width = (int)wb1.Width;
+            int height = (int)wb1.Height;
 
             double SummRed = 0;
             double SummGreen = 0;
@@ -347,7 +349,7 @@ namespace SimplestSpinWPF
             int firstCursorPixel;
             double FI = 0;
 
-            firstCursorPixel = (int)wb1.Width * (((int)wb1.Height / 2) - (wCursor / 2)) * 3;
+            firstCursorPixel = width * ((height / 2) - (wCursor / 2)) * 3;
             checkNpixelsInCursor = 0;
             for (int b = 0, g = 1, r = 2; b < L; b += 3, r += 3, g += 3)
             {
@@ -368,22 +370,22 @@ namespace SimplestSpinWPF
                     difDouble = (difRed/ difGreen) * additionalCoef;
                     dif = (int)difDouble;
                         
-                        if ((g >= (firstCursorPixel + (int)wb1.Width * 0) && g < (firstCursorPixel + (int)wb1.Width * 0 + wCursor * 3))
-                            || (g >= (firstCursorPixel + (int)wb1.Width * 1) && g < (firstCursorPixel + (int)wb1.Width * 1 + wCursor * 3))
-                            || (g >= (firstCursorPixel + (int)wb1.Width * 2) && g < (firstCursorPixel + (int)wb1.Width * 2 + wCursor * 3))
-                            || (g >= (firstCursorPixel + (int)wb1.Width * 3) && g < (firstCursorPixel + (int)wb1.Width * 3 + wCursor * 3))
-                            || (g >= (firstCursorPixel + (int)wb1.Width * 4) && g < (firstCursorPixel + (int)wb1.Width * 4 + wCursor * 3))
-                            || (g >= (firstCursorPixel + (int)wb1.Width * 5) && g < (firstCursorPixel + (int)wb1.Width * 5 + wCursor * 3))
-                            || (g >= (firstCursorPixel + (int)wb1.Width * 6) && g < (firstCursorPixel + (int)wb1.Width * 6 + wCursor * 3))
-                            || (g >= (firstCursorPixel + (int)wb1.Width * 7) && g < (firstCursorPixel + (int)wb1.Width * 7 + wCursor * 3))
-                            || (g >= (firstCursorPixel + (int)wb1.Width * 8) && g < (firstCursorPixel + (int)wb1.Width * 8 + wCursor * 3))
-                            || (g >= (firstCursorPixel + (int)wb1.Width * 9) && g < (firstCursorPixel + (int)wb1.Width * 9 + wCursor * 3)))
-                    {
-                        SummRed += difRed;
+                        if ((g >= (firstCursorPixel + width * 0) && g < (firstCursorPixel + width * 0 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 1) && g < (firstCursorPixel + width * 1 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 2) && g < (firstCursorPixel + width * 2 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 3) && g < (firstCursorPixel + width * 3 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 4) && g < (firstCursorPixel + width * 4 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 5) && g < (firstCursorPixel + width * 5 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 6) && g < (firstCursorPixel + width * 6 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 7) && g < (firstCursorPixel + width * 7 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 8) && g < (firstCursorPixel + width * 8 + wCursor * 3))
+                            || (g >= (firstCursorPixel + width * 9) && g < (firstCursorPixel + width * 9 + wCursor * 3)))
+                        {
+                            SummRed += difRed;
                             SummGreen += difGreen;
-                        checkNpixelsInCursor += 1;
+                        //checkNpixelsInCursor += 1;
                         bb[g] = 0;
-                        }
+                    }
                 }
 
                 if (dif < 0)
@@ -417,8 +419,8 @@ namespace SimplestSpinWPF
             //wb.WritePixels(new Int32Rect(0, 0, (int)wb1.Width, (int)wb1.Height), heatmap, (int)wb1.Width * 3, 0);
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             //FindSumInsideCursor(convertedImage);
-            Console.WriteLine($"NpixelsInCursor = {checkNpixelsInCursor}");
-            Console.WriteLine($"firstCursorPixel = {firstCursorPixel}");
+            //Console.WriteLine($"NpixelsInCursor = {checkNpixelsInCursor}");
+            //Console.WriteLine($"firstCursorPixel = {firstCursorPixel}");
             return wb;
         }
         
