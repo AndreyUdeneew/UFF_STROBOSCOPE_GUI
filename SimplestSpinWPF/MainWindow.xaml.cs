@@ -147,6 +147,8 @@ namespace SimplestSpinWPF
         public BitmapSource PSEUDO = null;
         public BitmapSource HeatMap = null;
         public BitmapSource bsOut = null;
+        int FIcounter = 0;
+        int averageLimit = 10;
 
         public long PrevImageSum = 0;
         private void GetImages()
@@ -399,8 +401,16 @@ namespace SimplestSpinWPF
                 if (Grayed)
                     bb[b] = res; bb[r] = res;
             }
-            FI = SummRed / SummGreen;
-            Console.WriteLine($"FI = {FI}");
+            FI += SummRed / SummGreen;
+            FIcounter += 1;
+            if(FIcounter == averageLimit)
+            {
+                FI = FI / averageLimit;
+                FIcounter = 0;
+                Console.WriteLine($"FI = {FI}");
+                FI = 0;
+            }
+            
             //wb.WritePixels(new Int32Rect(0, 0, (int)wb1.Width, (int)wb1.Height), heatmap, (int)wb1.Width * 3, 0);
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             //FindSumInsideCursor(convertedImage);
