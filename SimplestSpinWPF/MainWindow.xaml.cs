@@ -351,6 +351,8 @@ namespace SimplestSpinWPF
 
             double SummRed = 0;
             double SummGreen = 0;
+            double SummFluor = 0;
+            double SummWhite = 0;
             int w, h;
             int wCursor = 10;
             int wCursor3 = 30;
@@ -391,12 +393,14 @@ namespace SimplestSpinWPF
                             || (g >= (firstCursorPixel + width8) && g < (firstCursorPixel + width8 + wCursor3))
                             || (g >= (firstCursorPixel + width9) && g < (firstCursorPixel + width9 + wCursor3)))
                         {
-                            bb[g] = 0;
+                            bb[g] = 124;
                             if(FIcounter == averageLimit)
                             {
-                                SummRed += difRed;
-                                SummGreen += difGreen;
-                            }
+                                //SummRed += difRed;
+                                //SummGreen += difGreen;
+                                SummFluor += bb1[r];
+                                SummWhite += bb2[r];
+                        }
 
                             //checkNpixelsInCursor += 1;
                         
@@ -424,7 +428,8 @@ namespace SimplestSpinWPF
             
             if(FIcounter == averageLimit)
             {
-                FI = SummRed / SummGreen;
+                //FI = SummRed / SummGreen;
+                FI = SummFluor / SummWhite;
                 FIcounter = 0;
                 FI_textbox.Text = FI.ToString("F1");
             }
