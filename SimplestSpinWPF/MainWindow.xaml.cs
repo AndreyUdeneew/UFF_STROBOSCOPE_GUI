@@ -365,6 +365,31 @@ namespace SimplestSpinWPF
 
             for (int b = 0, g = 1, r = 2; b < L; b += 3, r += 3, g += 3)
             {
+
+                if ((g >= (firstCursorPixel) && g < (firstCursorPixel + wCursor3))
+                    || (g >= (firstCursorPixel + width) && g < (firstCursorPixel + width + wCursor3))
+                    || (g >= (firstCursorPixel + width2) && g < (firstCursorPixel + width2 + wCursor3))
+                    || (g >= (firstCursorPixel + width3) && g < (firstCursorPixel + width3 + wCursor3))
+                    || (g >= (firstCursorPixel + width4) && g < (firstCursorPixel + width4 + wCursor3))
+                    || (g >= (firstCursorPixel + width5) && g < (firstCursorPixel + width5 + wCursor3))
+                    || (g >= (firstCursorPixel + width6) && g < (firstCursorPixel + width6 + wCursor3))
+                    || (g >= (firstCursorPixel + width7) && g < (firstCursorPixel + width7 + wCursor3))
+                    || (g >= (firstCursorPixel + width8) && g < (firstCursorPixel + width8 + wCursor3))
+                    || (g >= (firstCursorPixel + width9) && g < (firstCursorPixel + width9 + wCursor3)))
+                {
+                    bb[g] = 0;
+                    if (FIcounter == averageLimit)
+                    {
+                        //SummRed += difRed;
+                        //SummGreen += difGreen;
+                        SummFluor += bb1[r];
+                        SummWhite += bb2[r];
+                    }
+
+                    //checkNpixelsInCursor += 1;
+
+                }
+
                 if (GreenFlu)
                     dif = (bb1[g] - bb2[g]);
                 if (RedFlu)
@@ -382,29 +407,6 @@ namespace SimplestSpinWPF
                     difDouble = (difRed / difGreen) * additionalCoef;
                     dif = (int)difDouble;
                         
-                        if ((g >= (firstCursorPixel) && g < (firstCursorPixel + wCursor3))
-                            || (g >= (firstCursorPixel + width ) && g < (firstCursorPixel + width + wCursor3))
-                            || (g >= (firstCursorPixel + width2) && g < (firstCursorPixel + width2 + wCursor3))
-                            || (g >= (firstCursorPixel + width3) && g < (firstCursorPixel + width3 + wCursor3))
-                            || (g >= (firstCursorPixel + width4) && g < (firstCursorPixel + width4 + wCursor3))
-                            || (g >= (firstCursorPixel + width5) && g < (firstCursorPixel + width5 + wCursor3))
-                            || (g >= (firstCursorPixel + width6) && g < (firstCursorPixel + width6 + wCursor3))
-                            || (g >= (firstCursorPixel + width7) && g < (firstCursorPixel + width7 + wCursor3))
-                            || (g >= (firstCursorPixel + width8) && g < (firstCursorPixel + width8 + wCursor3))
-                            || (g >= (firstCursorPixel + width9) && g < (firstCursorPixel + width9 + wCursor3)))
-                        {
-                            bb[g] = 124;
-                            if(FIcounter == averageLimit)
-                            {
-                                //SummRed += difRed;
-                                //SummGreen += difGreen;
-                                SummFluor += bb1[r];
-                                SummWhite += bb2[r];
-                        }
-
-                            //checkNpixelsInCursor += 1;
-                        
-                        }
                 }
 
                 if (dif < 0)
