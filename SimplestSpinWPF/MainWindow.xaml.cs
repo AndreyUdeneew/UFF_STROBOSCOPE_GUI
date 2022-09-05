@@ -47,7 +47,7 @@ namespace SimplestSpinWPF
                     if (j == 0)
                         DivideCache[i * 256 + j] = 0;
                     else
-                        DivideCache[i * 256 + j] = (byte)(i * 10 / j);
+                        DivideCache[i * 256 + j] = (byte)(i * additionalCoef / j);
 
             //LayoutLeft.Children.Add(gridControl);
 
@@ -296,6 +296,7 @@ namespace SimplestSpinWPF
             int width7 = width * 7;
             int width8 = width * 8;
             int width9 = width * 9;
+            //int cursorString = 0;
 
             double SummRed = 0;
             double SummGreen = 0;
@@ -306,7 +307,7 @@ namespace SimplestSpinWPF
             int wCursor3 = 30;
             int hCursor = 10;
             int firstCursorPixel;
-            double FI;
+            double FI = 0;
 
             firstCursorPixel = (width * ((height / 2) - (wCursor / 2))) + (width / 2);
             FIcounter += 1;
@@ -314,28 +315,6 @@ namespace SimplestSpinWPF
             {
                 for (int b = 0, g = 1, r = 2; b < L; b += 3, r += 3, g += 3)
                 {
-
-                    if ((g >= (firstCursorPixel) && g < (firstCursorPixel + wCursor3))
-                        || (g >= (firstCursorPixel + width) && g < (firstCursorPixel + width + wCursor3))
-                        || (g >= (firstCursorPixel + width2) && g < (firstCursorPixel + width2 + wCursor3))
-                        || (g >= (firstCursorPixel + width3) && g < (firstCursorPixel + width3 + wCursor3))
-                        || (g >= (firstCursorPixel + width4) && g < (firstCursorPixel + width4 + wCursor3))
-                        || (g >= (firstCursorPixel + width5) && g < (firstCursorPixel + width5 + wCursor3))
-                        || (g >= (firstCursorPixel + width6) && g < (firstCursorPixel + width6 + wCursor3))
-                        || (g >= (firstCursorPixel + width7) && g < (firstCursorPixel + width7 + wCursor3))
-                        || (g >= (firstCursorPixel + width8) && g < (firstCursorPixel + width8 + wCursor3))
-                        || (g >= (firstCursorPixel + width9) && g < (firstCursorPixel + width9 + wCursor3)))
-                    {
-                        bb[g] = 0;
-                        if (FIcounter == averageLimit)
-                        {
-                            //SummRed += difRed;
-                            //SummGreen += difGreen;
-                            SummFluor += (bb1[r] - bb2[r]);
-                            SummWhite += bb2[r];
-                        }
-                    }
-
                     if (GreenFlu)
                         dif = (bb1[g] - bb2[g]);
                     if (RedFlu)
@@ -356,7 +335,7 @@ namespace SimplestSpinWPF
                         }
                         //difDouble = (difRed / difGreen) * additionalCoef;
 
-                        dif = DC[(difRed << 8) + difGreen];// (difRed >> difGreen) << additionalCoef;
+                        dif = DC[(difRed << 8) + difGreen];
                         //dif = (byte)(difRed /  difGreen);
                         //dif = DC[(difGreen << 8) + difRed];
                         //dif = (int)difDouble;                       
@@ -401,20 +380,21 @@ namespace SimplestSpinWPF
                         bb[b] = res; bb[r] = res;
                 }
             }
-
+            //firstCursorPixel = 0;
+            for (int cursorString = 0; cursorString < hCursor; cursorString += 1)
+                for (int b = ((firstCursorPixel + width * cursorString) + 0), g = ((firstCursorPixel + width * cursorString) + 1), r = ((firstCursorPixel + width * cursorString) + 2); b < ((firstCursorPixel + width * cursorString) + wCursor * 3); b += 3, r += 3, g += 3)
+                {
+                    bb[g] = 0; bb[b] = 0; bb[r] = 0;
+                    SummFluor += (bb2[r] - bb1[r]);
+                    SummWhite += bb1[r];
+                }
 
             if (FIcounter == averageLimit)
             {
-                //FI = SummRed / SummGreen;
-                //FI = (SummFluor - SummWhite) / (SummWhite + SummFluor);
-
-                //FI = LastImageSum / (LastImageSum + PrevImageSum);
                 FI = SummFluor / SummWhite;
                 if (FI < 0)
                     FI *= -1;
                 FIcounter = 0;
-                SummWhite = 0;
-                SummFluor = 0;
                 FI_textbox.Text = FI.ToString("F1");
             }
 
