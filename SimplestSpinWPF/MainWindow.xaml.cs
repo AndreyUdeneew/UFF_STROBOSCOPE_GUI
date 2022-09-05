@@ -35,11 +35,19 @@ namespace SimplestSpinWPF
 
         IManagedCamera SpinCamColor = null;
         //PropertyGridControl gridControl = new PropertyGridControl();
+        byte[] DivideCache = new byte[256 * 256];
 
         Thread RefreshThread;
         public MainWindow()
         {
             InitializeComponent();
+
+            for (int i = 0; i < 256; i++)
+                for (int j = 0; j < 256; j++)
+                    if (j == 0)
+                        DivideCache[i * 256 + j] = 0;
+                    else
+                        DivideCache[i * 256 + j] = (byte)(i * 10 / j);
 
             //LayoutLeft.Children.Add(gridControl);
 
@@ -148,7 +156,7 @@ namespace SimplestSpinWPF
         public BitmapSource HeatMap = null;
         public BitmapSource bsOut = null;
         int FIcounter = 0;
-        int averageLimit = 5;
+        int averageLimit = 2;
         int checkNpixelsInCursor = 0;
 
         public long PrevImageSum = 0;
@@ -298,105 +306,120 @@ namespace SimplestSpinWPF
             int wCursor3 = 30;
             int hCursor = 10;
             int firstCursorPixel;
-            double FI = 0;
-            
-            firstCursorPixel = (width * ((height / 2) - (wCursor / 2))) + (width/2);
+            double FI;
+
+            firstCursorPixel = (width * ((height / 2) - (wCursor / 2))) + (width / 2);
             FIcounter += 1;
-
-            for (int b = 0, g = 1, r = 2; b < L; b += 3, r += 3, g += 3)
+            fixed (byte* DC = DivideCache)
             {
-
-                if ((g >= (firstCursorPixel) && g < (firstCursorPixel + wCursor3))
-                    || (g >= (firstCursorPixel + width) && g < (firstCursorPixel + width + wCursor3))
-                    || (g >= (firstCursorPixel + width2) && g < (firstCursorPixel + width2 + wCursor3))
-                    || (g >= (firstCursorPixel + width3) && g < (firstCursorPixel + width3 + wCursor3))
-                    || (g >= (firstCursorPixel + width4) && g < (firstCursorPixel + width4 + wCursor3))
-                    || (g >= (firstCursorPixel + width5) && g < (firstCursorPixel + width5 + wCursor3))
-                    || (g >= (firstCursorPixel + width6) && g < (firstCursorPixel + width6 + wCursor3))
-                    || (g >= (firstCursorPixel + width7) && g < (firstCursorPixel + width7 + wCursor3))
-                    || (g >= (firstCursorPixel + width8) && g < (firstCursorPixel + width8 + wCursor3))
-                    || (g >= (firstCursorPixel + width9) && g < (firstCursorPixel + width9 + wCursor3)))
+                for (int b = 0, g = 1, r = 2; b < L; b += 3, r += 3, g += 3)
                 {
-                    bb[g] = 0;
-                    if (FIcounter == averageLimit)
+
+                    if ((g >= (firstCursorPixel) && g < (firstCursorPixel + wCursor3))
+                        || (g >= (firstCursorPixel + width) && g < (firstCursorPixel + width + wCursor3))
+                        || (g >= (firstCursorPixel + width2) && g < (firstCursorPixel + width2 + wCursor3))
+                        || (g >= (firstCursorPixel + width3) && g < (firstCursorPixel + width3 + wCursor3))
+                        || (g >= (firstCursorPixel + width4) && g < (firstCursorPixel + width4 + wCursor3))
+                        || (g >= (firstCursorPixel + width5) && g < (firstCursorPixel + width5 + wCursor3))
+                        || (g >= (firstCursorPixel + width6) && g < (firstCursorPixel + width6 + wCursor3))
+                        || (g >= (firstCursorPixel + width7) && g < (firstCursorPixel + width7 + wCursor3))
+                        || (g >= (firstCursorPixel + width8) && g < (firstCursorPixel + width8 + wCursor3))
+                        || (g >= (firstCursorPixel + width9) && g < (firstCursorPixel + width9 + wCursor3)))
                     {
-                        //SummRed += difRed;
-                        //SummGreen += difGreen;
-                        SummFluor += bb1[r];
-                        SummWhite += bb2[r];
+                        bb[g] = 0;
+                        if (FIcounter == averageLimit)
+                        {
+                            //SummRed += difRed;
+                            //SummGreen += difGreen;
+                            SummFluor += bb1[r];
+                            SummWhite += bb2[r];
+                        }
                     }
-                }
 
-                if (GreenFlu)
-                    dif = (bb1[g] - bb2[g]);
-                if (RedFlu)
-                    dif = (bb1[r] - bb2[r]);
+                    if (GreenFlu)
+                        dif = (bb1[g] - bb2[g]);
+                    if (RedFlu)
+                        dif = (bb1[r] - bb2[r]);
 
-                if (R2G)
-                {
-                    difRed = bb1[r] - bb2[r];
-                    difGreen= bb1[g] - bb2[g];
-
-                    if (difGreen == 0)
+                    if (R2G)
                     {
-                        difGreen = 1;
+                        difRed = bb1[r] - bb2[r];
+                        if (difRed < 0)
+                            difRed = -difRed;
+                        difGreen = bb1[g] - bb2[g];
+                        if (difGreen < 0)
+                            difGreen = -difGreen;
+
+                        if (difGreen == 0)
+                        {
+                            difGreen = 1;
+                        }
+                        //difDouble = (difRed / difGreen) * additionalCoef;
+
+                        dif = DC[(difRed << 8) + difGreen];// (difRed >> difGreen) << additionalCoef;
+                        //dif = (byte)(difRed /  difGreen);
+                        //dif = DC[(difGreen << 8) + difRed];
+                        //dif = (int)difDouble;                       
                     }
-                    //difDouble = (difRed / difGreen) * additionalCoef;
-                    dif = (difRed >> difGreen) << additionalCoef;
-                    //dif = (int)difDouble;                       
-                }
 
-                if (dif < 0)
-                    dif = -dif;
+                    if (dif < 0)
+                        dif = -dif;
 
-                res = bb[g];
-                if (amp > 0)
-                    dif <<= amp;
-                if (amp < 0)
-                    dif >>= -amp;
+                    res = bb[g];
+                    if (amp > 0)
+                        dif <<= amp;
+                    if (amp < 0)
+                        dif >>= -amp;
 
-                temp = res + dif;
+                    temp = res + dif;
 
-                if (Pseudo)
-                {
-                    if (temp > 255)
+                    if (Pseudo)
                     {
-                        bb[g] = 255; bb[r] = 255; bb[b] = 255;
+                        if (temp > 255)
+                        {
+                            bb[g] = 255; bb[r] = 255; bb[b] = 255;
+                        }
+                        else
+                        {
+                            bb[r] = (byte)(temp << 1); bb[g] = (byte)(temp << 2); bb[b] = (byte)(temp << 4);
+                        }
+                        if (Grayed)
+                            bb[b] = res; bb[r] = res;
                     }
                     else
                     {
-                        bb[r] = (byte)(temp << 1); bb[g] = (byte)(temp << 2); bb[b] = (byte)(temp << 4);
+                        if (temp > 255)
+                            bb[g] = 255;
+                        else
+                            bb[g] = (byte)(temp);
+
+                        if (Grayed)
+                            bb[b] = res; bb[r] = res;
                     }
-                    if (Grayed)
-                        bb[b] = res; bb[r] = res;
-                }
-                else
-                {
-                    if (temp > 255)
-                        bb[g] = 255;
-                    else
-                        bb[g] = (byte)(temp);
 
                     if (Grayed)
                         bb[b] = res; bb[r] = res;
                 }
-
-                if (Grayed)
-                    bb[b] = res; bb[r] = res;
             }
-            
-            if(FIcounter == averageLimit)
+
+
+            if (FIcounter == averageLimit)
             {
                 //FI = SummRed / SummGreen;
-                FI = SummFluor / SummWhite;
+                FI = (SummFluor - SummWhite) / (SummWhite + SummFluor);
+                if (FI < 0)
+                    FI *= -1;
+                //FI = LastImageSum / (LastImageSum + PrevImageSum);
                 FIcounter = 0;
-                FI_textbox.Text = FI.ToString("F1");
+                SummWhite = 0;
+                SummFluor = 0;
+                FI_textbox.Text = FI.ToString("F3");
             }
-            
+
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
         }
-        
+
 
         int Clamp(int i)
         {
