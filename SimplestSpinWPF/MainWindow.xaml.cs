@@ -156,7 +156,7 @@ namespace SimplestSpinWPF
         public BitmapSource HeatMap = null;
         public BitmapSource bsOut = null;
         int FIcounter = 0;
-        int averageLimit = 2;
+        int averageLimit = 1;
         int checkNpixelsInCursor = 0;
 
         public long PrevImageSum = 0;
@@ -331,7 +331,7 @@ namespace SimplestSpinWPF
                         {
                             //SummRed += difRed;
                             //SummGreen += difGreen;
-                            SummFluor += bb1[r];
+                            SummFluor += (bb1[r] - bb2[r]);
                             SummWhite += bb2[r];
                         }
                     }
@@ -406,14 +406,16 @@ namespace SimplestSpinWPF
             if (FIcounter == averageLimit)
             {
                 //FI = SummRed / SummGreen;
-                FI = (SummFluor - SummWhite) / (SummWhite + SummFluor);
+                //FI = (SummFluor - SummWhite) / (SummWhite + SummFluor);
+
+                //FI = LastImageSum / (LastImageSum + PrevImageSum);
+                FI = SummFluor / SummWhite;
                 if (FI < 0)
                     FI *= -1;
-                //FI = LastImageSum / (LastImageSum + PrevImageSum);
                 FIcounter = 0;
                 SummWhite = 0;
                 SummFluor = 0;
-                FI_textbox.Text = FI.ToString("F3");
+                FI_textbox.Text = FI.ToString("F1");
             }
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
