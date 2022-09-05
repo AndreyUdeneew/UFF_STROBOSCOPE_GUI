@@ -158,6 +158,8 @@ namespace SimplestSpinWPF
         int FIcounter = 0;
         int averageLimit = 1;
         int checkNpixelsInCursor = 0;
+        double FI_norma = 1;
+        double FI = 0;
 
         public long PrevImageSum = 0;
         private void GetImages()
@@ -307,8 +309,7 @@ namespace SimplestSpinWPF
             int wCursor3 = 30;
             int hCursor = 10;
             int firstCursorPixel;
-            double FI = 0;
-
+            
             firstCursorPixel = (width * ((height / 2) - (wCursor / 2))) + (width / 2);
             FIcounter += 1;
             fixed (byte* DC = DivideCache)
@@ -394,6 +395,7 @@ namespace SimplestSpinWPF
                 FI = SummFluor / SummWhite;
                 if (FI < 0)
                     FI *= -1;
+                FI = FI / FI_norma;
                 FIcounter = 0;
                 FI_textbox.Text = FI.ToString("F1");
             }
@@ -448,6 +450,17 @@ namespace SimplestSpinWPF
             {
                 SpinCamColor.BeginAcquisition();
                 Refreshing = true;
+            }
+            catch { }
+        }
+
+        private void ButtonNorma_Click(object sender, RoutedEventArgs e)
+        {
+            if (SpinCamColor == null)
+                return;
+            try
+            {
+                FI_norma = FI;
             }
             catch { }
         }
