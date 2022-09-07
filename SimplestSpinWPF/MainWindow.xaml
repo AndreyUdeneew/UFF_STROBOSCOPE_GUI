@@ -33,7 +33,7 @@
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonGreen" Content="Green" Grid.Column="4" HorizontalAlignment="Left" Margin="20,333,0,0" VerticalAlignment="Top" IsThreeState="False" IsChecked="True" Background="#FFBFBFBF"/>
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonRed" Content="Red" Grid.Column="4" HorizontalAlignment="Center" Margin="0,353,0,0" VerticalAlignment="Top"  Background="#FFB0B0B0"/>
         <!--<CheckBox x:Name="checkBoxGray" Content="In gray" Grid.Column="4" HorizontalAlignment="Left" Margin="9,459,0,0" VerticalAlignment="Top" Foreground="Gray" IsThreeState="False" IsChecked="true"/>-->
-        <Button Background="DarkGray"  x:Name="button3" Content="Quit" Grid.Column="4" HorizontalAlignment="Left" Margin="10,521,0,0" VerticalAlignment="Top" Width="54" Click="button3_Click"/>
+        <Button Background="DarkGray"  x:Name="button3" Content="Quit" Grid.Column="4" HorizontalAlignment="Left" Margin="10,601,0,0" VerticalAlignment="Top" Width="54" Click="button3_Click"/>
         <Button x:Name="button4" Content="Save" Grid.Column="4" HorizontalAlignment="Left" Height="20" Margin="10,496,0,0" VerticalAlignment="Top" Width="54" Click="button4_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonR2G"  Content="R/G" HorizontalAlignment="Center" Margin="0,373,0,0" VerticalAlignment="Top"/>
         <!--<RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonOxy"  Content="Oxy" HorizontalAlignment="Center" Margin="0,393,0,0" VerticalAlignment="Top"/>-->
@@ -49,10 +49,8 @@
         </RadioButton>
         <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonGray"  Content="In gray" HorizontalAlignment="Left" Margin="20,447,0,0" VerticalAlignment="Top"/>
         <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonHeatmap"  Content="Pseudo" HorizontalAlignment="Left" Margin="20,466,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="FI_textbox" Grid.Column="4" HorizontalAlignment="Left" Margin="10,562,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="80" FontSize="20"/>
-        <Label x:Name="FI_label" Grid.Column="4" HorizontalAlignment="Center" Margin="0,614,0,0" VerticalAlignment="Top" Width="78" Foreground="Gray" RenderTransformOrigin="-0.509,0.472">
-            <Button x:Name="ButtonNorma" Content="Норма"/>
-        </Label>
+        <Label x:Name="FI_Label" Grid.Column="2" Foreground="LightYellow" Content="Label" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="184" FontSize="15"/>
+        <Button Background="DarkGray"  x:Name="Norma" Content="Norm" Grid.Column="4" HorizontalAlignment="Left" Margin="10,521,0,0" VerticalAlignment="Top" Width="54" Click="ButtonNorma_Click_1"/>
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
     </Grid>
 

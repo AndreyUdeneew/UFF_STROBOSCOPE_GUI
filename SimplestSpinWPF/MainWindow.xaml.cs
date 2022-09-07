@@ -36,6 +36,7 @@ namespace SimplestSpinWPF
         IManagedCamera SpinCamColor = null;
         //PropertyGridControl gridControl = new PropertyGridControl();
         byte[] DivideCache = new byte[256 * 256];
+        byte[] HSVToRGBCache = new byte[256 * 4];
 
         Thread RefreshThread;
         public MainWindow()
@@ -48,6 +49,16 @@ namespace SimplestSpinWPF
                         DivideCache[i * 256 + j] = 0;
                     else
                         DivideCache[i * 256 + j] = (byte)(i * additionalCoef / j);
+
+            for (int i = 0, j = 0; i < 255; i++)
+            {
+                int r, g, b;
+                HsvToRgb((255 - i) * 0.8, 0.9, 0.9, out r, out g, out b);
+                HSVToRGBCache[j++] = (byte)b;
+                HSVToRGBCache[j++] = (byte)g;
+                HSVToRGBCache[j++] = (byte)r;
+                HSVToRGBCache[j++] = 0;
+            }
 
             //LayoutLeft.Children.Add(gridControl);
 
@@ -160,6 +171,7 @@ namespace SimplestSpinWPF
         int checkNpixelsInCursor = 0;
         double FI_norma = 1;
         double FI = 0;
+        double FI_Real = 0;
 
         public long PrevImageSum = 0;
         private void GetImages()
@@ -177,14 +189,18 @@ namespace SimplestSpinWPF
                                 {
                                     CC.Dispatcher.Invoke(new Action(() =>
                                     {
-                                        rawImage.ConvertToBitmapSource(PixelFormatEnums.BGR8, rawImage, ColorProcessingAlgorithm.DEFAULT);
-                                        PrevConvertedImage = convertedImage;
-                                        convertedImage = rawImage.bitmapsource;
-                                        i++;
-                                        PrevImageSum = LastImageSum;
-                                        LastImageSum = FindSum(convertedImage);
+                                        try
+                                        {
+                                            rawImage.ConvertToBitmapSource(PixelFormatEnums.BGR8, rawImage, ColorProcessingAlgorithm.DEFAULT);
+                                            PrevConvertedImage = convertedImage;
+                                            convertedImage = rawImage.bitmapsource;
+                                            i++;
+                                            PrevImageSum = LastImageSum;
+                                            LastImageSum = FindSum(convertedImage);
 
-                                        RefreshScreen();
+                                            RefreshScreen();
+                                        }
+                                        catch { };
                                     }), DispatcherPriority.Normal);
                                 }
                                 catch (Exception ex)
@@ -277,6 +293,7 @@ namespace SimplestSpinWPF
             byte* bb2 = (byte*)wb2.BackBuffer.ToPointer();
             byte* bb = (byte*)wb.BackBuffer.ToPointer();
 
+
             int dif = 0;
             double difDouble = 0;
             //double difRed = 0;
@@ -304,17 +321,17 @@ namespace SimplestSpinWPF
             double SummGreen = 0;
             double SummFluor = 0;
             double SummWhite = 0;
-            int w, h;
+            int w = (int)wb1.Width, h = (int)wb1.Height;
             int wCursor = 10;
             int wCursor3 = 30;
             int hCursor = 10;
             int firstCursorPixel;
-            
+
             firstCursorPixel = (width * ((height / 2) - (wCursor / 2))) + (width / 2);
             FIcounter += 1;
-            fixed (byte* DC = DivideCache)
+            fixed (byte* DC = DivideCache, HSVC = HSVToRGBCache)
             {
-                for (int b = 0, g = 1, r = 2; b < L; b += 3, r += 3, g += 3)
+                for (int b = 0, g = 1, r = 2, i = 0; b < L; b += 3, r += 3, g += 3, i++)
                 {
                     if (GreenFlu)
                         dif = (bb1[g] - bb2[g]);
@@ -355,16 +372,12 @@ namespace SimplestSpinWPF
 
                     if (Pseudo)
                     {
-                        if (temp > 255)
-                        {
-                            bb[g] = 255; bb[r] = 255; bb[b] = 255;
-                        }
-                        else
-                        {
-                            bb[r] = (byte)(temp << 1); bb[g] = (byte)(temp << 2); bb[b] = (byte)(temp << 4);
-                        }
-                        if (Grayed)
-                            bb[b] = res; bb[r] = res;
+
+                        int j = dif << 2;
+                        //int j = (i % w) << 2;
+                        bb[b] = HSVC[j++];
+                        bb[g] = HSVC[j++];
+                        bb[r] = HSVC[j++];
                     }
                     else
                     {
@@ -374,43 +387,49 @@ namespace SimplestSpinWPF
                             bb[g] = (byte)(temp);
 
                         if (Grayed)
-                            bb[b] = res; bb[r] = res;
+                        { bb[b] = res; bb[r] = res; }
                     }
 
                     if (Grayed)
-                        bb[b] = res; bb[r] = res;
+                    { bb[b] = res; bb[r] = res; }
                 }
             }
             //firstCursorPixel = 0;
             for (int cursorString = 0; cursorString < hCursor; cursorString += 1)
                 for (int b = ((firstCursorPixel + width * cursorString) + 0), g = ((firstCursorPixel + width * cursorString) + 1), r = ((firstCursorPixel + width * cursorString) + 2); b < ((firstCursorPixel + width * cursorString) + wCursor * 3); b += 3, r += 3, g += 3)
                 {
-                    bb[g] = 0; bb[b] = 0; bb[r] = 0;
-                    SummFluor += (bb2[r] - bb1[r]);
-                    SummWhite += bb1[r];
+                    bb[g] >>= 1; bb[b] >>= 1; bb[r] >>= 1;
+                    if (background == wb1)
+                    {
+                        SummFluor += (bb2[r] - bb1[r]);
+                        SummWhite += bb1[r];
+                    }
+                    else
+                    {
+                        SummFluor += (bb1[r] - bb2[r]);
+                        SummWhite += bb2[r];
+                    }
                 }
 
-            if (FIcounter == averageLimit)
-            {
-                FI = SummFluor / SummWhite;
-                if (FI < 0)
-                    FI *= -1;
-                FI = FI / FI_norma;
-                FIcounter = 0;
-                FI_textbox.Text = FI.ToString("F1");
-            }
+            //if (FIcounter == averageLimit)
+            //{
+            //    FI = SummFluor / SummWhite;
+            //    if (FI < 0)
+            //        FI *= -1;
+            //    FI = FI / FI_norma;
+            //    FIcounter = 0;
+            //    FI_textbox.Text = FI.ToString("F1");
+            //}
+            FI_Real = SummFluor / SummWhite;
+            FI = FI_Real / FI_norma;
+            string sss = String.Format("{0:F2}", FI);
+
+            FI_Label.Content = sss;
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
         }
 
-
-        int Clamp(int i)
-        {
-            if (i < 0) return 0;
-            if (i > 255) return 255;
-            return i;
-        }
 
         private System.Drawing.Bitmap BitmapFromWriteableBitmap(WriteableBitmap writeBmp)
         {
@@ -454,16 +473,16 @@ namespace SimplestSpinWPF
             catch { }
         }
 
-        private void ButtonNorma_Click(object sender, RoutedEventArgs e)
-        {
-            if (SpinCamColor == null)
-                return;
-            try
-            {
-                FI_norma = FI;
-            }
-            catch { }
-        }
+        //private void ButtonNorma_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (SpinCamColor == null)
+        //        return;
+        //    try
+        //    {
+        //        FI_norma = FI;
+        //    }
+        //    catch { }
+        //}
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
@@ -536,7 +555,7 @@ namespace SimplestSpinWPF
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("White" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_textbox.Text)
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("White" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_Label.Content.ToString())
                     );
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
@@ -555,7 +574,7 @@ namespace SimplestSpinWPF
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_textbox.Text)
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_Label.Content.ToString())
                     );
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
@@ -574,7 +593,7 @@ namespace SimplestSpinWPF
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_textbox.Text)
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_Label.Content.ToString())
                     );
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
@@ -593,7 +612,7 @@ namespace SimplestSpinWPF
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + FI_textbox.Text)
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + FI_Label.Content.ToString())
                     );
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
@@ -604,6 +623,112 @@ namespace SimplestSpinWPF
             {
                 MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void ButtonNorma_Click_1(object sender, RoutedEventArgs e)
+        {
+            FI_norma = FI_Real;
+        }
+
+        void HsvToRgb(double h, double S, double V, out int r, out int g, out int b)
+        {
+            double H = h;
+            while (H < 0) { H += 360; };
+            while (H >= 360) { H -= 360; };
+            double R, G, B;
+            if (V <= 0)
+            { R = G = B = 0; }
+            else if (S <= 0)
+            {
+                R = G = B = V;
+            }
+            else
+            {
+                double hf = H / 60.0;
+                int i = (int)Math.Floor(hf);
+                double f = hf - i;
+                double pv = V * (1 - S);
+                double qv = V * (1 - S * f);
+                double tv = V * (1 - S * (1 - f));
+                switch (i)
+                {
+
+                    // Red is the dominant color
+
+                    case 0:
+                        R = V;
+                        G = tv;
+                        B = pv;
+                        break;
+
+                    // Green is the dominant color
+
+                    case 1:
+                        R = qv;
+                        G = V;
+                        B = pv;
+                        break;
+                    case 2:
+                        R = pv;
+                        G = V;
+                        B = tv;
+                        break;
+
+                    // Blue is the dominant color
+
+                    case 3:
+                        R = pv;
+                        G = qv;
+                        B = V;
+                        break;
+                    case 4:
+                        R = tv;
+                        G = pv;
+                        B = V;
+                        break;
+
+                    // Red is the dominant color
+
+                    case 5:
+                        R = V;
+                        G = pv;
+                        B = qv;
+                        break;
+
+                    // Just in case we overshoot on our math by a little, we put these here. Since its a switch it won't slow us down at all to put these here.
+
+                    case 6:
+                        R = V;
+                        G = tv;
+                        B = pv;
+                        break;
+                    case -1:
+                        R = V;
+                        G = pv;
+                        B = qv;
+                        break;
+
+                    // The color is not defined, we should throw an error.
+
+                    default:
+                        //LFATAL("i Value error in Pixel conversion, Value is %d", i);
+                        R = G = B = V; // Just pretend its black/white
+                        break;
+                }
+            }
+            r = Clamp((int)(R * 255.0));
+            g = Clamp((int)(G * 255.0));
+            b = Clamp((int)(B * 255.0));
+        }
+
+        /// <summary>
+        /// Clamp a value to 0-255
+        /// </summary>
+        int Clamp(int i)
+        {
+            if (i < 0) return 0;
+            if (i > 255) return 255;
+            return i;
         }
     }
 }
