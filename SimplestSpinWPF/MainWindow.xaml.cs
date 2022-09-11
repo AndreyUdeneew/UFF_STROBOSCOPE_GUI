@@ -265,11 +265,19 @@ namespace SimplestSpinWPF
             bool Pseudo = (bool)radioButtonHeatmap.IsChecked;
 
             if (mode == 1)
-                GreenFlu = true;
+            {
+                GreenFlu = true; RedFlu = false; R2G = true;
+            }                   
             if (mode == 2)
-                RedFlu = true;
+            {
+                RedFlu = true; GreenFlu = false; R2G = false;
+            }                
             if (mode == 3)
-                R2G = true;
+            {
+                R2G = true; GreenFlu = false; RedFlu = false;
+            }
+            if (mode == 4)
+                Pseudo = true;
 
             if (bs1 == null)
                 return null;
@@ -422,7 +430,7 @@ namespace SimplestSpinWPF
             //}
             FI_Real = SummFluor / SummWhite;
             FI = FI_Real / FI_norma;
-            string sss = String.Format("{0:F2}", FI);
+            string sss = String.Format("{0:F1}", FI);
 
             FI_Label.Content = sss;
 
