@@ -266,7 +266,7 @@ namespace SimplestSpinWPF
 
             if (mode == 1)
             {
-                GreenFlu = true; RedFlu = false; R2G = true;
+                GreenFlu = true; RedFlu = false; R2G = false;
             }                   
             if (mode == 2)
             {
