@@ -173,6 +173,8 @@ namespace SimplestSpinWPF
         double FI = 0;
         double FI_Real = 0;
         string sss = "";
+        string fileName4Saving = "";
+        string fileNameDecreased = "";
 
         public long PrevImageSum = 0;
         private void GetImages()
@@ -600,19 +602,34 @@ namespace SimplestSpinWPF
                 BitmapEncoder encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create((FindColoredDifference(convertedImage, PrevConvertedImage, 2))));
                 DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                     !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + sss)
                     );
+                fileNameDecreased = Filename;
+                Filename += ".PNG";
+                fileName4Saving = Filename;
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
                     encoder.Save(fileStream);
                 }
             }
+
             catch (Exception ex)
             {
                 MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            //fileName4Saving = (fileName4Saving + ".PNG");
+            System.Drawing.Image img = Bitmap.FromFile(fileName4Saving); //путь к картинке
+            fileName4Saving = fileNameDecreased + "_FI_" + sss + "_.PNG";
+            Graphics g = Graphics.FromImage(img);
+            g.DrawString(sss, new Font("Verdana", (float)20), //текст на картинке, шрифт и его размер
+            new SolidBrush(Color.White), 10, 10); //месторасположения текста
+
+            img.Save(fileName4Saving + "", System.Drawing.Imaging.ImageFormat.Png); //путь и имя сохранения файла
+
+            g = null; //обнуляем переменные во избежании переполнения памяти
+            img = null;
 
             try
             {
@@ -738,6 +755,40 @@ namespace SimplestSpinWPF
             if (i < 0) return 0;
             if (i > 255) return 255;
             return i;
+        }
+        public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
+        {
+            BitmapImage bitmap = new BitmapImage(new Uri(inputFile)); // inputFile must be absolute path
+            DrawingVisual visual = new DrawingVisual();
+
+            using (DrawingContext dc = visual.RenderOpen())
+            {
+                dc.DrawImage(bitmap, new Rect(0, 0, bitmap.PixelWidth, bitmap.PixelHeight));
+                dc.DrawText(text, position);
+            }
+
+            RenderTargetBitmap target = new RenderTargetBitmap(bitmap.PixelWidth, bitmap.PixelHeight,
+                                                               bitmap.DpiX, bitmap.DpiY, PixelFormats.Default);
+            target.Render(visual);
+
+            BitmapEncoder encoder = null;
+
+            switch (System.IO.Path.GetExtension(outputFile))
+            {
+                case ".png":
+                    encoder = new PngBitmapEncoder();
+                    break;
+                    // more encoders here
+            }
+
+            if (encoder != null)
+            {
+                encoder.Frames.Add(BitmapFrame.Create(target));
+                using (FileStream outputStream = new FileStream(outputFile, FileMode.Create))
+                {
+                    encoder.Save(outputStream);
+                }
+            }
         }
     }
 }
