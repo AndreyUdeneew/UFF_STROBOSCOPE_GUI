@@ -172,6 +172,7 @@ namespace SimplestSpinWPF
         double FI_norma = 1;
         double FI = 0;
         double FI_Real = 0;
+        string sss = "";
 
         public long PrevImageSum = 0;
         private void GetImages()
@@ -430,7 +431,7 @@ namespace SimplestSpinWPF
             //}
             FI_Real = SummFluor / SummWhite;
             FI = FI_Real / FI_norma;
-            string sss = String.Format("{0:F1}", FI);
+            sss = String.Format("{0:F1}", FI);
 
             FI_Label.Content = sss;
 
@@ -563,7 +564,7 @@ namespace SimplestSpinWPF
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("White" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_Label.Content.ToString())
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("White" + "_Coef" + (int)(AmplificationSlider.Value))
                     );
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
@@ -582,7 +583,7 @@ namespace SimplestSpinWPF
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_Label.Content.ToString())
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + sss)
                     );
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
@@ -601,7 +602,7 @@ namespace SimplestSpinWPF
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_Label.Content.ToString())
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + sss)
                     );
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
@@ -620,7 +621,7 @@ namespace SimplestSpinWPF
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + FI_Label.Content.ToString())
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + sss)
                     );
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
