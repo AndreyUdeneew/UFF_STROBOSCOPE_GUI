@@ -580,17 +580,25 @@ namespace SimplestSpinWPF
 
             try
             {
-                BitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create((FindColoredDifference(convertedImage, PrevConvertedImage, 1))));
+                //BitmapEncoder encoder = new PngBitmapEncoder();
+                WriteableBitmap frameSource  = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
+
+                System.Drawing.Bitmap bmp;
+                bmp = BitmapFromWriteableBitmap(frameSource);
+                Graphics gr = Graphics.FromImage(bmp);
+                gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
+                BitmapFrame frame = BitmapFrame.Create(frameSource);
+                //encoder.Frames.Add(frame);
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                     !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + sss)
                     );
-                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
-                {
-                    encoder.Save(fileStream);
-                }
+                bmp.Save(Filename);
+                //    using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                //    {
+                //        encoder.Save(fileStream);
+                //    }
             }
             catch (Exception ex)
             {
@@ -599,51 +607,59 @@ namespace SimplestSpinWPF
 
             try
             {
-                BitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create((FindColoredDifference(convertedImage, PrevConvertedImage, 2))));
+                //BitmapEncoder encoder = new PngBitmapEncoder();
+                WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 2);
+
+                System.Drawing.Bitmap bmp;
+                bmp = BitmapFromWriteableBitmap(frameSource);
+                Graphics gr = Graphics.FromImage(bmp);
+                gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
+                bmp.Save(@"C:\MEDIA\testRed.png");
+                //BitmapFrame frame = BitmapFrame.Create(frameSource);
+                //encoder.Frames.Add(frame);
                 DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}",
+                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                     !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + sss)
                     );
-                fileNameDecreased = Filename;
-                Filename += ".PNG";
-                fileName4Saving = Filename;
-                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
-                {
-                    encoder.Save(fileStream);
-                }
+                bmp.Save(Filename);
+                //fileNameDecreased = Filename;
+                //Filename += ".PNG";
+                //fileName4Saving = Filename;
+                //using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                //{
+                //    encoder.Save(fileStream);
+                //}
             }
 
             catch (Exception ex)
             {
                 MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            //fileName4Saving = (fileName4Saving + ".PNG");
-            System.Drawing.Image img = Bitmap.FromFile(fileName4Saving); //путь к картинке
-            fileName4Saving = fileNameDecreased + "_FI_" + sss + "_.PNG";
-            Graphics g = Graphics.FromImage(img);
-            g.DrawString(sss, new Font("Verdana", (float)20), //текст на картинке, шрифт и его размер
-            new SolidBrush(Color.White), 10, 10); //месторасположения текста
 
-            img.Save(fileName4Saving + "", System.Drawing.Imaging.ImageFormat.Png); //путь и имя сохранения файла
-
-            g = null; //обнуляем переменные во избежании переполнения памяти
-            img = null;
 
             try
             {
-                BitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create((FindColoredDifference(convertedImage, PrevConvertedImage, 3))));
+                //BitmapEncoder encoder = new PngBitmapEncoder();
+                WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 3);
+
+                System.Drawing.Bitmap bmp;
+                bmp = BitmapFromWriteableBitmap(frameSource);
+                Graphics gr = Graphics.FromImage(bmp);
+                gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
+                bmp.Save(@"C:\MEDIA\testR2G.png");
+                //BitmapFrame frame = BitmapFrame.Create(frameSource);
+                //encoder.Frames.Add(frame);
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                     !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + sss)
                     );
-                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
-                {
-                    encoder.Save(fileStream);
-                }
+                bmp.Save(Filename);
+                //using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                //{
+                //    encoder.Save(fileStream);
+                //}
             }
             catch (Exception ex)
             {
