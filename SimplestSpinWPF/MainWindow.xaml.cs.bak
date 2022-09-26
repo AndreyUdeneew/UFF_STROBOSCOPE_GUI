@@ -614,7 +614,7 @@ namespace SimplestSpinWPF
                 bmp = BitmapFromWriteableBitmap(frameSource);
                 Graphics gr = Graphics.FromImage(bmp);
                 gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
-                //bmp.Save(@"C:\MEDIA\testRed.png");
+                bmp.Save(@"C:\MEDIA\testRed.png");
                 //BitmapFrame frame = BitmapFrame.Create(frameSource);
                 //encoder.Frames.Add(frame);
                 DateTime d = DateTime.Now;
@@ -647,7 +647,7 @@ namespace SimplestSpinWPF
                 bmp = BitmapFromWriteableBitmap(frameSource);
                 Graphics gr = Graphics.FromImage(bmp);
                 gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
-                //bmp.Save(@"C:\MEDIA\testR2G.png");
+                bmp.Save(@"C:\MEDIA\testR2G.png");
                 //BitmapFrame frame = BitmapFrame.Create(frameSource);
                 //encoder.Frames.Add(frame);
                 DateTime d = DateTime.Now;
