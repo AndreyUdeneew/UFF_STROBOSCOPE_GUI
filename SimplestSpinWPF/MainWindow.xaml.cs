@@ -159,6 +159,7 @@ namespace SimplestSpinWPF
         public BitmapSource redImage = null;
         public BitmapSource greenImage = null;
         public BitmapSource background = null;
+        public BitmapSource UV = null;
         public BitmapSource R2G = null;
         public BitmapSource heatmapR2G = null;
         public BitmapSource heatmapRed = null;
@@ -167,7 +168,7 @@ namespace SimplestSpinWPF
         public BitmapSource HeatMap = null;
         public BitmapSource bsOut = null;
         int FIcounter = 0;
-        int averageLimit = 1;
+        int averageLimit = 10;
         int checkNpixelsInCursor = 0;
         double FI_norma = 1;
         double FI = 0;
@@ -270,11 +271,11 @@ namespace SimplestSpinWPF
             if (mode == 1)
             {
                 GreenFlu = true; RedFlu = false; R2G = false;
-            }                   
+            }
             if (mode == 2)
             {
                 RedFlu = true; GreenFlu = false; R2G = false;
-            }                
+            }
             if (mode == 3)
             {
                 R2G = true; GreenFlu = false; RedFlu = false;
@@ -293,11 +294,13 @@ namespace SimplestSpinWPF
             {
                 wb = new WriteableBitmap(bs1);
                 background = wb1;
+                UV = wb2;
             }
             else
             {
                 wb = new WriteableBitmap(bs2);
                 background = wb2;
+                UV = wb1;
             }
             wb1.Lock(); wb2.Lock(); wb.Lock();
             byte* bb1 = (byte*)wb1.BackBuffer.ToPointer();
@@ -433,9 +436,19 @@ namespace SimplestSpinWPF
             //}
             FI_Real = SummFluor / SummWhite;
             FI = FI_Real / FI_norma;
-            sss = String.Format("{0:F1}", FI);
-
-            FI_Label.Content = sss;
+            FIcounter += 1;
+            //FI += FI;
+            if (FIcounter == averageLimit)
+            {
+                //FI = FI / averageLimit;
+                sss = String.Format("{0:F1}", FI);
+                FI_Label.Content = sss;
+                FIcounter = 0;
+                //FI = 0;
+            }
+            //sss = String.Format("{0:F1}", FI);
+            //sss = String.Format("{0:F1}", FI);
+            //FI_Label.Content = sss;
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
@@ -530,7 +543,7 @@ namespace SimplestSpinWPF
                 if (SpinCamColor.IsStreaming())
                     SpinCamColor.EndAcquisition();
 
-            if (RefreshThread.IsAlive)
+            //if (RefreshThread.IsAlive)
                 RefreshThread.Abort();
             e.Cancel = false;
         }
@@ -580,8 +593,27 @@ namespace SimplestSpinWPF
 
             try
             {
+                BitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create((BitmapSource)UV));
+                DateTime d = DateTime.Now;
+                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("UV" + "_Coef" + (int)(AmplificationSlider.Value))
+                    );
+                using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                {
+                    encoder.Save(fileStream);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            try
+            {
                 //BitmapEncoder encoder = new PngBitmapEncoder();
-                WriteableBitmap frameSource  = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
+                WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
 
                 System.Drawing.Bitmap bmp;
                 bmp = BitmapFromWriteableBitmap(frameSource);
@@ -614,7 +646,7 @@ namespace SimplestSpinWPF
                 bmp = BitmapFromWriteableBitmap(frameSource);
                 Graphics gr = Graphics.FromImage(bmp);
                 gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
-                bmp.Save(@"C:\MEDIA\testRed.png");
+                //bmp.Save(@"C:\MEDIA\testRed.png");
                 //BitmapFrame frame = BitmapFrame.Create(frameSource);
                 //encoder.Frames.Add(frame);
                 DateTime d = DateTime.Now;
@@ -647,7 +679,7 @@ namespace SimplestSpinWPF
                 bmp = BitmapFromWriteableBitmap(frameSource);
                 Graphics gr = Graphics.FromImage(bmp);
                 gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
-                bmp.Save(@"C:\MEDIA\testR2G.png");
+                //bmp.Save(@"C:\MEDIA\testR2G.png");
                 //BitmapFrame frame = BitmapFrame.Create(frameSource);
                 //encoder.Frames.Add(frame);
                 DateTime d = DateTime.Now;
