@@ -152,7 +152,7 @@ namespace SimplestSpinWPF
         const int PortSpeed = 115200;
         bool Refreshing = false;
         int i = 0;
-        int additionalCoef = 5;
+        int additionalCoef = 2;
         long LastImageSum = 0;
         public BitmapSource convertedImage = null;
         public BitmapSource PrevConvertedImage = null;
