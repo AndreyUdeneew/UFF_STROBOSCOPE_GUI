@@ -265,20 +265,25 @@ namespace SimplestSpinWPF
             bool GreenFlu = (bool)radioButtonGreen.IsChecked;
             bool RedFlu = (bool)radioButtonRed.IsChecked;
             bool R2G = (bool)radioButtonR2G.IsChecked;
+            bool R_G = (bool)radioButtonR_G.IsChecked;
             bool Grayed = (bool)radioButtonGray.IsChecked;
             bool Pseudo = (bool)radioButtonHeatmap.IsChecked;
 
             if (mode == 1)
             {
-                GreenFlu = true; RedFlu = false; R2G = false;
+                GreenFlu = true; RedFlu = false; R2G = false; R_G = false;
             }
             if (mode == 2)
             {
-                RedFlu = true; GreenFlu = false; R2G = false;
+                RedFlu = true; GreenFlu = false; R2G = false; R_G = false;
             }
             if (mode == 3)
             {
-                R2G = true; GreenFlu = false; RedFlu = false;
+                R2G = true; GreenFlu = false; RedFlu = false; R_G = false;
+            }
+            if (mode == 5)
+            {
+                R_G = true; R2G = false; GreenFlu = false; RedFlu = false;
             }
             if (mode == 4)
                 Pseudo = true;
@@ -371,6 +376,20 @@ namespace SimplestSpinWPF
                         //dif = (byte)(difRed /  difGreen);
                         //dif = DC[(difGreen << 8) + difRed];
                         //dif = (int)difDouble;                       
+                    }
+
+                    if (R_G)
+                    {
+                        difRed = bb1[r] - bb2[r];
+                        if (difRed < 0)
+                            difRed = -difRed;
+                        difGreen = bb1[g] - bb2[g];
+                        if (difGreen < 0)
+                            difGreen = -difGreen;
+
+                        dif = (difRed - difGreen)<<1;
+                        if (dif < 0)
+                            dif = 0;
                     }
 
                     if (dif < 0)
@@ -570,6 +589,7 @@ namespace SimplestSpinWPF
             bool GreenFlu = (bool)radioButtonGreen.IsChecked;
             bool RedFlu = (bool)radioButtonRed.IsChecked;
             bool R2G = (bool)radioButtonR2G.IsChecked;
+            bool R_G = (bool)radioButtonR_G.IsChecked;
             bool Grayed = (bool)radioButtonGray.IsChecked;
 
             try
@@ -686,6 +706,34 @@ namespace SimplestSpinWPF
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                     !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + sss)
+                    );
+                bmp.Save(Filename);
+                //using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                //{
+                //    encoder.Save(fileStream);
+                //}
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            try
+            {
+                //BitmapEncoder encoder = new PngBitmapEncoder();
+                WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 5);
+
+                System.Drawing.Bitmap bmp;
+                bmp = BitmapFromWriteableBitmap(frameSource);
+                Graphics gr = Graphics.FromImage(bmp);
+                gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
+                //bmp.Save(@"C:\MEDIA\testR2G.png");
+                //BitmapFrame frame = BitmapFrame.Create(frameSource);
+                //encoder.Frames.Add(frame);
+                DateTime d = DateTime.Now;
+                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + sss)
                     );
                 bmp.Save(Filename);
                 //using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
