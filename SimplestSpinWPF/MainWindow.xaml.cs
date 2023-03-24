@@ -24,6 +24,7 @@ using Color = System.Drawing.Color;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace SimplestSpinWPF
 {
@@ -152,7 +153,7 @@ namespace SimplestSpinWPF
         const int PortSpeed = 115200;
         bool Refreshing = false;
         int i = 0;
-        int additionalCoef = 2;
+        int additionalCoef = 4;
         long LastImageSum = 0;
         public BitmapSource convertedImage = null;
         public BitmapSource PrevConvertedImage = null;
@@ -268,6 +269,7 @@ namespace SimplestSpinWPF
             bool R_G = (bool)radioButtonR_G.IsChecked;
             bool Grayed = (bool)radioButtonGray.IsChecked;
             bool Pseudo = (bool)radioButtonHeatmap.IsChecked;
+            bool Oxy = (bool)CheckBoxOxy.IsChecked;
 
             if (mode == 1)
             {
@@ -318,6 +320,8 @@ namespace SimplestSpinWPF
             //double difRed = 0;
             //double difGreen = 0;
             int difRed = 0;
+            int dataRed = 0;
+            int dataIR = 0;
             int difGreen = 0;
             int temp;
             byte res = 0;
@@ -378,6 +382,18 @@ namespace SimplestSpinWPF
                         //dif = (int)difDouble;                       
                     }
 
+                    if (Oxy)
+                    {
+                        dataRed = bb1[r];
+                        dataIR = bb2[g];
+
+                        if (dataIR == 0)
+                        {
+                            dataIR = 1;
+                        }
+                        dif = DC[(dataRed << 8) + dataIR];                       
+                    }
+
                     if (R_G)
                     {
                         difRed = bb1[r] - bb2[r];
@@ -387,10 +403,25 @@ namespace SimplestSpinWPF
                         if (difGreen < 0)
                             difGreen = -difGreen;
 
-                        dif = (difRed - difGreen)<<1;
+                        dif = (difRed - difGreen);
                         if (dif < 0)
                             dif = 0;
                     }
+
+                    //if (Pseudo)
+                    //{
+                    //    difRed = bb1[r] - bb2[r];
+                    //    if (difRed < 0)
+                    //        difRed = -difRed;
+                    //    difGreen = bb1[g] - bb2[g];
+                    //    if (difGreen < 0)
+                    //        difGreen = -difGreen;
+
+                    //    dif = (difRed - difGreen) << 1;
+                    //    if (dif < 0)
+                    //        dif = 0;
+
+                    //}
 
                     if (dif < 0)
                         dif = -dif;
@@ -590,7 +621,8 @@ namespace SimplestSpinWPF
             bool RedFlu = (bool)radioButtonRed.IsChecked;
             bool R2G = (bool)radioButtonR2G.IsChecked;
             bool R_G = (bool)radioButtonR_G.IsChecked;
-            bool Grayed = (bool)radioButtonGray.IsChecked;
+            bool Oxy = (bool)CheckBoxOxy.IsChecked;
+            //bool Grayed = (bool)radioButtonGray.IsChecked;
 
             try
             {
