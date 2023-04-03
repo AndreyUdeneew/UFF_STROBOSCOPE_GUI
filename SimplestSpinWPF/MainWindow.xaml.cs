@@ -358,6 +358,7 @@ namespace SimplestSpinWPF
                 {
                     if (GreenFlu)
                         dif = (bb1[g] - bb2[g]);
+                        
                     if (RedFlu)
                         dif = (bb1[r] - bb2[r]);
 

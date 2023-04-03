@@ -37,7 +37,7 @@
         <Button x:Name="button4" Content="Save" Grid.Column="4" HorizontalAlignment="Left" Height="20" Margin="10,590,0,0" VerticalAlignment="Top" Width="54" Click="button4_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonR2G"  Content="R/G" HorizontalAlignment="Center" Margin="0,373,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonR_G"  Content="R-G" HorizontalAlignment="Center" Margin="0,393,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
-        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonColor"  Content="Color" HorizontalAlignment="Left" Margin="20,458,0,0" VerticalAlignment="Top" IsChecked="True" RenderTransformOrigin="0.5,0.5" Width="73">
+        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonColor"  Content="Color" HorizontalAlignment="Left" Margin="20,458,0,0" VerticalAlignment="Top"  RenderTransformOrigin="0.5,0.5" Width="73">
             <RadioButton.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -47,7 +47,7 @@
                 </TransformGroup>
             </RadioButton.RenderTransform>
         </RadioButton>
-        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonGray"  Content="In gray" HorizontalAlignment="Left" Margin="20,480,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
+        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonGray"  Content="In gray" HorizontalAlignment="Left" Margin="20,480,0,0" IsChecked="True" VerticalAlignment="Top" Background="#FFBFBFBF"/>
         <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonHeatmap"  Content="Pseudo" HorizontalAlignment="Left" Margin="20,500,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
         <Label x:Name="FI_Label" Grid.Column="2" Foreground="LightYellow" Content="Label" HorizontalAlignment="Left" Margin="204,5,0,0" VerticalAlignment="Top" Width="184" FontSize="50" Grid.ColumnSpan="2"/>
         <Button Background="DarkGray"  x:Name="Norma" Content="Norm" Grid.Column="4" HorizontalAlignment="Left" Margin="10,624,0,0" VerticalAlignment="Top" Width="54" Click="ButtonNorma_Click_1"/>
