@@ -25,6 +25,7 @@ using System.IO;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using GxIAPINET;
 
 namespace SimplestSpinWPF
 {
@@ -33,11 +34,18 @@ namespace SimplestSpinWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Init flags
+        /// </summary>
+        static bool InitFlir = false;
+        static bool InitDAO = true;
+
 
         IManagedCamera SpinCamColor = null;
         //PropertyGridControl gridControl = new PropertyGridControl();
         byte[] DivideCache = new byte[256 * 256];
         byte[] HSVToRGBCache = new byte[256 * 4];
+        int FLiRCamCount = 0, DAOCamCount = 0;
 
         Thread RefreshThread;
         public MainWindow()
@@ -63,6 +71,209 @@ namespace SimplestSpinWPF
 
             //LayoutLeft.Children.Add(gridControl);
 
+            if (InitFlir) FlirCamInit();
+            if (InitDAO) DAOCamInit();
+
+
+            if (FLiRCamCount < 1 && DAOCamCount < 1)
+            {
+                MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.Close();
+                return;
+            }
+
+
+            RefreshThread = new Thread(GetImages);
+            RefreshThread.Start();
+        }
+
+        const int PortSpeed = 115200;
+        bool Refreshing = false;
+        int i = 0;
+        int additionalCoef = 4;
+        long LastImageSum = 0;
+        public BitmapSource convertedImage = null;
+        public BitmapSource PrevConvertedImage = null;
+        public BitmapSource redImage = null;
+        public BitmapSource greenImage = null;
+        public BitmapSource background = null;
+        public BitmapSource UV = null;
+        public BitmapSource R2G = null;
+        public BitmapSource heatmapR2G = null;
+        public BitmapSource heatmapRed = null;
+        public BitmapSource heatmapGreen = null;
+        public BitmapSource PSEUDO = null;
+        public BitmapSource HeatMap = null;
+        public BitmapSource bsOut = null;
+        int FIcounter = 0;
+        int averageLimit = 10;
+        int checkNpixelsInCursor = 0;
+        double FI_norma = 1;
+        double FI = 0;
+        double FI_Real = 0;
+        string sss = "";
+        string fileName4Saving = "";
+        string fileNameDecreased = "";
+
+        public long PrevImageSum = 0;
+
+
+        static IGXFactory CamDriver = null;                      ///< The handle for factory
+        IGXDevice Camera = null;                        ///< The handle for device
+        IGXStream CamStream = null;                        ///< The handle for stream
+        IGXFeatureControl FeatureControl = null;        ///< The handle for feature control
+        IGXFeatureControl StreamFeatureControl = null;  ///< The object for stream feature control
+        WriteableBitmap CurIm = null;
+        DispatcherTimer Timer = new DispatcherTimer();
+        int FPSFrameCounter = 0;
+        static List<IGXDeviceInfo> CamList = null;
+
+
+        void DAOCamInit()
+        {
+            int n = 0; ///cam number
+
+            if (CamDriver == null)
+            {
+                try
+                {
+                    CamDriver = IGXFactory.GetInstance();
+                    CamDriver.Init();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error initializing Daheng driver: " + ex.Message);
+                }
+            }
+            else
+            {
+                Debug.WriteLine("WARNINIG:no need to init Daheng");
+            }
+
+            if (CamList == null)
+            {
+                if (CamDriver == null)
+                    return;
+                try
+                {
+                    CamList = CamDriver.UpdateDeviceList(200).ToList();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error enumerating DAHENG cams: " + ex.Message);
+                }
+                DAOCamCount = CamList.Count;
+            }
+            if (CamList == null)
+            {
+                Debug.WriteLine("Error enumerating DAHENG cams: ");
+                return;
+            }
+
+            try
+            {
+                string SN = CamList[n].GetSN();
+                Camera = CamDriver.OpenDeviceBySN(SN, GX_ACCESS_MODE.GX_ACCESS_EXCLUSIVE);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error initing DAHENG cam {0}, reason: {1}", n + 1, ex.Message);
+                return;
+            }
+
+            if (null != Camera)
+            {
+                CamStream = Camera.OpenStream(0);
+                StreamFeatureControl = CamStream.GetFeatureControl();
+                FeatureControl = Camera.GetRemoteFeatureControl();
+            }
+            var FF = new List<string>();
+            StreamFeatureControl.GetFeatureNameList(FF);
+
+            if (FF.Contains("StreamBufferHandlingMode"))
+                if (StreamFeatureControl.GetEnumFeature("StreamBufferHandlingMode").GetEnumEntryList().Contains("NewestOnly"))
+                    StreamFeatureControl.GetEnumFeature("StreamBufferHandlingMode").SetValue("NewestOnly");
+
+
+
+            CamStream.StartGrab();
+            if (null != FeatureControl)
+            {
+                try
+                {
+                    FeatureControl.GetCommandFeature("AcquisitionStart").Execute();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error initing DAHENG cam {0} featues, reason: {1}", n + 1, ex.Message);
+                    return;
+                }
+            }
+            FPSFrameCounter = 0;
+
+            try
+            {
+                CamStream.GetImage(1000000);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error initing DAHENG cam {0}: cannot start reading, reason: {1}", n + 1, ex.Message);
+                return;
+            }
+        }
+
+        public BitmapSource DAOGetBitmap()
+        {
+            WriteableBitmap outBitmap = null;
+
+            string ErrorHappend = "";
+            if (Camera == null || CamStream == null)
+                ErrorHappend = "No camera found";
+
+            if (FPSFrameCounter % 100 == 0)
+                GC.Collect();
+
+            if (ErrorHappend == "")
+                try
+                {
+                    Stopwatch sss = new Stopwatch();
+                    sss.Start();
+                    IImageData rawImage = CamStream.GetImageNoThrow(5000000);
+                    int Width = (int)rawImage.GetWidth();
+                    int Height = (int)rawImage.GetHeight();
+                    sss.Restart();
+                    if (rawImage.GetStatus() == GX_FRAME_STATUS_LIST.GX_FRAME_STATUS_SUCCESS)
+                    {
+                        IntPtr PureBGRFrame = rawImage.ConvertToRGB24(GX_VALID_BIT_LIST.GX_BIT_0_7, GX_BAYER_CONVERT_TYPE_LIST.GX_RAW2RGB_NEIGHBOUR, false);
+                        FPSFrameCounter++;
+                        outBitmap = new WriteableBitmap(BitmapSource.Create(Width, Height, 1, 1, PixelFormats.Bgr24, null, PureBGRFrame, Width * Height * 3, Width * 3));
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                    //Debug.WriteLine("Convert{0} took {1}ms", FramesCount, sss.ElapsedMilliseconds);
+                    sss.Restart();
+                    rawImage.Destroy();
+                    // Debug.WriteLine("Destroy{0} took {1}ms", FramesCount, sss.ElapsedMilliseconds);
+                    sss.Stop();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    ErrorHappend = "Failed to get the next image: " + ex.Message;
+
+                }
+            else ErrorHappend = "Camera is not streaming";
+
+            if (ErrorHappend != "")
+                Debug.WriteLine("Error reading DAO: " + ErrorHappend);
+
+            return outBitmap;
+        }
+
+        void FlirCamInit()
+        {
             //Camera search and initialization
             // Retrieve singleton reference to system object
             ManagedSystem system = new ManagedSystem();
@@ -70,6 +281,9 @@ namespace SimplestSpinWPF
 
             // Retrieve list of cameras from the system
             IList<IManagedCamera> cameraList = system.GetCameras();
+            FLiRCamCount = cameraList.Count;
+            if (FLiRCamCount < 1)
+                return;
 
             var BlackFlys = cameraList.Where(c => c.GetTLDeviceNodeMap().GetNode<IString>("DeviceModelName").Value.Contains("Blackfly S")).ToArray();
             //var BlackFlys1 = cameraList.Where(c => c.GetTLDeviceNodeMap().Values.d.Contains("BlackFly S")).ToArray();
@@ -79,12 +293,13 @@ namespace SimplestSpinWPF
 
             //IManagedCamera cam = BlackFlys[0];
 
-            if (cameraList.Count < 1)
-            {
-                MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                this.Close();
-                return;
-            }
+            //if (cameraList.Count < 1)
+            //{
+            //    MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //    this.Close();
+            //    Thread.CurrentThread.Abort();
+            //    return;
+            //}
 
             IManagedCamera cam = cameraList[0];
             SpinCamColor = cam;
@@ -146,82 +361,80 @@ namespace SimplestSpinWPF
             //gridControl.Connect(cam);
             //cam.DeInit();
             //system.Dispose();
-            RefreshThread = new Thread(GetImages);
-            RefreshThread.Start();
         }
-
-        const int PortSpeed = 115200;
-        bool Refreshing = false;
-        int i = 0;
-        int additionalCoef = 4;
-        long LastImageSum = 0;
-        public BitmapSource convertedImage = null;
-        public BitmapSource PrevConvertedImage = null;
-        public BitmapSource redImage = null;
-        public BitmapSource greenImage = null;
-        public BitmapSource background = null;
-        public BitmapSource UV = null;
-        public BitmapSource R2G = null;
-        public BitmapSource heatmapR2G = null;
-        public BitmapSource heatmapRed = null;
-        public BitmapSource heatmapGreen = null;
-        public BitmapSource PSEUDO = null;
-        public BitmapSource HeatMap = null;
-        public BitmapSource bsOut = null;
-        int FIcounter = 0;
-        int averageLimit = 10;
-        int checkNpixelsInCursor = 0;
-        double FI_norma = 1;
-        double FI = 0;
-        double FI_Real = 0;
-        string sss = "";
-        string fileName4Saving = "";
-        string fileNameDecreased = "";
-
-        public long PrevImageSum = 0;
         private void GetImages()
         {
-            for (; ; )
-                if (Refreshing)
-                {
-                    try
+            if (FLiRCamCount > 0)
+                for (; ; )
+                    if (Refreshing)
                     {
-                        using (IManagedImage rawImage = SpinCamColor.GetNextImage())
+                        try
                         {
-                            if (!rawImage.IsIncomplete)
+                            using (IManagedImage rawImage = SpinCamColor.GetNextImage())
+                            {
+                                if (!rawImage.IsIncomplete)
+                                {
+                                    try
+                                    {
+                                        CC.Dispatcher.Invoke(new Action(() =>
+                                        {
+                                            try
+                                            {
+                                                rawImage.ConvertToBitmapSource(PixelFormatEnums.BGR8, rawImage, ColorProcessingAlgorithm.DEFAULT);
+                                                PrevConvertedImage = convertedImage;
+                                                convertedImage = rawImage.bitmapsource;
+                                                i++;
+                                                PrevImageSum = LastImageSum;
+                                                LastImageSum = FindSum(convertedImage);
+                                                RefreshScreen();
+                                            }
+                                            catch { };
+                                        }), DispatcherPriority.Normal);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Debug.WriteLine(i.ToString() + " " + ex.Message + "\n" + ex.StackTrace.ToString());
+                                    }
+                                }
+                                if (i % 200 == 0)
+                                    GC.Collect();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine("GetFrameError: " + ex.Message);
+                        }
+                    }
+                    else { }
+
+            else if (DAOCamCount > 0)
+                for (; ; )
+                    if (Refreshing)
+                    {
+                        Thread.Sleep(1);
+                        try
+                        {
+
+                            CC.Dispatcher.Invoke(new Action(() =>
                             {
                                 try
                                 {
-                                    CC.Dispatcher.Invoke(new Action(() =>
-                                    {
-                                        try
-                                        {
-                                            rawImage.ConvertToBitmapSource(PixelFormatEnums.BGR8, rawImage, ColorProcessingAlgorithm.DEFAULT);
-                                            PrevConvertedImage = convertedImage;
-                                            convertedImage = rawImage.bitmapsource;
-                                            i++;
-                                            PrevImageSum = LastImageSum;
-                                            LastImageSum = FindSum(convertedImage);
-
-                                            RefreshScreen();
-                                        }
-                                        catch { };
-                                    }), DispatcherPriority.Normal);
+                                    var temp = DAOGetBitmap();
+                                    PrevConvertedImage = convertedImage;
+                                    convertedImage = new WriteableBitmap(temp);
+                                    i++;
+                                    PrevImageSum = LastImageSum;
+                                    LastImageSum = FindSum(convertedImage);
+                                    RefreshScreen();
                                 }
-                                catch (Exception ex)
-                                {
-                                    Debug.WriteLine(i.ToString() + " " + ex.Message + "\n" + ex.StackTrace.ToString());
-                                }
-                            }
-                            if (i % 200 == 0)
-                                GC.Collect();
+                                catch (Exception ex) { Debug.WriteLine("Error output to screen: " + ex.Message); };
+                            }), DispatcherPriority.Normal);
+                        }
+                        catch (Exception ex)
+                        {
+                            Debug.WriteLine(i.ToString() + " " + ex.Message + "\n" + ex.StackTrace.ToString());
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine("GetFrameError: " + ex.Message);
-                    }
-                }
         }
 
         void RefreshScreen()
@@ -252,10 +465,10 @@ namespace SimplestSpinWPF
             wb.Lock();
             byte* bb = (byte*)wb.BackBuffer.ToPointer();
             long Sum = 0;
-            long L = (int)wb.Width * (int)wb.Height * 3;
+            long L = (int)wb.PixelWidth * (int)wb.PixelHeight * 3;
             for (int i = 0; i < L; i += 3)
-                //for (int x = 0, i = 0; x < wb.Width; x++)
-                //    for (int y = 0; y < wb.Height; y++)
+                //for (int x = 0, i = 0; x < wb.PixelWidth; x++)
+                //    for (int y = 0; y < wb.PixelHeight; y++)
                 Sum += bb[i];
             wb.Unlock();
             return Sum;
@@ -327,9 +540,9 @@ namespace SimplestSpinWPF
             byte res = 0;
 
             int amp = (int)(AmplificationSlider.Value);
-            long L = (int)wb1.Width * (int)wb1.Height * 3;
-            int width = (int)wb1.Width * 3;
-            int height = (int)wb1.Height;
+            long L = (int)wb1.PixelWidth * (int)wb1.PixelHeight * 3;
+            int width = (int)wb1.PixelWidth * 3;
+            int height = (int)wb1.PixelHeight;
             int width2 = width * 2;
             int width3 = width * 3;
             int width4 = width * 4;
@@ -344,7 +557,7 @@ namespace SimplestSpinWPF
             double SummGreen = 0;
             double SummFluor = 0;
             double SummWhite = 0;
-            int w = (int)wb1.Width, h = (int)wb1.Height;
+            int w = (int)wb1.PixelWidth, h = (int)wb1.PixelHeight;
             int wCursor = 10;
             int wCursor3 = 30;
             int hCursor = 10;
@@ -358,7 +571,7 @@ namespace SimplestSpinWPF
                 {
                     if (GreenFlu)
                         dif = (bb1[g] - bb2[g]);
-                        
+
                     if (RedFlu)
                         dif = (bb1[r] - bb2[r]);
 
@@ -392,7 +605,7 @@ namespace SimplestSpinWPF
                         {
                             dataIR = 1;
                         }
-                        dif = DC[(dataRed << 8) + dataIR];                       
+                        dif = DC[(dataRed << 8) + dataIR];
                     }
 
                     if (R_G)
@@ -538,12 +751,13 @@ namespace SimplestSpinWPF
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
+            Refreshing = true;
             if (SpinCamColor == null)
                 return;
             try
             {
                 SpinCamColor.BeginAcquisition();
-                Refreshing = true;
+
             }
             catch { }
         }
@@ -595,7 +809,11 @@ namespace SimplestSpinWPF
                     SpinCamColor.EndAcquisition();
 
             //if (RefreshThread.IsAlive)
+            try
+            {
                 RefreshThread.Abort();
+            }
+            catch { }
             e.Cancel = false;
         }
 
