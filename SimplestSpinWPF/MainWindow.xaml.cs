@@ -26,6 +26,8 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using GxIAPINET;
+using System.IO.Ports;
+using System.ComponentModel;
 
 namespace SimplestSpinWPF
 {
@@ -88,6 +90,7 @@ namespace SimplestSpinWPF
         }
 
         const int PortSpeed = 115200;
+        SerialPort p = null;
         bool Refreshing = false;
         int i = 0;
         int additionalCoef = 4;
@@ -114,6 +117,8 @@ namespace SimplestSpinWPF
         string sss = "";
         string fileName4Saving = "";
         string fileNameDecreased = "";
+        string _portName = "";
+        string CMD = "";
 
         public long PrevImageSum = 0;
 
@@ -474,6 +479,139 @@ namespace SimplestSpinWPF
             return Sum;
         }
 
+        private void Main_Load(object sender, EventArgs e)
+        {
+            var portNames = SerialPort.GetPortNames();
+            ComboboxPorts.Items.Add(portNames);
+        }
+
+        private void portSelectorComboBox_TextChanged(object sender, EventArgs e)
+        {
+            _portName = ComboboxPorts.SelectedItem.ToString();
+        }
+
+        private void buttonPortOpen_Click(object sender, EventArgs e)
+        {
+            if (p != null)
+                if (p.IsOpen)
+                {
+                    //toolStripStatusLabel4.Text = "Arduin busy or so";
+                    return;
+                }
+            try
+            {
+                //if (backgroundWorker1.IsBusy)
+                //    backgroundWorker1.CancelAsync();
+                //if (ComboboxPorts.SelectedItem == null)
+                //    p = new SerialPort("COM3", PortSpeed);
+                //else
+                p = new SerialPort(ComboboxPorts.SelectedItem.ToString(), PortSpeed);
+                p.Open();
+                p.DtrEnable = true;
+                p.RtsEnable = true;
+
+                //if (DetectArduino(p))
+                //{
+                //    toolStripStatusLabel4.Text = "Arduin ya ya!";
+                //    backgroundWorker1.RunWorkerAsync();
+                //}
+                //else
+                //    toolStripStatusLabel4.Text = "Arduin nicht";
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to open port. Sorry ( " + ex.Message);
+                //toolStripStatusLabel4.Text = "nicht arbeiten (";
+            }
+        }
+
+        private bool DetectArduino(SerialPort currentPort)
+        {
+            try
+            {
+                Thread.Sleep(2000);
+                currentPort.WriteLine("HELLO");
+                Thread.Sleep(1000);
+                string returnMessage = currentPort.ReadExisting();
+
+                if (returnMessage.Contains("WireTester"))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+
+        //private void button9_Click(object sender, EventArgs e)
+        //{
+        //    if (p != null)
+        //        if (p.IsOpen)
+        //        {
+        //            p.Close();
+        //            toolStripStatusLabel4.Text = "Arduin frei";
+        //        }
+        //}
+
+        //private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        //{
+        //    KeepReading();
+        //}
+
+        //void KeepReading()
+        //{
+        //    for (; ; )
+        //    {
+        //        if (p != null)
+        //            if (p.IsOpen)
+        //            {
+        //                if (p.BytesToRead > 0)
+        //                    try
+        //                    {
+
+        //                        string tt = p.ReadExisting();
+        //                        statusStrip1.Invoke(new Action(() =>
+        //                        {
+        //                            CommaCount += tt.Count(x => x == ',');
+        //                            Buf += tt;
+        //                            textBox2.Text += tt;
+        //                            textBox2.SelectionStart = textBox2.TextLength;
+        //                            textBox2.ScrollToCaret();
+
+
+        //                            toolStripStatusLabel5.Text = tt;
+        //                            toolStripStatusLabel2.Text = "Reads = " + (++ReadsCount).ToString();
+        //                        }));
+        //                    }
+        //                    catch (Exception ex) { System.Diagnostics.Debug.WriteLine("COM port reading error: " + ex.Message); }
+        //                Thread.Sleep(5);
+        //            }
+        //            else break;
+        //        else break;
+        //    }
+        //}
+
+        //private void button10_Click(object sender, EventArgs e)
+        //{
+        //    SendD();
+        //}
+
+        public void SendCMD(string CMD)
+        {
+            //CommaCount = 0;
+            //Buf = "";
+
+            if (p != null)
+                if (p.IsOpen)
+                {
+                    p.Write(CMD);
+                    //FrameStart = DateTime.Now;
+                }
+        }
+
         unsafe public WriteableBitmap FindColoredDifference(BitmapSource bs1, BitmapSource bs2, byte mode)
         {
             bool GreenFlu = (bool)radioButtonGreen.IsChecked;
@@ -482,23 +620,46 @@ namespace SimplestSpinWPF
             bool R_G = (bool)radioButtonR_G.IsChecked;
             bool Grayed = (bool)radioButtonGray.IsChecked;
             bool Pseudo = (bool)radioButtonHeatmap.IsChecked;
-            bool Oxy = (bool)CheckBoxOxy.IsChecked;
+            bool Oxy = (bool)radioButtonOxy.IsChecked;
+            bool RLED = (bool)radioButtonRedLED.IsChecked;
+            bool BOTH = (bool)radioButtonBothLEDs.IsChecked;
+            bool ICG = (bool)radioButtonICG.IsChecked;
+            bool Sequent = (bool)radioButtonSeq.IsChecked;
+
+
+
 
             if (mode == 1)
             {
-                GreenFlu = true; RedFlu = false; R2G = false; R_G = false;
+                GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; SendCMD("M1");
             }
             if (mode == 2)
             {
-                RedFlu = true; GreenFlu = false; R2G = false; R_G = false;
+                RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; SendCMD("M1");
             }
             if (mode == 3)
             {
-                R2G = true; GreenFlu = false; RedFlu = false; R_G = false;
+                R2G = true; GreenFlu = false; RedFlu = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; SendCMD("M1");
             }
             if (mode == 5)
             {
-                R_G = true; R2G = false; GreenFlu = false; RedFlu = false;
+                R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; SendCMD("M1");
+            }
+            if (mode == 6)
+            {
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false; SendCMD("M2");
+            }
+            if (mode == 7)
+            {
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = true; ICG = false; Sequent = false; SendCMD("M3");
+            }
+            if (mode == 8)
+            {
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false; SendCMD("M4");
+            }
+            if (mode == 9)
+            {
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true; SendCMD("M5");
             }
             if (mode == 4)
                 Pseudo = true;
@@ -620,6 +781,46 @@ namespace SimplestSpinWPF
                         dif = (difRed - difGreen);
                         if (dif < 0)
                             dif = 0;
+                    }
+
+                    if (RLED)
+                    {
+                        difRed = bb1[r] - bb2[r];
+                        if (difRed < 0)
+                            difRed = -difRed;
+                       
+                    }
+
+                    if (BOTH)
+                    {
+                        difRed = bb1[r] - bb2[r];
+                        if (difRed < 0)
+                            difRed = -difRed;
+
+                    }
+
+                    if (RLED)
+                    {
+                        difRed = bb1[r] - bb2[r];
+                        if (difRed < 0)
+                            difRed = -difRed;
+
+                    }
+
+                    if (ICG)
+                    {
+                        difRed = bb1[r] - bb2[r];
+                        if (difRed < 0)
+                            difRed = -difRed;
+
+                    }
+
+                    if (Sequent)
+                    {
+                        difRed = bb1[r] - bb2[r];
+                        if (difRed < 0)
+                            difRed = -difRed;
+
                     }
 
                     //if (Pseudo)
