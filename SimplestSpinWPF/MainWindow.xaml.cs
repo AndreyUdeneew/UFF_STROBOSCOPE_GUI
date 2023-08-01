@@ -43,6 +43,7 @@ namespace SimplestSpinWPF
         static bool InitDAO = true;
 
 
+
         IManagedCamera SpinCamColor = null;
         //PropertyGridControl gridControl = new PropertyGridControl();
         byte[] DivideCache = new byte[256 * 256];
@@ -52,7 +53,10 @@ namespace SimplestSpinWPF
         Thread RefreshThread;
         public MainWindow()
         {
-            InitializeComponent();
+            //SerialPort p = null;
+            //var portNames = SerialPort.GetPortNames();
+            //ComboboxPorts.Items.Add(portNames);
+
 
             for (int i = 0; i < 256; i++)
                 for (int j = 0; j < 256; j++)
@@ -479,11 +483,11 @@ namespace SimplestSpinWPF
             return Sum;
         }
 
-        private void Main_Load(object sender, EventArgs e)
-        {
-            var portNames = SerialPort.GetPortNames();
-            ComboboxPorts.Items.Add(portNames);
-        }
+        //private void Main_Load(object sender, EventArgs e)
+        //{
+        //    var portNames = SerialPort.GetPortNames();
+        //    ComboboxPorts.Items.Add(portNames);
+        //}
 
         private void portSelectorComboBox_TextChanged(object sender, EventArgs e)
         {
@@ -492,39 +496,42 @@ namespace SimplestSpinWPF
 
         private void buttonPortOpen_Click(object sender, EventArgs e)
         {
-            if (p != null)
-                if (p.IsOpen)
-                {
-                    //toolStripStatusLabel4.Text = "Arduin busy or so";
-                    return;
-                }
-            try
-            {
-                //if (backgroundWorker1.IsBusy)
-                //    backgroundWorker1.CancelAsync();
-                //if (ComboboxPorts.SelectedItem == null)
-                //    p = new SerialPort("COM3", PortSpeed);
-                //else
-                p = new SerialPort(ComboboxPorts.SelectedItem.ToString(), PortSpeed);
-                p.Open();
-                p.DtrEnable = true;
-                p.RtsEnable = true;
+            var portNames = SerialPort.GetPortNames();
+            ComboboxPorts.Items.Add(portNames);
+            //if (p != null)
+            //    if (p.IsOpen)
+            //    {
+            //        //toolStripStatusLabel4.Text = "Arduin busy or so";
+            //        return;
+            //    }
+            //try
+            //{
+            //    //if (backgroundWorker1.IsBusy)
+            //    //    backgroundWorker1.CancelAsync();
+            //    //if (ComboboxPorts.SelectedItem == null)
+            //    //    p = new SerialPort("COM3", PortSpeed);
+            //    //else
+            //    p = new SerialPort(ComboboxPorts.SelectedItem.ToString(), PortSpeed);
+            //    p.Open();
+            //    p.DtrEnable = true;
+            //    p.RtsEnable = true;
 
-                //if (DetectArduino(p))
-                //{
-                //    toolStripStatusLabel4.Text = "Arduin ya ya!";
-                //    backgroundWorker1.RunWorkerAsync();
-                //}
-                //else
-                //    toolStripStatusLabel4.Text = "Arduin nicht";
+            //    //if (DetectArduino(p))
+            //    //{
+            //    //    toolStripStatusLabel4.Text = "Arduin ya ya!";
+            //    //    backgroundWorker1.RunWorkerAsync();
+            //    //}
+            //    //else
+            //    //    toolStripStatusLabel4.Text = "Arduin nicht";
 
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to open port. Sorry ( " + ex.Message);
-                //toolStripStatusLabel4.Text = "nicht arbeiten (";
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Failed to open port. Sorry ( " + ex.Message);
+            //    //toolStripStatusLabel4.Text = "nicht arbeiten (";
+            //}
         }
+
 
         private bool DetectArduino(SerialPort currentPort)
         {
@@ -545,6 +552,8 @@ namespace SimplestSpinWPF
                 return false;
             }
         }
+
+
 
         //private void button9_Click(object sender, EventArgs e)
         //{
@@ -1304,6 +1313,16 @@ namespace SimplestSpinWPF
             if (i > 255) return 255;
             return i;
         }
+
+        public void ComboboxPorts_DropDownOpened(object sender, EventArgs e)
+        {
+            string[] ports = SerialPort.GetPortNames();
+            foreach (string comport in ports)
+            {
+                ComboboxPorts.Items.Add(comport);
+            }
+        }
+
         public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
         {
             BitmapImage bitmap = new BitmapImage(new Uri(inputFile)); // inputFile must be absolute path
