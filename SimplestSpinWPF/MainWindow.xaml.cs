@@ -43,7 +43,6 @@ namespace SimplestSpinWPF
         static bool InitDAO = true;
 
 
-
         IManagedCamera SpinCamColor = null;
         //PropertyGridControl gridControl = new PropertyGridControl();
         byte[] DivideCache = new byte[256 * 256];
@@ -53,11 +52,6 @@ namespace SimplestSpinWPF
         Thread RefreshThread;
         public MainWindow()
         {
-            //SerialPort p = null;
-            //var portNames = SerialPort.GetPortNames();
-            //ComboboxPorts.Items.Add(portNames);
-
-
             for (int i = 0; i < 256; i++)
                 for (int j = 0; j < 256; j++)
                     if (j == 0)
@@ -483,56 +477,6 @@ namespace SimplestSpinWPF
             return Sum;
         }
 
-        //private void Main_Load(object sender, EventArgs e)
-        //{
-        //    var portNames = SerialPort.GetPortNames();
-        //    ComboboxPorts.Items.Add(portNames);
-        //}
-
-        private void portSelectorComboBox_TextChanged(object sender, EventArgs e)
-        {
-            _portName = ComboboxPorts.SelectedItem.ToString();
-        }
-
-        private void buttonPortOpen_Click(object sender, EventArgs e)
-        {
-            var portNames = SerialPort.GetPortNames();
-            ComboboxPorts.Items.Add(portNames);
-            //if (p != null)
-            //    if (p.IsOpen)
-            //    {
-            //        //toolStripStatusLabel4.Text = "Arduin busy or so";
-            //        return;
-            //    }
-            //try
-            //{
-            //    //if (backgroundWorker1.IsBusy)
-            //    //    backgroundWorker1.CancelAsync();
-            //    //if (ComboboxPorts.SelectedItem == null)
-            //    //    p = new SerialPort("COM3", PortSpeed);
-            //    //else
-            //    p = new SerialPort(ComboboxPorts.SelectedItem.ToString(), PortSpeed);
-            //    p.Open();
-            //    p.DtrEnable = true;
-            //    p.RtsEnable = true;
-
-            //    //if (DetectArduino(p))
-            //    //{
-            //    //    toolStripStatusLabel4.Text = "Arduin ya ya!";
-            //    //    backgroundWorker1.RunWorkerAsync();
-            //    //}
-            //    //else
-            //    //    toolStripStatusLabel4.Text = "Arduin nicht";
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("Failed to open port. Sorry ( " + ex.Message);
-            //    //toolStripStatusLabel4.Text = "nicht arbeiten (";
-            //}
-        }
-
-
         private bool DetectArduino(SerialPort currentPort)
         {
             try
@@ -640,35 +584,35 @@ namespace SimplestSpinWPF
 
             if (mode == 1)
             {
-                GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; SendCMD("M1");
+                GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; // SendCMD("M1");
             }
             if (mode == 2)
             {
-                RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; SendCMD("M1");
+                RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; //SendCMD("M1");
             }
             if (mode == 3)
             {
-                R2G = true; GreenFlu = false; RedFlu = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; SendCMD("M1");
+                R2G = true; GreenFlu = false; RedFlu = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; //SendCMD("M1");
             }
             if (mode == 5)
             {
-                R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; SendCMD("M1");
+                R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; //SendCMD("M1");
             }
             if (mode == 6)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false; SendCMD("M2");
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false; //SendCMD("M2");
             }
             if (mode == 7)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = true; ICG = false; Sequent = false; SendCMD("M3");
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = true; ICG = false; Sequent = false; //SendCMD("M3");
             }
             if (mode == 8)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false; SendCMD("M4");
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false; //SendCMD("M4");
             }
             if (mode == 9)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true; SendCMD("M5");
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true; //SendCMD("M5");
             }
             if (mode == 4)
                 Pseudo = true;
@@ -740,13 +684,20 @@ namespace SimplestSpinWPF
                 for (int b = 0, g = 1, r = 2, i = 0; b < L; b += 3, r += 3, g += 3, i++)
                 {
                     if (GreenFlu)
+                    {
+                        SendCMD("M1");
                         dif = (bb1[g] - bb2[g]);
+                    }
 
                     if (RedFlu)
+                    {
+                        SendCMD("M1");
                         dif = (bb1[r] - bb2[r]);
+                    }
 
                     if (R2G)
                     {
+                        SendCMD("M1");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -768,6 +719,7 @@ namespace SimplestSpinWPF
 
                     if (Oxy)
                     {
+                        SendCMD("M4");
                         dataRed = bb1[r];
                         dataIR = bb2[g];
 
@@ -780,6 +732,7 @@ namespace SimplestSpinWPF
 
                     if (R_G)
                     {
+                        SendCMD("M1");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -794,6 +747,7 @@ namespace SimplestSpinWPF
 
                     if (RLED)
                     {
+                        SendCMD("M5");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -802,22 +756,17 @@ namespace SimplestSpinWPF
 
                     if (BOTH)
                     {
+                        SendCMD("M3");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
 
                     }
 
-                    if (RLED)
-                    {
-                        difRed = bb1[r] - bb2[r];
-                        if (difRed < 0)
-                            difRed = -difRed;
-
-                    }
 
                     if (ICG)
                     {
+                        SendCMD("M4");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -826,6 +775,7 @@ namespace SimplestSpinWPF
 
                     if (Sequent)
                     {
+                        SendCMD("M6");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -1029,6 +979,7 @@ namespace SimplestSpinWPF
 
         private void button3_Click(object sender, RoutedEventArgs e)
         {
+            p.Close();
             try
             {
                 SpinCamColor.EndAcquisition();
@@ -1323,7 +1274,30 @@ namespace SimplestSpinWPF
             }
         }
 
-        public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
+        private void buttonPortOpen_Click(object sender, EventArgs e)
+        {
+            if (p != null)
+                if (p.IsOpen)
+                    return;
+
+            try
+            {
+                if (ComboboxPorts.SelectedItem == null)
+                    p = new SerialPort("COM14", PortSpeed);
+                else
+                    p = new SerialPort(ComboboxPorts.SelectedItem.ToString(), PortSpeed);
+                p.Open();
+                p.DtrEnable = true;
+                p.RtsEnable = true;
+
+            }
+            catch
+            {
+                MessageBox.Show("Failed to open port. Sorry (");
+            }
+        }
+
+            public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
         {
             BitmapImage bitmap = new BitmapImage(new Uri(inputFile)); // inputFile must be absolute path
             DrawingVisual visual = new DrawingVisual();
