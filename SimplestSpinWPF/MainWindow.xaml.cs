@@ -561,7 +561,7 @@ namespace SimplestSpinWPF
                 if (p.IsOpen)
                 {
                     p.Write(CMD);
-                    p.Write("\r\n");
+                    p.Write("\n");
                     //FrameStart = DateTime.Now;
                 }
         }
