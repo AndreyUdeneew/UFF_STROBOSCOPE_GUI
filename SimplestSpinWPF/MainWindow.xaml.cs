@@ -561,6 +561,7 @@ namespace SimplestSpinWPF
                 if (p.IsOpen)
                 {
                     p.Write(CMD);
+                    p.Write("\r\n");
                     //FrameStart = DateTime.Now;
                 }
         }
@@ -751,7 +752,7 @@ namespace SimplestSpinWPF
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
-                       
+
                     }
 
                     if (BOTH)
@@ -1297,7 +1298,7 @@ namespace SimplestSpinWPF
             }
         }
 
-            public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
+        public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
         {
             BitmapImage bitmap = new BitmapImage(new Uri(inputFile)); // inputFile must be absolute path
             DrawingVisual visual = new DrawingVisual();
