@@ -131,6 +131,7 @@ namespace SimplestSpinWPF
         string fileNameDecreased = "";
         string _portName = "";
         string CMD = "";
+        bool Oxy = false;
 
         public long PrevImageSum = 0;
 
@@ -583,35 +584,90 @@ namespace SimplestSpinWPF
             return;
         }
 
-        private void radioButtonOxy_Checked(object sender, EventArgs e)
+        private void RadioButtonR2G_Checked(object sender, EventArgs e)
+        {
+            // приводим отправителя к элементу типа RadioButton
+            RadioButton radioButtonR2G = (RadioButton)sender;
+            if (radioButtonR2G.IsChecked == true)
+            {
+                SendCMD("M1\r\n");
+                //RadioButton pressed = (RadioButton)sender;
+                //MessageBox.Show(radioButtonOxy.Content.ToString());
+            }
+            //MessageBox.Show(radioButtonOxy.Content.ToString());
+        }
+
+        private void RadioButtonR_G_Checked(object sender, EventArgs e)
+        {
+            // приводим отправителя к элементу типа RadioButton
+            RadioButton radioButtonR_G = (RadioButton)sender;
+            if (radioButtonR_G.IsChecked == true)
+            {
+                SendCMD("M1\r\n");
+                //RadioButton pressed = (RadioButton)sender;
+                //MessageBox.Show(radioButtonOxy.Content.ToString());
+            }
+            //MessageBox.Show(radioButtonOxy.Content.ToString());
+        }
+
+        private void RadioButtonGreen_Checked(object sender, EventArgs e)
+        {
+            // приводим отправителя к элементу типа RadioButton
+            RadioButton radioButtonGreen = (RadioButton)sender;
+            if (radioButtonGreen.IsChecked == true)
+            {
+                SendCMD("M1\r\n");
+                //RadioButton pressed = (RadioButton)sender;
+                //MessageBox.Show(radioButtonOxy.Content.ToString());
+            }
+            //MessageBox.Show(radioButtonOxy.Content.ToString());
+        }
+
+        private void RadioButtonRed_Checked(object sender, EventArgs e)
+        {
+            // приводим отправителя к элементу типа RadioButton
+            RadioButton radioButtonRed = (RadioButton)sender;
+            if (radioButtonRed.IsChecked == true)
+            {
+                SendCMD("M1\r\n");
+                //RadioButton pressed = (RadioButton)sender;
+                //MessageBox.Show(radioButtonOxy.Content.ToString());
+            }
+            //MessageBox.Show(radioButtonOxy.Content.ToString());
+        }
+
+        private void RadioButtonOxy_Checked(object sender, EventArgs e)
         {
             // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonOxy = (RadioButton)sender;
             if (radioButtonOxy.IsChecked == true)
             {
+                SendCMD("M6\r\n");
+                Oxy = true;
+                DrawDiffCheckBox.IsChecked = false;
                 //RadioButton pressed = (RadioButton)sender;
-                MessageBox.Show(radioButtonOxy.Content.ToString());
+                //MessageBox.Show(radioButtonOxy.Content.ToString());
             }
-            MessageBox.Show(radioButtonOxy.Content.ToString());
+            //MessageBox.Show(radioButtonOxy.Content.ToString());
         }
-        private void radioButtonRedLED_Checked(object sender, RoutedEventArgs e)
+        private void RadioButtonRedLED_Checked(object sender, RoutedEventArgs e)
         {
             // приводим отправителя к элементу типа RadioButton
-            RadioButton radioButtonRedLED = (RadioButton)sender;
+            RadioButton RadioButtonRedLED = (RadioButton)sender;
             if (radioButtonRedLED.IsChecked == true)
             {
-                SendCMD("M7\r\n");
-                MessageBox.Show(radioButtonOxy.Content.ToString());
+                SendCMD("M2\r\n");
+                //MessageBox.Show(radioButtonRedLED.Content.ToString());
             }
         }
-        private void radioButtonBothLEDs_Checked(object sender, EventArgs e)
+        private void RadioButtonBothLEDs_Checked(object sender, EventArgs e)
         {
             // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonBothLEDs = (RadioButton)sender;
             if (radioButtonBothLEDs.IsChecked == true)
             {
-                SendCMD("M1\n");
-                MessageBox.Show(radioButtonBothLEDs.Content.ToString());
+                SendCMD("M3\n");
+                //MessageBox.Show(radioButtonBothLEDs.Content.ToString());
             }
         }
         private void RadioButtonICG_Checked(object sender, EventArgs e)
@@ -620,18 +676,18 @@ namespace SimplestSpinWPF
             RadioButton radioButtonICG = (RadioButton)sender;
             if (radioButtonICG.IsChecked == true)
             {
-                SendCMD("M2\n");
-                MessageBox.Show(radioButtonICG.Content.ToString());
+                SendCMD("M7\n");
+                //MessageBox.Show(radioButtonICG.Content.ToString());
             }
         }
-        private void radioButtonSeq_Checked(object sender, EventArgs e)
+        private void RadioButtonSeq_Checked(object sender, EventArgs e)
         {
             // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonSeq = (RadioButton)sender;
             if (radioButtonSeq.IsChecked == true)
             {
-                SendCMD("M3\n");
-                MessageBox.Show(radioButtonSeq.Content.ToString());
+                SendCMD("M6\n");
+                //MessageBox.Show(radioButtonSeq.Content.ToString());
             }
         }
 
@@ -643,7 +699,7 @@ namespace SimplestSpinWPF
             bool R_G = (bool)radioButtonR_G.IsChecked;
             bool Grayed = (bool)radioButtonGray.IsChecked;
             bool Pseudo = (bool)radioButtonHeatmap.IsChecked;
-            bool Oxy = (bool)radioButtonOxy.IsChecked;
+            //bool Oxy = (bool)radioButtonOxy.IsChecked;
             bool RLED = (bool)radioButtonRedLED.IsChecked;
             bool BOTH = (bool)radioButtonBothLEDs.IsChecked;
             bool ICG = (bool)radioButtonICG.IsChecked;
@@ -1370,6 +1426,15 @@ namespace SimplestSpinWPF
             }
             if (p.IsOpen)
                 return;
+        }
+
+        private void ChangeMode_Click(object sender, RoutedEventArgs e)
+        {
+            if (radioButtonOxy.IsChecked == true) MessageBox.Show(radioButtonOxy.Content.ToString());
+            if(radioButtonRedLED.IsChecked == true) MessageBox.Show(radioButtonRedLED.Content.ToString());
+            if(radioButtonBothLEDs.IsChecked == true) MessageBox.Show(radioButtonBothLEDs.Content.ToString());
+            if (radioButtonICG.IsChecked == true) MessageBox.Show(radioButtonICG.Content.ToString());
+            if (radioButtonSeq.IsChecked == true) MessageBox.Show(radioButtonSeq.Content.ToString());
         }
 
         void KeepReading()
