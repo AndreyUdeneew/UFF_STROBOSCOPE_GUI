@@ -38,11 +38,11 @@
         <Button x:Name="buttonPortOpen" Content="Open" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,572,0,0" VerticalAlignment="Top" Width="54" Click="buttonPortOpen_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonR2G"  Content="R/G" HorizontalAlignment="Center" Margin="0,373,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonR_G"  Content="R-G" HorizontalAlignment="Center" Margin="0,393,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
-        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonOxy"  Content="Oxy" HorizontalAlignment="Center" Margin="0,413,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
-        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonRedLED"  Content="R_LED" HorizontalAlignment="Left" Margin="21,433,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
-        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonBothLEDs"  Content="Both" HorizontalAlignment="Left" Margin="22,453,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
-        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonICG"  Content="ICG" HorizontalAlignment="Center" Margin="0,473,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
-        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonSeq"  Content="Sequent" HorizontalAlignment="Left" Margin="10,491,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
+        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonOxy"  Content="Oxy" HorizontalAlignment="Center" Margin="0,413,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButton_Checked"/>
+        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonRedLED"  Content="R_LED" HorizontalAlignment="Left" Margin="21,433,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButton_Checked"/>
+        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonBothLEDs"  Content="Both" HorizontalAlignment="Left" Margin="22,453,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButton_Checked"/>
+        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonICG"  Content="ICG" HorizontalAlignment="Center" Margin="0,473,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButton_Checked"/>
+        <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonSeq"  Content="Sequent" HorizontalAlignment="Left" Margin="10,491,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButton_Checked"/>
         <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonColor"  Content="Color" HorizontalAlignment="Left" Margin="9,623,0,0" VerticalAlignment="Top"  RenderTransformOrigin="0.5,0.5" Width="73">
             <RadioButton.RenderTransform>
                 <TransformGroup>

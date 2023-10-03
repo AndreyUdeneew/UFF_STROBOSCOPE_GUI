@@ -28,6 +28,11 @@ using System.Runtime.InteropServices.ComTypes;
 using GxIAPINET;
 using System.IO.Ports;
 using System.ComponentModel;
+using System.Windows.Forms;
+using System.Windows;
+using System.Windows.Controls;
+using RadioButton = System.Windows.Controls.RadioButton;
+using MessageBox = System.Windows.MessageBox;
 
 namespace SimplestSpinWPF
 {
@@ -50,8 +55,15 @@ namespace SimplestSpinWPF
         int FLiRCamCount = 0, DAOCamCount = 0;
 
         Thread RefreshThread;
+        //Thread ModeSelectThread;
         public MainWindow()
         {
+            //InitializeComponent();
+
+            //RadioButton rb = new RadioButton { IsChecked = true, GroupName = "Languages", Content = "JavaScript" };
+            //rb.Checked += RadioButton_Checked;
+            //stackPanel.Children.Add(rb);
+
             for (int i = 0; i < 256; i++)
                 for (int j = 0; j < 256; j++)
                     if (j == 0)
@@ -77,14 +89,16 @@ namespace SimplestSpinWPF
 
             if (FLiRCamCount < 1 && DAOCamCount < 1)
             {
-                MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();
                 return;
             }
 
 
             RefreshThread = new Thread(GetImages);
+            //ModeSelectThread = new Thread(ModeSelection);
             RefreshThread.Start();
+            //ModeSelectThread.Start();
         }
 
         const int PortSpeed = 115200;
@@ -130,6 +144,8 @@ namespace SimplestSpinWPF
         DispatcherTimer Timer = new DispatcherTimer();
         int FPSFrameCounter = 0;
         static List<IGXDeviceInfo> CamList = null;
+
+
 
 
         void DAOCamInit()
@@ -477,25 +493,25 @@ namespace SimplestSpinWPF
             return Sum;
         }
 
-        private bool DetectArduino(SerialPort currentPort)
-        {
-            try
-            {
-                Thread.Sleep(2000);
-                currentPort.WriteLine("HELLO");
-                Thread.Sleep(1000);
-                string returnMessage = currentPort.ReadExisting();
+        //private bool DetectArduino(SerialPort currentPort)
+        //{
+        //    try
+        //    {
+        //        Thread.Sleep(2000);
+        //        currentPort.WriteLine("HELLO");
+        //        Thread.Sleep(1000);
+        //        string returnMessage = currentPort.ReadExisting();
 
-                if (returnMessage.Contains("WireTester"))
-                    return true;
-                else
-                    return false;
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-        }
+        //        if (returnMessage.Contains("WireTester"))
+        //            return true;
+        //        else
+        //            return false;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return false;
+        //    }
+        //}
 
 
 
@@ -561,9 +577,62 @@ namespace SimplestSpinWPF
                 if (p.IsOpen)
                 {
                     p.Write(CMD);
-                    p.Write("\n");
+                    //p.Write("\n");
                     //FrameStart = DateTime.Now;
                 }
+            return;
+        }
+
+        private void radioButtonOxy_Checked(object sender, EventArgs e)
+        {
+            // приводим отправителя к элементу типа RadioButton
+            RadioButton radioButtonOxy = (RadioButton)sender;
+            if (radioButtonOxy.IsChecked == true)
+            {
+                //RadioButton pressed = (RadioButton)sender;
+                MessageBox.Show(radioButtonOxy.Content.ToString());
+            }
+            MessageBox.Show(radioButtonOxy.Content.ToString());
+        }
+        private void radioButtonRedLED_Checked(object sender, RoutedEventArgs e)
+        {
+            // приводим отправителя к элементу типа RadioButton
+            RadioButton radioButtonRedLED = (RadioButton)sender;
+            if (radioButtonRedLED.IsChecked == true)
+            {
+                SendCMD("M7\r\n");
+                MessageBox.Show(radioButtonOxy.Content.ToString());
+            }
+        }
+        private void radioButtonBothLEDs_Checked(object sender, EventArgs e)
+        {
+            // приводим отправителя к элементу типа RadioButton
+            RadioButton radioButtonBothLEDs = (RadioButton)sender;
+            if (radioButtonBothLEDs.IsChecked == true)
+            {
+                SendCMD("M1\n");
+                MessageBox.Show(radioButtonBothLEDs.Content.ToString());
+            }
+        }
+        private void RadioButtonICG_Checked(object sender, EventArgs e)
+        {
+            // приводим отправителя к элементу типа RadioButton
+            RadioButton radioButtonICG = (RadioButton)sender;
+            if (radioButtonICG.IsChecked == true)
+            {
+                SendCMD("M2\n");
+                MessageBox.Show(radioButtonICG.Content.ToString());
+            }
+        }
+        private void radioButtonSeq_Checked(object sender, EventArgs e)
+        {
+            // приводим отправителя к элементу типа RadioButton
+            RadioButton radioButtonSeq = (RadioButton)sender;
+            if (radioButtonSeq.IsChecked == true)
+            {
+                SendCMD("M3\n");
+                MessageBox.Show(radioButtonSeq.Content.ToString());
+            }
         }
 
         unsafe public WriteableBitmap FindColoredDifference(BitmapSource bs1, BitmapSource bs2, byte mode)
@@ -585,11 +654,11 @@ namespace SimplestSpinWPF
 
             if (mode == 1)
             {
-                GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; // SendCMD("M1");
+                GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;  //SendCMD("M1");
             }
             if (mode == 2)
             {
-                RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; //SendCMD("M1");
+                RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;// SendCMD("M1");
             }
             if (mode == 3)
             {
@@ -597,11 +666,11 @@ namespace SimplestSpinWPF
             }
             if (mode == 5)
             {
-                R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; //SendCMD("M1");
+                R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;// SendCMD("M1");
             }
             if (mode == 6)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false; //SendCMD("M2");
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false;// SendCMD("M2");
             }
             if (mode == 7)
             {
@@ -609,11 +678,11 @@ namespace SimplestSpinWPF
             }
             if (mode == 8)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false; //SendCMD("M4");
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false;// SendCMD("M4");
             }
             if (mode == 9)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true; //SendCMD("M5");
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true;// SendCMD("M5");
             }
             if (mode == 4)
                 Pseudo = true;
@@ -686,19 +755,19 @@ namespace SimplestSpinWPF
                 {
                     if (GreenFlu)
                     {
-                        SendCMD("M1");
+                        //SendCMD("M1\n");
                         dif = (bb1[g] - bb2[g]);
                     }
 
                     if (RedFlu)
                     {
-                        SendCMD("M1");
+                        //SendCMD("M1\n");
                         dif = (bb1[r] - bb2[r]);
                     }
 
                     if (R2G)
                     {
-                        SendCMD("M1");
+                        //SendCMD("M1\n");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -720,7 +789,7 @@ namespace SimplestSpinWPF
 
                     if (Oxy)
                     {
-                        SendCMD("M4");
+                        //SendCMD("M4\n");
                         dataRed = bb1[r];
                         dataIR = bb2[g];
 
@@ -733,7 +802,7 @@ namespace SimplestSpinWPF
 
                     if (R_G)
                     {
-                        SendCMD("M1");
+                        //SendCMD("M1\n");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -748,7 +817,7 @@ namespace SimplestSpinWPF
 
                     if (RLED)
                     {
-                        SendCMD("M5");
+                        //SendCMD("M5\n");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -757,7 +826,7 @@ namespace SimplestSpinWPF
 
                     if (BOTH)
                     {
-                        SendCMD("M3");
+                        //SendCMD("M3\n");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -767,7 +836,7 @@ namespace SimplestSpinWPF
 
                     if (ICG)
                     {
-                        SendCMD("M4");
+                        //SendCMD("M4\n");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -776,7 +845,7 @@ namespace SimplestSpinWPF
 
                     if (Sequent)
                     {
-                        SendCMD("M6");
+                        //SendCMD("M6\n");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -992,7 +1061,7 @@ namespace SimplestSpinWPF
                 RefreshThread.Abort();
             }
             catch { }
-            Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
         }
 
         private void button4_Click(object sender, RoutedEventArgs e)    //Save button
@@ -1021,7 +1090,7 @@ namespace SimplestSpinWPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             try
@@ -1040,7 +1109,7 @@ namespace SimplestSpinWPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             try
@@ -1067,7 +1136,7 @@ namespace SimplestSpinWPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             try
@@ -1099,7 +1168,7 @@ namespace SimplestSpinWPF
 
             catch (Exception ex)
             {
-                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
 
@@ -1128,7 +1197,7 @@ namespace SimplestSpinWPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             try
@@ -1156,7 +1225,7 @@ namespace SimplestSpinWPF
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -1290,11 +1359,41 @@ namespace SimplestSpinWPF
                 p.Open();
                 p.DtrEnable = true;
                 p.RtsEnable = true;
-
+                if (p.IsOpen)
+                    return;
             }
             catch
             {
-                MessageBox.Show("Failed to open port. Sorry (");
+                System.Windows.MessageBox.Show("Failed to open port. Sorry (");
+                KeepReading();
+                return;
+            }
+            if (p.IsOpen)
+                return;
+        }
+
+        void KeepReading()
+        {
+            for (; ; )
+            {
+                if (p != null)
+                    if (p.IsOpen)
+                    {
+                        if (p.BytesToRead > 0)
+                        {
+                            string tt = p.ReadExisting();
+                            //textBox2.Invoke(new Action(() =>
+                            //{
+                            //    CommaCount += tt.Count((x) => x == ',');
+                            //    Buf += tt;
+                            //    textBox2.Text = tt;
+                            //    toolStripStatusLabel2.Text = "Reads = " + (++ReadsCount).ToString();
+                            //}));
+                        }
+                        Thread.Sleep(5);
+                    }
+                    else break;
+                else break;
             }
         }
 
