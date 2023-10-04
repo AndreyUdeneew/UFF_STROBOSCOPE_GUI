@@ -578,8 +578,6 @@ namespace SimplestSpinWPF
                 if (p.IsOpen)
                 {
                     p.Write(CMD);
-                    //p.Write("\n");
-                    //FrameStart = DateTime.Now;
                 }
             return;
         }
@@ -591,10 +589,7 @@ namespace SimplestSpinWPF
             if (radioButtonR2G.IsChecked == true)
             {
                 SendCMD("M1\r\n");
-                //RadioButton pressed = (RadioButton)sender;
-                //MessageBox.Show(radioButtonOxy.Content.ToString());
             }
-            //MessageBox.Show(radioButtonOxy.Content.ToString());
         }
 
         private void RadioButtonR_G_Checked(object sender, EventArgs e)
@@ -604,10 +599,7 @@ namespace SimplestSpinWPF
             if (radioButtonR_G.IsChecked == true)
             {
                 SendCMD("M1\r\n");
-                //RadioButton pressed = (RadioButton)sender;
-                //MessageBox.Show(radioButtonOxy.Content.ToString());
             }
-            //MessageBox.Show(radioButtonOxy.Content.ToString());
         }
 
         private void RadioButtonGreen_Checked(object sender, EventArgs e)
@@ -617,10 +609,7 @@ namespace SimplestSpinWPF
             if (radioButtonGreen.IsChecked == true)
             {
                 SendCMD("M1\r\n");
-                //RadioButton pressed = (RadioButton)sender;
-                //MessageBox.Show(radioButtonOxy.Content.ToString());
             }
-            //MessageBox.Show(radioButtonOxy.Content.ToString());
         }
 
         private void RadioButtonRed_Checked(object sender, EventArgs e)
@@ -630,10 +619,7 @@ namespace SimplestSpinWPF
             if (radioButtonRed.IsChecked == true)
             {
                 SendCMD("M1\r\n");
-                //RadioButton pressed = (RadioButton)sender;
-                //MessageBox.Show(radioButtonOxy.Content.ToString());
             }
-            //MessageBox.Show(radioButtonOxy.Content.ToString());
         }
 
         private void RadioButtonOxy_Checked(object sender, EventArgs e)
@@ -645,10 +631,7 @@ namespace SimplestSpinWPF
                 SendCMD("M6\r\n");
                 Oxy = true;
                 DrawDiffCheckBox.IsChecked = false;
-                //RadioButton pressed = (RadioButton)sender;
-                //MessageBox.Show(radioButtonOxy.Content.ToString());
             }
-            //MessageBox.Show(radioButtonOxy.Content.ToString());
         }
         private void RadioButtonRedLED_Checked(object sender, RoutedEventArgs e)
         {
@@ -657,7 +640,6 @@ namespace SimplestSpinWPF
             if (radioButtonRedLED.IsChecked == true)
             {
                 SendCMD("M2\r\n");
-                //MessageBox.Show(radioButtonRedLED.Content.ToString());
             }
         }
         private void RadioButtonBothLEDs_Checked(object sender, EventArgs e)
@@ -667,7 +649,6 @@ namespace SimplestSpinWPF
             if (radioButtonBothLEDs.IsChecked == true)
             {
                 SendCMD("M3\n");
-                //MessageBox.Show(radioButtonBothLEDs.Content.ToString());
             }
         }
         private void RadioButtonICG_Checked(object sender, EventArgs e)
@@ -677,7 +658,6 @@ namespace SimplestSpinWPF
             if (radioButtonICG.IsChecked == true)
             {
                 SendCMD("M7\n");
-                //MessageBox.Show(radioButtonICG.Content.ToString());
             }
         }
         private void RadioButtonSeq_Checked(object sender, EventArgs e)
@@ -687,7 +667,6 @@ namespace SimplestSpinWPF
             if (radioButtonSeq.IsChecked == true)
             {
                 SendCMD("M6\n");
-                //MessageBox.Show(radioButtonSeq.Content.ToString());
             }
         }
 
@@ -699,42 +678,44 @@ namespace SimplestSpinWPF
             bool R_G = (bool)radioButtonR_G.IsChecked;
             bool Grayed = (bool)radioButtonGray.IsChecked;
             bool Pseudo = (bool)radioButtonHeatmap.IsChecked;
-            //bool Oxy = (bool)radioButtonOxy.IsChecked;
+            bool Oxy = (bool)radioButtonOxy.IsChecked;
             bool RLED = (bool)radioButtonRedLED.IsChecked;
             bool BOTH = (bool)radioButtonBothLEDs.IsChecked;
             bool ICG = (bool)radioButtonICG.IsChecked;
             bool Sequent = (bool)radioButtonSeq.IsChecked;
+
+            bool OxyAlter = (bool)CheckBoxOxyAlter.IsChecked;
 
 
 
 
             if (mode == 1)
             {
-                GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;  //SendCMD("M1");
+                GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
             }
             if (mode == 2)
             {
-                RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;// SendCMD("M1");
+                RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
             }
             if (mode == 3)
             {
-                R2G = true; GreenFlu = false; RedFlu = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; //SendCMD("M1");
+                R2G = true; GreenFlu = false; RedFlu = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
             }
             if (mode == 5)
             {
-                R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;// SendCMD("M1");
+                R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
             }
             if (mode == 6)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false;// SendCMD("M2");
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false;
             }
             if (mode == 7)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = true; ICG = false; Sequent = false; //SendCMD("M3");
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = true; ICG = false; Sequent = false;
             }
             if (mode == 8)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false;// SendCMD("M4");
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false;
             }
             if (mode == 9)
             {
@@ -811,19 +792,16 @@ namespace SimplestSpinWPF
                 {
                     if (GreenFlu)
                     {
-                        //SendCMD("M1\n");
                         dif = (bb1[g] - bb2[g]);
                     }
 
                     if (RedFlu)
                     {
-                        //SendCMD("M1\n");
                         dif = (bb1[r] - bb2[r]);
                     }
 
                     if (R2G)
                     {
-                        //SendCMD("M1\n");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -845,9 +823,14 @@ namespace SimplestSpinWPF
 
                     if (Oxy)
                     {
-                        //SendCMD("M4\n");
                         dataRed = bb1[r];
                         dataIR = bb2[g];
+
+                        if(OxyAlter)
+                        {
+                            dataRed = bb1[r];
+                            dataIR = bb2[g];
+                        }
 
                         if (dataIR == 0)
                         {
@@ -1127,7 +1110,7 @@ namespace SimplestSpinWPF
             bool RedFlu = (bool)radioButtonRed.IsChecked;
             bool R2G = (bool)radioButtonR2G.IsChecked;
             bool R_G = (bool)radioButtonR_G.IsChecked;
-            bool Oxy = (bool)CheckBoxOxy.IsChecked;
+            bool Oxy = (bool)radioButtonOxy.IsChecked;
             //bool Grayed = (bool)radioButtonGray.IsChecked;
 
             try

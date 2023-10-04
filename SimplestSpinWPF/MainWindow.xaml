@@ -57,7 +57,7 @@
         <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonHeatmap"  Content="Pseudo" HorizontalAlignment="Left" Margin="9,665,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
         <Label x:Name="FI_Label" Grid.Column="2" Foreground="LightYellow" Content="Label" HorizontalAlignment="Left" Margin="204,5,0,0" VerticalAlignment="Top" Width="184" FontSize="50" Grid.ColumnSpan="2"/>
         <Button Background="DarkGray"  x:Name="Norma" Content="Norm" Grid.Column="4" HorizontalAlignment="Left" Margin="10,710,0,0" VerticalAlignment="Top" Width="54" Click="ButtonNorma_Click_1" RenderTransformOrigin="0.506,-2.505"/>
-        <CheckBox x:Name="CheckBoxOxy" Content="Oxy" Grid.Column="4" HorizontalAlignment="Left" Margin="10,105,0,0" VerticalAlignment="Top" Foreground="Gray"/>
+        <CheckBox x:Name="CheckBoxOxyAlter" Content="OxyAlter" Grid.Column="4" HorizontalAlignment="Left" Margin="10,105,0,0" VerticalAlignment="Top" Foreground="Gray"/>
         <ComboBox x:Name="ComboboxPorts" Grid.Column="4" HorizontalAlignment="Center" Margin="0,545,0,0" VerticalAlignment="Top" Width="54" DropDownOpened="ComboboxPorts_DropDownOpened"/>
         <Button x:Name="ChangeMode" Content="Mode" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,520,0,0" VerticalAlignment="Top" Width="54" Click="ChangeMode_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
