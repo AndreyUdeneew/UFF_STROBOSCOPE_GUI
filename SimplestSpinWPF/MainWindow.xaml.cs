@@ -731,18 +731,26 @@ namespace SimplestSpinWPF
             WriteableBitmap wb2 = new WriteableBitmap(bs2);
             WriteableBitmap wb;
 
-            if (LastImageSum < PrevImageSum)
-            {
-                wb = new WriteableBitmap(bs1);
-                background = wb1;
-                UV = wb2;
-            }
-            else
-            {
-                wb = new WriteableBitmap(bs2);
-                background = wb2;
-                UV = wb1;
-            }
+            //if (!Oxy)
+            //{
+                if (LastImageSum < PrevImageSum)
+                {
+                    wb = new WriteableBitmap(bs1);
+                    //background = wb1;
+                    //UV = wb2;
+                }
+                else
+                {
+                    wb = new WriteableBitmap(bs2);
+                    //background = wb2;
+                    //UV = wb1;
+                }
+            //}
+            //else
+            //{
+            //    b = new WriteableBitmap(bs1);
+            //}
+ 
             wb1.Lock(); wb2.Lock(); wb.Lock();
             byte* bb1 = (byte*)wb1.BackBuffer.ToPointer();
             byte* bb2 = (byte*)wb2.BackBuffer.ToPointer();
@@ -824,19 +832,20 @@ namespace SimplestSpinWPF
                     if (Oxy)
                     {
                         dataRed = bb1[r];
-                        dataIR = bb2[g];
+                        dataIR = bb2[r];
 
-                        if(OxyAlter)
+                        if (OxyAlter)
                         {
-                            dataRed = bb1[r];
-                            dataIR = bb2[g];
+                            dataRed = bb2[r];
+                            dataIR = bb1[r];
                         }
 
                         if (dataIR == 0)
                         {
                             dataIR = 1;
                         }
-                        dif = DC[(dataRed << 8) + dataIR];
+                            dif = DC[(dataRed << 8) + dataIR];
+                            //dif = dataRed / dataIR;
                     }
 
                     if (R_G)
@@ -916,6 +925,15 @@ namespace SimplestSpinWPF
                         dif >>= -amp;
 
                     temp = res + dif;
+
+                    //if (!Oxy)
+                    //{
+                    //    temp = res + dif;
+                    //}
+                    //else
+                    //{
+                    //    temp = dif;
+                    //}
 
                     if (Pseudo)
                     {
