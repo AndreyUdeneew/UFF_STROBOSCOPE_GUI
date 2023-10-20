@@ -613,40 +613,40 @@ namespace SimplestSpinWPF
 
 
 
-            //if (mode == 1)
-            //{
-            //    GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
-            //}
-            //if (mode == 2)
-            //{
-            //    RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
-            //}
-            //if (mode == 3)
-            //{
-            //    R2G = true; GreenFlu = false; RedFlu = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
-            //}
-            //if (mode == 5)
-            //{
-            //    R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
-            //}
-            //if (mode == 6)
-            //{
-            //    R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false;
-            //}
-            //if (mode == 7)
-            //{
-            //    R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = true; ICG = false; Sequent = false;
-            //}
-            //if (mode == 8)
-            //{
-            //    R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false;
-            //}
-            //if (mode == 9)
-            //{
-            //    R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true;// SendCMD("M5");
-            //}
-            //if (mode == 4)
-            //    Pseudo = true;
+            if (mode == 1)
+            {
+                GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
+            }
+            if (mode == 2)
+            {
+                RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
+            }
+            if (mode == 3)
+            {
+                R2G = true; GreenFlu = false; RedFlu = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
+            }
+            if (mode == 5)
+            {
+                R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
+            }
+            if (mode == 6)
+            {
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false;
+            }
+            if (mode == 7)
+            {
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = true; ICG = false; Sequent = false;
+            }
+            if (mode == 8)
+            {
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false;
+            }
+            if (mode == 9)
+            {
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true;
+            }
+            if (mode == 4)
+                Pseudo = true;
 
             if (bs1 == null)
                 return null;
@@ -658,15 +658,15 @@ namespace SimplestSpinWPF
                     if (LastImageSum < PrevImageSum)
                     {
                         wb = new WriteableBitmap(bs1);
-                        //background = wb1;
-                        //UV = wb2;
-                    }
+                background = wb1;
+                UV = wb2;
+            }
                 else
                 {
                     wb = new WriteableBitmap(bs2);
-                    //background = wb2;
-                    //UV = wb1;
-                }
+                background = wb2;
+                UV = wb1;
+            }
 
             wb1.Lock(); wb2.Lock(); wb.Lock();
             byte* bb1 = (byte*)wb1.BackBuffer.ToPointer();
@@ -1033,6 +1033,10 @@ namespace SimplestSpinWPF
             bool R2G = (bool)radioButtonR2G.IsChecked;
             bool R_G = (bool)radioButtonR_G.IsChecked;
             bool Oxy = (bool)radioButtonOxy.IsChecked;
+            bool Sequent = (bool)radioButtonSeq.IsChecked;
+            bool RLED = (bool)radioButtonRedLED.IsChecked;
+            bool BOTH = (bool)radioButtonBothLEDs.IsChecked;
+            bool ICG = (bool)radioButtonICG.IsChecked;
             //bool Grayed = (bool)radioButtonGray.IsChecked;
 
             try
