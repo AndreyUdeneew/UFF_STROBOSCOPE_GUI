@@ -953,16 +953,16 @@ namespace SimplestSpinWPF
             catch { }
         }
 
-        //private void ButtonNorma_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (SpinCamColor == null)
-        //        return;
-        //    try
-        //    {
-        //        FI_norma = FI;
-        //    }
-        //    catch { }
-        //}
+        private void ButtonNorma_Click(object sender, RoutedEventArgs e)
+        {
+            //if (SpinCamColor == null)
+            //    return;
+            try
+            {
+                FI_norma = FI;
+            }
+            catch { }
+        }
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
