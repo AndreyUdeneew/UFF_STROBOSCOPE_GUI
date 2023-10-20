@@ -494,81 +494,6 @@ namespace SimplestSpinWPF
             return Sum;
         }
 
-        //private bool DetectArduino(SerialPort currentPort)
-        //{
-        //    try
-        //    {
-        //        Thread.Sleep(2000);
-        //        currentPort.WriteLine("HELLO");
-        //        Thread.Sleep(1000);
-        //        string returnMessage = currentPort.ReadExisting();
-
-        //        if (returnMessage.Contains("WireTester"))
-        //            return true;
-        //        else
-        //            return false;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return false;
-        //    }
-        //}
-
-
-
-        //private void button9_Click(object sender, EventArgs e)
-        //{
-        //    if (p != null)
-        //        if (p.IsOpen)
-        //        {
-        //            p.Close();
-        //            toolStripStatusLabel4.Text = "Arduin frei";
-        //        }
-        //}
-
-        //private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        //{
-        //    KeepReading();
-        //}
-
-        //void KeepReading()
-        //{
-        //    for (; ; )
-        //    {
-        //        if (p != null)
-        //            if (p.IsOpen)
-        //            {
-        //                if (p.BytesToRead > 0)
-        //                    try
-        //                    {
-
-        //                        string tt = p.ReadExisting();
-        //                        statusStrip1.Invoke(new Action(() =>
-        //                        {
-        //                            CommaCount += tt.Count(x => x == ',');
-        //                            Buf += tt;
-        //                            textBox2.Text += tt;
-        //                            textBox2.SelectionStart = textBox2.TextLength;
-        //                            textBox2.ScrollToCaret();
-
-
-        //                            toolStripStatusLabel5.Text = tt;
-        //                            toolStripStatusLabel2.Text = "Reads = " + (++ReadsCount).ToString();
-        //                        }));
-        //                    }
-        //                    catch (Exception ex) { System.Diagnostics.Debug.WriteLine("COM port reading error: " + ex.Message); }
-        //                Thread.Sleep(5);
-        //            }
-        //            else break;
-        //        else break;
-        //    }
-        //}
-
-        //private void button10_Click(object sender, EventArgs e)
-        //{
-        //    SendD();
-        //}
-
         public void SendCMD(string CMD)
         {
             //CommaCount = 0;
@@ -628,9 +553,8 @@ namespace SimplestSpinWPF
             RadioButton radioButtonOxy = (RadioButton)sender;
             if (radioButtonOxy.IsChecked == true)
             {
-                SendCMD("M6\r\n");
+                SendCMD("M4\r\n");
                 Oxy = true;
-                DrawDiffCheckBox.IsChecked = false;
             }
         }
         private void RadioButtonRedLED_Checked(object sender, RoutedEventArgs e)
@@ -689,40 +613,40 @@ namespace SimplestSpinWPF
 
 
 
-            if (mode == 1)
-            {
-                GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
-            }
-            if (mode == 2)
-            {
-                RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
-            }
-            if (mode == 3)
-            {
-                R2G = true; GreenFlu = false; RedFlu = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
-            }
-            if (mode == 5)
-            {
-                R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
-            }
-            if (mode == 6)
-            {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false;
-            }
-            if (mode == 7)
-            {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = true; ICG = false; Sequent = false;
-            }
-            if (mode == 8)
-            {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false;
-            }
-            if (mode == 9)
-            {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true;// SendCMD("M5");
-            }
-            if (mode == 4)
-                Pseudo = true;
+            //if (mode == 1)
+            //{
+            //    GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
+            //}
+            //if (mode == 2)
+            //{
+            //    RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
+            //}
+            //if (mode == 3)
+            //{
+            //    R2G = true; GreenFlu = false; RedFlu = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
+            //}
+            //if (mode == 5)
+            //{
+            //    R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
+            //}
+            //if (mode == 6)
+            //{
+            //    R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false;
+            //}
+            //if (mode == 7)
+            //{
+            //    R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = true; ICG = false; Sequent = false;
+            //}
+            //if (mode == 8)
+            //{
+            //    R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false;
+            //}
+            //if (mode == 9)
+            //{
+            //    R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true;// SendCMD("M5");
+            //}
+            //if (mode == 4)
+            //    Pseudo = true;
 
             if (bs1 == null)
                 return null;
@@ -731,26 +655,19 @@ namespace SimplestSpinWPF
             WriteableBitmap wb2 = new WriteableBitmap(bs2);
             WriteableBitmap wb;
 
-            //if (!Oxy)
-            //{
-                if (LastImageSum < PrevImageSum)
-                {
-                    wb = new WriteableBitmap(bs1);
-                    //background = wb1;
-                    //UV = wb2;
-                }
+                    if (LastImageSum < PrevImageSum)
+                    {
+                        wb = new WriteableBitmap(bs1);
+                        //background = wb1;
+                        //UV = wb2;
+                    }
                 else
                 {
                     wb = new WriteableBitmap(bs2);
                     //background = wb2;
                     //UV = wb1;
                 }
-            //}
-            //else
-            //{
-            //    b = new WriteableBitmap(bs1);
-            //}
- 
+
             wb1.Lock(); wb2.Lock(); wb.Lock();
             byte* bb1 = (byte*)wb1.BackBuffer.ToPointer();
             byte* bb2 = (byte*)wb2.BackBuffer.ToPointer();
@@ -765,6 +682,7 @@ namespace SimplestSpinWPF
             int dataRed = 0;
             int dataIR = 0;
             int difGreen = 0;
+            int OX = 0;
             int temp;
             byte res = 0;
 
@@ -805,15 +723,23 @@ namespace SimplestSpinWPF
 
                     if (RedFlu)
                     {
-                        dif = (bb1[r] - bb2[r]);
+                        //dif = (bb1[r] - bb2[r]);
+                        dif = DC[((bb1[r] << 8) + bb2[r])];
+                        if (OxyAlter)
+                        {
+                            dif = DC[((bb2[r] << 8) + bb1[r])];
+                        }
                     }
 
                     if (R2G)
                     {
                         difRed = bb1[r] - bb2[r];
+                        //difRed = bb1[r];
                         if (difRed < 0)
                             difRed = -difRed;
+
                         difGreen = bb1[g] - bb2[g];
+                        //difGreen = bb2[r];
                         if (difGreen < 0)
                             difGreen = -difGreen;
 
@@ -821,36 +747,34 @@ namespace SimplestSpinWPF
                         {
                             difGreen = 1;
                         }
-                        //difDouble = (difRed / difGreen) * additionalCoef;
 
-                        dif = DC[(difRed << 8) + difGreen];
-                        //dif = (byte)(difRed /  difGreen);
-                        //dif = DC[(difGreen << 8) + difRed];
-                        //dif = (int)difDouble;                       
+                        dif = DC[(difRed << 8) + difGreen];                 
                     }
 
                     if (Oxy)
                     {
-                        dataRed = bb1[r];
-                        dataIR = bb2[r];
+                        dataRed = bb2[r];
+                        dataIR = bb1[r];
 
                         if (OxyAlter)
                         {
-                            dataRed = bb2[r];
-                            dataIR = bb1[r];
+                            dataRed = bb1[r];
+                            dataIR = bb2[r];
                         }
 
                         if (dataIR == 0)
                         {
                             dataIR = 1;
                         }
-                            dif = DC[(dataRed << 8) + dataIR];
-                            //dif = dataRed / dataIR;
+                        dif = (bb1[r] - bb2[r]);
+                        //dif = DC[(dataRed << 8) + dataIR];
+                        //dif += OX;
+                        //dif = dataRed / dataIR;
+                        //dif = dataRed - dataIR;
                     }
 
                     if (R_G)
                     {
-                        //SendCMD("M1\n");
                         difRed = bb1[r] - bb2[r];
                         if (difRed < 0)
                             difRed = -difRed;
@@ -865,76 +789,50 @@ namespace SimplestSpinWPF
 
                     if (RLED)
                     {
-                        //SendCMD("M5\n");
-                        difRed = bb1[r] - bb2[r];
-                        if (difRed < 0)
-                            difRed = -difRed;
+                        dif = bb1[r] - bb2[r];
+                        if (dif < 0)
+                            dif = -dif;
 
                     }
 
                     if (BOTH)
                     {
-                        //SendCMD("M3\n");
-                        difRed = bb1[r] - bb2[r];
-                        if (difRed < 0)
-                            difRed = -difRed;
+                        dif = bb1[r] - bb2[r];
+                        if (dif < 0)
+                            dif = -dif;
 
                     }
 
 
                     if (ICG)
                     {
-                        //SendCMD("M4\n");
-                        difRed = bb1[r] - bb2[r];
-                        if (difRed < 0)
-                            difRed = -difRed;
+                        dif = bb1[r] - bb2[r];
+                        if (dif < 0)
+                            dif = -dif;
 
                     }
 
                     if (Sequent)
                     {
-                        //SendCMD("M6\n");
-                        difRed = bb1[r] - bb2[r];
-                        if (difRed < 0)
-                            difRed = -difRed;
+                        dif = bb1[r] - bb2[r];
+                        if (dif < 0)
+                            dif = -dif;
 
                     }
 
-                    //if (Pseudo)
-                    //{
-                    //    difRed = bb1[r] - bb2[r];
-                    //    if (difRed < 0)
-                    //        difRed = -difRed;
-                    //    difGreen = bb1[g] - bb2[g];
-                    //    if (difGreen < 0)
-                    //        difGreen = -difGreen;
+                        if (dif < 0)
+                            dif = -dif;
 
-                    //    dif = (difRed - difGreen) << 1;
-                    //    if (dif < 0)
-                    //        dif = 0;
 
-                    //}
+                        res = bb[g];
+                        if (amp > 0)
+                            dif <<= amp;
+                        if (amp < 0)
+                            dif >>= -amp;
 
-                    if (dif < 0)
-                        dif = -dif;
 
-                    res = bb[g];
-                    if (amp > 0)
-                        dif <<= amp;
-                    if (amp < 0)
-                        dif >>= -amp;
-
-                    temp = res + dif;
-
-                    //if (!Oxy)
-                    //{
-                    //    temp = res + dif;
-                    //}
-                    //else
-                    //{
-                    //    temp = dif;
-                    //}
-
+                        temp = res + dif;
+               
                     if (Pseudo)
                     {
 
@@ -946,15 +844,13 @@ namespace SimplestSpinWPF
                     }
                     else
                     {
+ 
                         if (temp > 255)
                             bb[g] = 255;
                         else
                             bb[g] = (byte)(temp);
-
-                        if (Grayed)
-                        { bb[b] = res; bb[r] = res; }
                     }
-
+                    
                     if (Grayed)
                     { bb[b] = res; bb[r] = res; }
                 }
@@ -1432,8 +1328,8 @@ namespace SimplestSpinWPF
         private void ChangeMode_Click(object sender, RoutedEventArgs e)
         {
             if (radioButtonOxy.IsChecked == true) MessageBox.Show(radioButtonOxy.Content.ToString());
-            if(radioButtonRedLED.IsChecked == true) MessageBox.Show(radioButtonRedLED.Content.ToString());
-            if(radioButtonBothLEDs.IsChecked == true) MessageBox.Show(radioButtonBothLEDs.Content.ToString());
+            if (radioButtonRedLED.IsChecked == true) MessageBox.Show(radioButtonRedLED.Content.ToString());
+            if (radioButtonBothLEDs.IsChecked == true) MessageBox.Show(radioButtonBothLEDs.Content.ToString());
             if (radioButtonICG.IsChecked == true) MessageBox.Show(radioButtonICG.Content.ToString());
             if (radioButtonSeq.IsChecked == true) MessageBox.Show(radioButtonSeq.Content.ToString());
         }

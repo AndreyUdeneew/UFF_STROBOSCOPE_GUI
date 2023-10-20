@@ -28,7 +28,7 @@
         <Image x:Name="CC"  RenderTransformOrigin="0.5,0.5" Margin="-18,0,20,0" Grid.ColumnSpan="4" />
         <DockPanel x:Name="LayoutLeft" Grid.Column="0" Grid.ColumnSpan="2"  >
         </DockPanel>
-        <CheckBox x:Name="DrawDiffCheckBox" Content="Fluor" Grid.Column="4" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" Foreground="Gray"/>
+        <CheckBox x:Name="DrawDiffCheckBox" Content="Fluor" Grid.Column="4" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" IsChecked="True" Foreground="Gray"/>
         <Slider x:Name="AmplificationSlider" Grid.Column="4" HorizontalAlignment="Left" Height="180" Margin="20,142,0,0" VerticalAlignment="Top" Width="29" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray"/>
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonGreen" Content="Green" Grid.Column="4" HorizontalAlignment="Left" Margin="20,333,0,0" VerticalAlignment="Top" IsThreeState="False"  Background="#FFBFBFBF" Checked="RadioButtonGreen_Checked"/>
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonRed" Content="Red" Grid.Column="4" HorizontalAlignment="Center" Margin="0,353,0,0" VerticalAlignment="Top" IsChecked="True" Background="#FFBFBFBF" Checked="RadioButtonRed_Checked"/>
