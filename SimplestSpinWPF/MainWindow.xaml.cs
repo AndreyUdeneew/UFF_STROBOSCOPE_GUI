@@ -723,12 +723,12 @@ namespace SimplestSpinWPF
 
                     if (RedFlu)
                     {
-                        //dif = (bb1[r] - bb2[r]);
-                        dif = DC[((bb1[r] << 8) + bb2[r])];
-                        if (OxyAlter)
-                        {
-                            dif = DC[((bb2[r] << 8) + bb1[r])];
-                        }
+                        dif = (bb1[r] - bb2[r]);
+                        //dif = DC[((bb1[r] << 8) + bb2[r])];
+                        //if (OxyAlter)
+                        //{
+                        //    dif = DC[((bb2[r] << 8) + bb1[r])];
+                        //}
                     }
 
                     if (R2G)
@@ -753,21 +753,29 @@ namespace SimplestSpinWPF
 
                     if (Oxy)
                     {
-                        dataRed = bb2[r];
-                        dataIR = bb1[r];
+                        dataRed = bb1[r];
+                        dataIR = bb2[r];
 
                         if (OxyAlter)
                         {
-                            dataRed = bb1[r];
-                            dataIR = bb2[r];
+                            dataRed = bb2[r];
+                            dataIR = bb1[r];
                         }
 
                         if (dataIR == 0)
                         {
                             dataIR = 1;
                         }
-                        dif = (bb1[r] - bb2[r]);
-                        //dif = DC[(dataRed << 8) + dataIR];
+                        //dif = (bb1[r] - bb2[r]);
+                        if (dataRed < dataIR)
+                        {
+                            dif = DC[(dataIR<< 8) + dataRed];
+                        }
+                        else
+                        {
+                            dif = DC[(dataRed << 8) + dataIR];
+                        }
+
                         //dif += OX;
                         //dif = dataRed / dataIR;
                         //dif = dataRed - dataIR;
