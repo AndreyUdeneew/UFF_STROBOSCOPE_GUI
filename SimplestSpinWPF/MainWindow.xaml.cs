@@ -645,6 +645,10 @@ namespace SimplestSpinWPF
             {
                 R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true;
             }
+            if (mode == 10)
+            {
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = true; RLED = false; BOTH = false; ICG = false; Sequent = false;
+            }
             if (mode == 4)
                 Pseudo = true;
 
@@ -724,22 +728,15 @@ namespace SimplestSpinWPF
                     if (RedFlu)
                     {
                         dif = (bb1[r] - bb2[r]);
-                        //dif = DC[((bb1[r] << 8) + bb2[r])];
-                        //if (OxyAlter)
-                        //{
-                        //    dif = DC[((bb2[r] << 8) + bb1[r])];
-                        //}
                     }
 
                     if (R2G)
                     {
                         difRed = bb1[r] - bb2[r];
-                        //difRed = bb1[r];
                         if (difRed < 0)
                             difRed = -difRed;
 
                         difGreen = bb1[g] - bb2[g];
-                        //difGreen = bb2[r];
                         if (difGreen < 0)
                             difGreen = -difGreen;
 
@@ -766,7 +763,11 @@ namespace SimplestSpinWPF
                         {
                             dataIR = 1;
                         }
-                        //dif = (bb1[r] - bb2[r]);
+                        if (dataRed == 0)
+                        {
+                            dataRed = 1;
+                        }
+
                         if (dataRed < dataIR)
                         {
                             dif = DC[(dataIR<< 8) + dataRed];
@@ -775,10 +776,6 @@ namespace SimplestSpinWPF
                         {
                             dif = DC[(dataRed << 8) + dataIR];
                         }
-
-                        //dif += OX;
-                        //dif = dataRed / dataIR;
-                        //dif = dataRed - dataIR;
                     }
 
                     if (R_G)
@@ -833,18 +830,32 @@ namespace SimplestSpinWPF
 
 
                         res = bb[g];
-                        if (amp > 0)
-                            dif <<= amp;
-                        if (amp < 0)
-                            dif >>= -amp;
+                        dif <<= amp;
 
+                    //if (Oxy)
+                    //{
+                        
+                    //    temp = bb[g];
+                    //}
 
+                    if (!Oxy)
+                    {
                         temp = res + dif;
-               
+                    }
+                    else
+                    {
+                        //res = (byte)(dif);
+                        temp = res + dif;
+                        //temp = dif;
+                    }
+
                     if (Pseudo)
                     {
 
-                        int j = dif << 2;
+                        //int j = dif << 2;
+                        //int j = dif << 1;
+                        //int j = dif;
+                        int j = temp<<2;
                         //int j = (i % w) << 2;
                         bb[b] = HSVC[j++];
                         bb[g] = HSVC[j++];
@@ -1192,7 +1203,37 @@ namespace SimplestSpinWPF
             {
                 System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            try
+            {
+                //BitmapEncoder encoder = new PngBitmapEncoder();
+                WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 10);
+
+                System.Drawing.Bitmap bmp;
+                bmp = BitmapFromWriteableBitmap(frameSource);
+                Graphics gr = Graphics.FromImage(bmp);
+                gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
+                //bmp.Save(@"C:\MEDIA\testR2G.png");
+                //BitmapFrame frame = BitmapFrame.Create(frameSource);
+                //encoder.Frames.Add(frame);
+                DateTime d = DateTime.Now;
+                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Oxy_" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + sss)
+                    );
+                bmp.Save(Filename);
+                //using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                //{
+                //    encoder.Save(fileStream);
+                //}
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+
+
 
         private void ButtonNorma_Click_1(object sender, RoutedEventArgs e)
         {
