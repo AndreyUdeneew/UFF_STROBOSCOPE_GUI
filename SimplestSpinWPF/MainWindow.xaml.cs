@@ -503,6 +503,7 @@ namespace SimplestSpinWPF
                 if (p.IsOpen)
                 {
                     p.Write(CMD);
+                    p.Write("\r\n");
                 }
             return;
         }
