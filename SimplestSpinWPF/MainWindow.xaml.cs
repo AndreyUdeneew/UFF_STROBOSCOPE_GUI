@@ -1087,33 +1087,7 @@ namespace SimplestSpinWPF
             {
                 System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            try
-            {
-                //BitmapEncoder encoder = new PngBitmapEncoder();
-                WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
-
-                System.Drawing.Bitmap bmp;
-                bmp = BitmapFromWriteableBitmap(frameSource);
-                Graphics gr = Graphics.FromImage(bmp);
-                gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
-                BitmapFrame frame = BitmapFrame.Create(frameSource);
-                //encoder.Frames.Add(frame);
-                DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + sss)
-                    );
-                bmp.Save(Filename);
-                //    using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
-                //    {
-                //        encoder.Save(fileStream);
-                //    }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            
 
             try
             {
@@ -1147,6 +1121,35 @@ namespace SimplestSpinWPF
                 System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+            if (GreenFlu || RedFlu || R2G || R_G) 
+            {
+            
+            try
+            {
+                //BitmapEncoder encoder = new PngBitmapEncoder();
+                WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
+
+                System.Drawing.Bitmap bmp;
+                bmp = BitmapFromWriteableBitmap(frameSource);
+                Graphics gr = Graphics.FromImage(bmp);
+                gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
+                BitmapFrame frame = BitmapFrame.Create(frameSource);
+                //encoder.Frames.Add(frame);
+                DateTime d = DateTime.Now;
+                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + sss)
+                    );
+                bmp.Save(Filename);
+                //    using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                //    {
+                //        encoder.Save(fileStream);
+                //    }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
 
             try
             {
@@ -1203,7 +1206,10 @@ namespace SimplestSpinWPF
             {
                 System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            }
 
+            if (Oxy)
+            {
             try
             {
                 //BitmapEncoder encoder = new PngBitmapEncoder();
@@ -1230,6 +1236,7 @@ namespace SimplestSpinWPF
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             }
         }
 
