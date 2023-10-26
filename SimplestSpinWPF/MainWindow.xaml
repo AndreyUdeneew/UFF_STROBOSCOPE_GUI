@@ -60,6 +60,11 @@
         <CheckBox x:Name="CheckBoxOxyAlter" Content="OxyAlter" Grid.Column="4" HorizontalAlignment="Left" Margin="10,105,0,0" VerticalAlignment="Top" Foreground="Gray"/>
         <ComboBox x:Name="ComboboxPorts" Grid.Column="4" HorizontalAlignment="Center" Margin="0,545,0,0" VerticalAlignment="Top" Width="54" DropDownOpened="ComboboxPorts_DropDownOpened"/>
         <Button x:Name="ChangeMode" Content="Mode" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,520,0,0" VerticalAlignment="Top" Width="54" Click="ChangeMode_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
+        <CheckBox x:Name="CheckBoxAutofocus" Content="Autofocus" Grid.Column="2" HorizontalAlignment="Left" Margin="37,23,0,0" VerticalAlignment="Top" Foreground="Gray"/>
+        <Button Background="DarkGray" x:Name="buttonZoomPlus" Content="Zoom+" Grid.Column="2" HorizontalAlignment="Left" Margin="64,103,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
+        <Button Background="DarkGray" x:Name="buttonZoomMinus" Content="Zoom-" Grid.Column="2" HorizontalAlignment="Left" Margin="64,190,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
+        <Button Background="DarkGray" x:Name="buttonFocusPlus" Content="Focus+" Grid.Column="2" HorizontalAlignment="Left" Margin="102,148,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
+        <Button Background="DarkGray" x:Name="buttonFocusMinus" Content="Focus-" Grid.Column="2" HorizontalAlignment="Left" Margin="20,148,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
     </Grid>
 

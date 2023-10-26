@@ -660,15 +660,15 @@ namespace SimplestSpinWPF
             WriteableBitmap wb2 = new WriteableBitmap(bs2);
             WriteableBitmap wb;
 
-                    if (LastImageSum < PrevImageSum)
-                    {
-                        wb = new WriteableBitmap(bs1);
+            if (LastImageSum < PrevImageSum)
+            {
+                wb = new WriteableBitmap(bs1);
                 background = wb1;
                 UV = wb2;
             }
-                else
-                {
-                    wb = new WriteableBitmap(bs2);
+            else
+            {
+                wb = new WriteableBitmap(bs2);
                 background = wb2;
                 UV = wb1;
             }
@@ -746,7 +746,7 @@ namespace SimplestSpinWPF
                             difGreen = 1;
                         }
 
-                        dif = DC[(difRed << 8) + difGreen];                 
+                        dif = DC[(difRed << 8) + difGreen];
                     }
 
                     if (Oxy)
@@ -771,7 +771,7 @@ namespace SimplestSpinWPF
 
                         if (dataRed < dataIR)
                         {
-                            dif = DC[(dataIR<< 8) + dataRed];
+                            dif = DC[(dataIR << 8) + dataRed];
                         }
                         else
                         {
@@ -826,16 +826,16 @@ namespace SimplestSpinWPF
 
                     }
 
-                        if (dif < 0)
-                            dif = -dif;
+                    if (dif < 0)
+                        dif = -dif;
 
 
-                        res = bb[g];
-                        dif <<= amp;
+                    res = bb[g];
+                    dif <<= amp;
 
                     //if (Oxy)
                     //{
-                        
+
                     //    temp = bb[g];
                     //}
 
@@ -856,7 +856,7 @@ namespace SimplestSpinWPF
                         //int j = dif << 2;
                         //int j = dif << 1;
                         //int j = dif;
-                        int j = temp<<2;
+                        int j = temp << 2;
                         //int j = (i % w) << 2;
                         bb[b] = HSVC[j++];
                         bb[g] = HSVC[j++];
@@ -864,13 +864,13 @@ namespace SimplestSpinWPF
                     }
                     else
                     {
- 
+
                         if (temp > 255)
                             bb[g] = 255;
                         else
                             bb[g] = (byte)(temp);
                     }
-                    
+
                     if (Grayed)
                     { bb[b] = res; bb[r] = res; }
                 }
@@ -1088,7 +1088,7 @@ namespace SimplestSpinWPF
             {
                 System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            
+
 
             try
             {
@@ -1122,122 +1122,122 @@ namespace SimplestSpinWPF
                 System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
-            if (GreenFlu || RedFlu || R2G || R_G) 
+            if (GreenFlu || RedFlu || R2G || R_G)
             {
-            
-            try
-            {
-                //BitmapEncoder encoder = new PngBitmapEncoder();
-                WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
 
-                System.Drawing.Bitmap bmp;
-                bmp = BitmapFromWriteableBitmap(frameSource);
-                Graphics gr = Graphics.FromImage(bmp);
-                gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
-                BitmapFrame frame = BitmapFrame.Create(frameSource);
-                //encoder.Frames.Add(frame);
-                DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + sss)
-                    );
-                bmp.Save(Filename);
-                //    using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
-                //    {
-                //        encoder.Save(fileStream);
-                //    }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+                try
+                {
+                    //BitmapEncoder encoder = new PngBitmapEncoder();
+                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
 
-            try
-            {
-                //BitmapEncoder encoder = new PngBitmapEncoder();
-                WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 3);
+                    System.Drawing.Bitmap bmp;
+                    bmp = BitmapFromWriteableBitmap(frameSource);
+                    Graphics gr = Graphics.FromImage(bmp);
+                    gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
+                    BitmapFrame frame = BitmapFrame.Create(frameSource);
+                    //encoder.Frames.Add(frame);
+                    DateTime d = DateTime.Now;
+                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + sss)
+                        );
+                    bmp.Save(Filename);
+                    //    using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                    //    {
+                    //        encoder.Save(fileStream);
+                    //    }
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
 
-                System.Drawing.Bitmap bmp;
-                bmp = BitmapFromWriteableBitmap(frameSource);
-                Graphics gr = Graphics.FromImage(bmp);
-                gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
-                //bmp.Save(@"C:\MEDIA\testR2G.png");
-                //BitmapFrame frame = BitmapFrame.Create(frameSource);
-                //encoder.Frames.Add(frame);
-                DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + sss)
-                    );
-                bmp.Save(Filename);
-                //using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
-                //{
-                //    encoder.Save(fileStream);
-                //}
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+                try
+                {
+                    //BitmapEncoder encoder = new PngBitmapEncoder();
+                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 3);
 
-            try
-            {
-                //BitmapEncoder encoder = new PngBitmapEncoder();
-                WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 5);
+                    System.Drawing.Bitmap bmp;
+                    bmp = BitmapFromWriteableBitmap(frameSource);
+                    Graphics gr = Graphics.FromImage(bmp);
+                    gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
+                    //bmp.Save(@"C:\MEDIA\testR2G.png");
+                    //BitmapFrame frame = BitmapFrame.Create(frameSource);
+                    //encoder.Frames.Add(frame);
+                    DateTime d = DateTime.Now;
+                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + sss)
+                        );
+                    bmp.Save(Filename);
+                    //using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                    //{
+                    //    encoder.Save(fileStream);
+                    //}
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
 
-                System.Drawing.Bitmap bmp;
-                bmp = BitmapFromWriteableBitmap(frameSource);
-                Graphics gr = Graphics.FromImage(bmp);
-                gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
-                //bmp.Save(@"C:\MEDIA\testR2G.png");
-                //BitmapFrame frame = BitmapFrame.Create(frameSource);
-                //encoder.Frames.Add(frame);
-                DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + sss)
-                    );
-                bmp.Save(Filename);
-                //using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
-                //{
-                //    encoder.Save(fileStream);
-                //}
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+                try
+                {
+                    //BitmapEncoder encoder = new PngBitmapEncoder();
+                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 5);
+
+                    System.Drawing.Bitmap bmp;
+                    bmp = BitmapFromWriteableBitmap(frameSource);
+                    Graphics gr = Graphics.FromImage(bmp);
+                    gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
+                    //bmp.Save(@"C:\MEDIA\testR2G.png");
+                    //BitmapFrame frame = BitmapFrame.Create(frameSource);
+                    //encoder.Frames.Add(frame);
+                    DateTime d = DateTime.Now;
+                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + sss)
+                        );
+                    bmp.Save(Filename);
+                    //using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                    //{
+                    //    encoder.Save(fileStream);
+                    //}
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
 
             if (Oxy)
             {
-            try
-            {
-                //BitmapEncoder encoder = new PngBitmapEncoder();
-                WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 10);
+                try
+                {
+                    //BitmapEncoder encoder = new PngBitmapEncoder();
+                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 10);
 
-                System.Drawing.Bitmap bmp;
-                bmp = BitmapFromWriteableBitmap(frameSource);
-                Graphics gr = Graphics.FromImage(bmp);
-                gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
-                //bmp.Save(@"C:\MEDIA\testR2G.png");
-                //BitmapFrame frame = BitmapFrame.Create(frameSource);
-                //encoder.Frames.Add(frame);
-                DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Oxy_" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + sss)
-                    );
-                bmp.Save(Filename);
-                //using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
-                //{
-                //    encoder.Save(fileStream);
-                //}
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+                    System.Drawing.Bitmap bmp;
+                    bmp = BitmapFromWriteableBitmap(frameSource);
+                    Graphics gr = Graphics.FromImage(bmp);
+                    gr.DrawString(sss, new Font("Tahoma", 50), System.Drawing.Brushes.White, 0, 0);
+                    //bmp.Save(@"C:\MEDIA\testR2G.png");
+                    //BitmapFrame frame = BitmapFrame.Create(frameSource);
+                    //encoder.Frames.Add(frame);
+                    DateTime d = DateTime.Now;
+                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Oxy_" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + sss)
+                        );
+                    bmp.Save(Filename);
+                    //using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
+                    //{
+                    //    encoder.Save(fileStream);
+                    //}
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
