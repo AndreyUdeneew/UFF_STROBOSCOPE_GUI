@@ -508,6 +508,16 @@ namespace SimplestSpinWPF
             return;
         }
 
+        public void filterChange(byte currentFilter)
+        {
+
+
+            if (currentFilter == 0)
+                SendCMD("FC0");
+            else
+                SendCMD("FC1");
+        }
+
         private void RadioButtonR2G_Checked(object sender, EventArgs e)
         {
             // приводим отправителя к элементу типа RadioButton
