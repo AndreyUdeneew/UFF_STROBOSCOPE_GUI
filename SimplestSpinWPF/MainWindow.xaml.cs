@@ -514,7 +514,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonR2G = (RadioButton)sender;
             if (radioButtonR2G.IsChecked == true)
             {
-                SendCMD("M1\r\n");
+                SendCMD("M1");
             }
         }
 
@@ -524,7 +524,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonR_G = (RadioButton)sender;
             if (radioButtonR_G.IsChecked == true)
             {
-                SendCMD("M1\r\n");
+                SendCMD("M1");
             }
         }
 
@@ -534,7 +534,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonGreen = (RadioButton)sender;
             if (radioButtonGreen.IsChecked == true)
             {
-                SendCMD("M1\r\n");
+                SendCMD("M1");
             }
         }
 
@@ -544,7 +544,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonRed = (RadioButton)sender;
             if (radioButtonRed.IsChecked == true)
             {
-                SendCMD("M1\r\n");
+                SendCMD("M1");
             }
         }
 
@@ -554,7 +554,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonOxy = (RadioButton)sender;
             if (radioButtonOxy.IsChecked == true)
             {
-                SendCMD("M4\r\n");
+                SendCMD("M4");
                 Oxy = true;
             }
         }
@@ -564,7 +564,7 @@ namespace SimplestSpinWPF
             RadioButton RadioButtonRedLED = (RadioButton)sender;
             if (radioButtonRedLED.IsChecked == true)
             {
-                SendCMD("M2\r\n");
+                SendCMD("M2");
             }
         }
         private void RadioButtonBothLEDs_Checked(object sender, EventArgs e)
@@ -573,7 +573,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonBothLEDs = (RadioButton)sender;
             if (radioButtonBothLEDs.IsChecked == true)
             {
-                SendCMD("M3\n");
+                SendCMD("M3");
             }
         }
         private void RadioButtonICG_Checked(object sender, EventArgs e)
@@ -582,7 +582,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonICG = (RadioButton)sender;
             if (radioButtonICG.IsChecked == true)
             {
-                SendCMD("M7\n");
+                SendCMD("M7");
             }
         }
         private void RadioButtonSeq_Checked(object sender, EventArgs e)
@@ -591,7 +591,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonSeq = (RadioButton)sender;
             if (radioButtonSeq.IsChecked == true)
             {
-                SendCMD("M6\n");
+                SendCMD("M6");
             }
         }
 
