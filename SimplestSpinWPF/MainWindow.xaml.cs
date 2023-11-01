@@ -518,12 +518,23 @@ namespace SimplestSpinWPF
                 SendCMD("FC1");
         }
 
+        public void zoom(byte currentFilter)
+        {
+
+
+            if (currentFilter == 0)
+                SendCMD("FC0");
+            else
+                SendCMD("FC1");
+        }
+
         private void RadioButtonR2G_Checked(object sender, EventArgs e)
         {
             // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonR2G = (RadioButton)sender;
             if (radioButtonR2G.IsChecked == true)
             {
+                filterChange(0);
                 SendCMD("M1");
             }
         }
@@ -534,6 +545,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonR_G = (RadioButton)sender;
             if (radioButtonR_G.IsChecked == true)
             {
+                filterChange(0);
                 SendCMD("M1");
             }
         }
@@ -544,6 +556,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonGreen = (RadioButton)sender;
             if (radioButtonGreen.IsChecked == true)
             {
+                filterChange(0);
                 SendCMD("M1");
             }
         }
@@ -554,6 +567,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonRed = (RadioButton)sender;
             if (radioButtonRed.IsChecked == true)
             {
+                filterChange(0);
                 SendCMD("M1");
             }
         }
@@ -564,6 +578,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonOxy = (RadioButton)sender;
             if (radioButtonOxy.IsChecked == true)
             {
+                filterChange(1);
                 SendCMD("M4");
                 Oxy = true;
             }
@@ -574,6 +589,7 @@ namespace SimplestSpinWPF
             RadioButton RadioButtonRedLED = (RadioButton)sender;
             if (radioButtonRedLED.IsChecked == true)
             {
+                filterChange(0);
                 SendCMD("M2");
             }
         }
@@ -583,6 +599,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonBothLEDs = (RadioButton)sender;
             if (radioButtonBothLEDs.IsChecked == true)
             {
+                filterChange(0);
                 SendCMD("M3");
             }
         }
@@ -592,6 +609,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonICG = (RadioButton)sender;
             if (radioButtonICG.IsChecked == true)
             {
+                filterChange(1);
                 SendCMD("M7");
             }
         }
@@ -601,6 +619,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonSeq = (RadioButton)sender;
             if (radioButtonSeq.IsChecked == true)
             {
+                filterChange(0);
                 SendCMD("M6");
             }
         }
