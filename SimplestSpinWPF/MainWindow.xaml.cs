@@ -47,7 +47,7 @@ namespace SimplestSpinWPF
         static bool InitFlir = true;
         static bool InitDAO = true;
         static bool ChotoEscho = true; static bool ChotoEscho2 = true;
-        bool ggg=false;
+        bool ggg = false; bool gg2g = false;
 
 
         IManagedCamera SpinCamColor = null;
