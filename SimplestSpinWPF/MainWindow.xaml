@@ -66,7 +66,14 @@
         <Button Background="DarkGray" x:Name="buttonFocusPlus" Content="Focus+" Grid.Column="2" HorizontalAlignment="Left" Margin="102,148,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
         <Button Background="DarkGray" x:Name="buttonFocusMinus" Content="Focus-" Grid.Column="2" HorizontalAlignment="Left" Margin="20,148,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
         <Grid x:Name="GraphGrid" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="208" Margin="0,680,0,0" VerticalAlignment="Bottom">
-            <Label x:Name="DebugLabel" Content="123234534513131" HorizontalAlignment="Left" Margin="39,24,0,0" VerticalAlignment="Top" Height="92" Width="564" Foreground="White" FontSize="36"/>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <Label x:Name="DebugLabel" Content="123234534513131" HorizontalAlignment="Left" Margin="537,0,0,0" VerticalAlignment="Top" Height="24" Width="200" Foreground="White" Grid.Row="1"/>
+            <WindowsFormsHost Name="WinFormsHost" HorizontalAlignment="Stretch"  Margin="0,0,0,0" VerticalAlignment="Stretch" />
+            <Button x:Name="button5" Content="Button" HorizontalAlignment="Left" Height="20" Margin="102,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="87" Click="button5_Click"/>
+            <Button x:Name="button6" Content="Button" HorizontalAlignment="Left" Height="21" Margin="10,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="87" Click="button6_Click"/>
         </Grid>
         <Button Background="DarkGray"  x:Name="ShowGraphButton" Content="Graph" Grid.Column="4" HorizontalAlignment="Center" Margin="0,735,0,0" VerticalAlignment="Top" Width="62" RenderTransformOrigin="0.506,-2.505" Click="ShowGraphButton_Click"/>
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->

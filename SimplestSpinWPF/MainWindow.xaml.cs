@@ -33,7 +33,8 @@ using System.Windows;
 using System.Windows.Controls;
 using RadioButton = System.Windows.Controls.RadioButton;
 using MessageBox = System.Windows.MessageBox;
-using OxyPlot;
+using Steema.TeeChart;
+
 
 namespace SimplestSpinWPF
 {
@@ -101,6 +102,7 @@ namespace SimplestSpinWPF
             RefreshThread.Start();
             //ModeSelectThread.Start();
             GraphGrid.Visibility = System.Windows.Visibility.Hidden;
+            InitPlot();
         }
 
         const int PortSpeed = 115200;
@@ -147,51 +149,18 @@ namespace SimplestSpinWPF
         DispatcherTimer Timer = new DispatcherTimer();
         int FPSFrameCounter = 0;
         static List<IGXDeviceInfo> CamList = null;
-
+        TChart chart = new TChart();
 
         void InitPlot()
         {
-            OxyPlot.Wpf.PlotView plotView = new OxyPlot.Wpf.PlotView();
-
-
-            OxyPlot.Series.LineSeries l = new OxyPlot.Series.LineSeries();
-            GraphGrid.SetRow( 0);
-            GraphGrid.SetColumn( 0);
-            GraphGrid.Children.Add(plotView);
-
-            PlotModel plotModel = new PlotModel();
-            plotView.Model = plotModel;
-            var series = new OxyPlot.Series.LineSeries()
-            {
-                Title = "Sample Series",
-            };
-            series.StrokeThickness = 2;
-
-            for (int i = 0; i < 200; i++)
-                series.Points.Add(new DataPoint(i, i * i));
-
-            series.Points.Add(new DataPoint(0, 0));
-            series.Points.Add(new DataPoint(1, 1));
-            series.Points.Add(new DataPoint(2, 2));
-
-            plotModel.Series.Add(series);
-            //var xAxis = new OxyPlot.Axes. LinearAxis()
-            //{
-            //    Title = "X-Axis",
-            //};
-
-            //var yAxis = new OxyPlot.Axes.LinearAxis()
-            //{
-            //    Title = "Y-Axis",
-            //    Angle =   45
-            //};
-
-            //plotModel.Axes.Add(xAxis);
-            //plotModel.Axes.Add(yAxis);
-
-            plotView.InvalidatePlot(true);
-            plotView.Width = 600;
-            plotView.Height = 200;
+            WinFormsHost.Child = chart;
+            Steema.TeeChart.Styles.Line lineSeries = new Steema.TeeChart.Styles.Line();
+            lineSeries.Title = "Sample Series";
+            lineSeries.FillSampleValues(); // Optional: Generate sample data for the series
+            chart.Series.Add(lineSeries);
+            chart.Header.Text = "My Chart";
+            chart.Axes.Bottom.Title.Text = "X-Axis";
+            chart.Axes.Left.Title.Text = "Y-Axis";
         }
 
         void DAOCamInit()
@@ -1535,6 +1504,15 @@ namespace SimplestSpinWPF
                 GraphGrid.Visibility = System.Windows.Visibility.Hidden;
         }
 
+        private void button6_Click(object sender, RoutedEventArgs e)
+        {
+            chart.BackColor = Color.FromArgb(255,0,0,0);
+        }
+
+        private void button5_Click(object sender, RoutedEventArgs e)
+        {
+            chart.Walls.Back.Transparent = true;
+        }
 
         public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
         {
