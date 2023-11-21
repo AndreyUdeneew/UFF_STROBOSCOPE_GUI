@@ -33,6 +33,7 @@ using System.Windows;
 using System.Windows.Controls;
 using RadioButton = System.Windows.Controls.RadioButton;
 using MessageBox = System.Windows.MessageBox;
+using Emgu.CV;
 
 namespace SimplestSpinWPF
 {
@@ -132,8 +133,9 @@ namespace SimplestSpinWPF
         string fileName4Saving = "";
         string fileNameDecreased = "";
         string _portName = "";
-        string CMD = "";
+        volatile string CMD = "";
         bool Oxy = false;
+        string AIM_color = "blue";
 
         public long PrevImageSum = 0;
 
@@ -510,7 +512,11 @@ namespace SimplestSpinWPF
                 if (p.IsOpen)
                 {
                     //string CMD2send = CMD;
-                    p.Write(CMD);
+                    //p.Write(CMD+"\n");
+                    if (CMD == "M1")
+                        p.Write("M1\n");
+                    if(CMD == "M2")
+                        p.Write("M2\n");
                     Debug.WriteLine(CMD);
                     CMD = "";
                 }
@@ -569,6 +575,7 @@ namespace SimplestSpinWPF
             if (radioButtonR2G.IsChecked == true)
             {
                 CMD = "M1";
+                AIM_color = "blue";
                 SendCMD();
                 //filterChange(0);
                 //if (p != null)
@@ -585,6 +592,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonR_G = (RadioButton)sender;
             if (radioButtonR_G.IsChecked == true)
             {
+                AIM_color = "blue";
                 filterChange(0);
                 CMD = "M1";
                 SendCMD();
@@ -602,6 +610,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonGreen = (RadioButton)sender;
             if (radioButtonGreen.IsChecked == true)
             {
+                AIM_color = "blue";
                 filterChange(0);
                 CMD = "M1";
                 SendCMD();
@@ -619,6 +628,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonRed = (RadioButton)sender;
             if (radioButtonRed.IsChecked == true)
             {
+                AIM_color = "blue";
                 filterChange(0);
                 CMD = "M1";
                 SendCMD();
@@ -636,6 +646,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonOxy = (RadioButton)sender;
             if (radioButtonOxy.IsChecked == true)
             {
+                AIM_color = "blue";
                 filterChange(1);
                 CMD = "M4";
                 SendCMD();
@@ -653,6 +664,7 @@ namespace SimplestSpinWPF
             RadioButton RadioButtonRedLED = (RadioButton)sender;
             if (radioButtonRedLED.IsChecked == true)
             {
+                AIM_color = "red";
                 filterChange(0);
                 CMD = "M2";
                 SendCMD();
@@ -669,6 +681,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonBothLEDs = (RadioButton)sender;
             if (radioButtonBothLEDs.IsChecked == true)
             {
+                AIM_color = "blue";
                 filterChange(0);
                 CMD = "M3";
                 SendCMD();
@@ -685,6 +698,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonICG = (RadioButton)sender;
             if (radioButtonICG.IsChecked == true)
             {
+                AIM_color = "blue";
                 filterChange(1);
                 CMD = "M7";
                 SendCMD();
@@ -701,6 +715,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonSeq = (RadioButton)sender;
             if (radioButtonSeq.IsChecked == true)
             {
+                AIM_color = "blue";
                 filterChange(0);
                 CMD = "M6";
                 SendCMD();
@@ -996,7 +1011,16 @@ namespace SimplestSpinWPF
             for (int cursorString = 0; cursorString < hCursor; cursorString += 1)
                 for (int b = ((firstCursorPixel + width * cursorString) + 0), g = ((firstCursorPixel + width * cursorString) + 1), r = ((firstCursorPixel + width * cursorString) + 2); b < ((firstCursorPixel + width * cursorString) + wCursor * 3); b += 3, r += 3, g += 3)
                 {
-                    bb[g] >>= 1; bb[b] >>= 1; bb[r] >>= 1;
+                    //bb[g] >>= 1; bb[b] >>= 1; bb[r] >>= 1;
+                    if (AIM_color == "red")
+                    {
+                        bb[g] = 0; bb[b] = 255; bb[r] = 0;
+                    }
+                    if (AIM_color == "blue")
+                    {
+                        bb[g] = 0; bb[b] = 0; bb[r] = 255;
+                    }
+
                     if (background == wb1)
                     {
                         SummFluor += (bb2[r] - bb1[r]);
@@ -1209,6 +1233,26 @@ namespace SimplestSpinWPF
             if (GreenFlu || RedFlu || R2G || R_G)
             {
 
+                //try
+                //{
+                //    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
+                //    System.Drawing.Bitmap bmp;
+                //    bmp = BitmapFromWriteableBitmap(frameSource);
+                //    Graphics gr = Graphics.FromImage(bmp);
+                //    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.Blue, 0, 0);
+                //    BitmapFrame frame = BitmapFrame.Create(frameSource);
+                //    DateTime d = DateTime.Now;
+                //    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                //        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                //        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_string)
+                //        );
+                //    bmp.Save(Filename);
+                //}
+                //catch (Exception ex)
+                //{
+                //    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //}
+
                 try
                 {
                     WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
@@ -1220,7 +1264,7 @@ namespace SimplestSpinWPF
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1229,45 +1273,45 @@ namespace SimplestSpinWPF
                     System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                try
-                {
-                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 3);
+                //try
+                //{
+                //    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 3);
 
-                    System.Drawing.Bitmap bmp;
-                    bmp = BitmapFromWriteableBitmap(frameSource);
-                    Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.Blue, 0, 0);
-                    DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + FI_string)
-                        );
-                    bmp.Save(Filename);
-                }
-                catch (Exception ex)
-                {
-                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                //    System.Drawing.Bitmap bmp;
+                //    bmp = BitmapFromWriteableBitmap(frameSource);
+                //    Graphics gr = Graphics.FromImage(bmp);
+                //    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.Blue, 0, 0);
+                //    DateTime d = DateTime.Now;
+                //    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                //        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                //        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + FI_string)
+                //        );
+                //    bmp.Save(Filename);
+                //}
+                //catch (Exception ex)
+                //{
+                //    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //}
 
-                try
-                {
-                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 5);
+                //try
+                //{
+                //    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 5);
 
-                    System.Drawing.Bitmap bmp;
-                    bmp = BitmapFromWriteableBitmap(frameSource);
-                    Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.Blue, 0, 0);
-                    DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + FI_string)
-                        );
-                    bmp.Save(Filename);
-                }
-                catch (Exception ex)
-                {
-                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                //    System.Drawing.Bitmap bmp;
+                //    bmp = BitmapFromWriteableBitmap(frameSource);
+                //    Graphics gr = Graphics.FromImage(bmp);
+                //    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.Blue, 0, 0);
+                //    DateTime d = DateTime.Now;
+                //    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                //        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                //        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + FI_string)
+                //        );
+                //    bmp.Save(Filename);
+                //}
+                //catch (Exception ex)
+                //{
+                //    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //}
             }
 
             if (RLED)
