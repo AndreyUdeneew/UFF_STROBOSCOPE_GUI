@@ -155,13 +155,22 @@ namespace SimplestSpinWPF
         {
             WinFormsHost.Child = chart;
             Steema.TeeChart.Styles.Line lineSeries = new Steema.TeeChart.Styles.Line();
-            lineSeries.Title = "Sample Series";
+            lineSeries.Title = "Central cursor";
             lineSeries.FillSampleValues(); // Optional: Generate sample data for the series
             chart.Series.Add(lineSeries);
-            chart.Header.Text = "My Chart";
-            chart.Axes.Bottom.Title.Text = "X-Axis";
-            chart.Axes.Left.Title.Text = "Y-Axis";
+            chart.Header.Visible = false;
+            chart.Axes.Bottom.Title.Text = "Millisecond";
+            chart.Axes.Left.Title.Text = "A.U.";
+            chart.Legend.Visible = false;
+            chart.Panel.Transparency = 100;
+            chart.Aspect.Chart3DPercent = 0;
+            chart.Aspect.Width3D = 0; chart.Aspect.View3D = false;
+            lineSeries.LinePen.Width = 3;
+            chart.Axes.Bottom.AxisPen.Color = Color.White;
+            chart.Axes.Left.AxisPen.Color = Color.White;
         }
+
+
 
         void DAOCamInit()
         {
@@ -953,10 +962,14 @@ namespace SimplestSpinWPF
             {
                 TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
                 TailKiller.Start();
+                try { chart.Series[0].Clear(); } catch { }
             }
-            if (TailKiller.ThreadState != System.Threading.ThreadState.Running)
-                TailKiller.Start();
-            
+            //if (TailKiller.ThreadState != System.Threading.ThreadState.Running)
+            //    try
+            //    {
+            //        TailKiller.Start();
+            //    }
+            //    catch { }
             //FI += FI;
             if (FIcounter == averageLimit)
             {
@@ -967,29 +980,34 @@ namespace SimplestSpinWPF
                 //FI = 0;
             }
             //sss = String.Format("{0:F1}", FI);
-            //sss = String.Format("{0:F1}", FI);
-            //FI_Label.Content = sss;
+            sss = String.Format("{0:F1}", FI);
+            FI_Label.Content = sss;
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
         }
 
         public void CutGraphPointsTail()
-        {
+        {                    
+            GraphPoint ppp = GraphPoints[GraphPoints.Count - 1];
+            if(double.IsNaN(ppp.FI_Real) || double.IsInfinity(ppp.FI_Real) || Math.Abs(ppp.FI_Real) > 10e20 || Math.Abs(ppp.FI_Real) < 10e-20)
+                ppp.FI_Real = 0;
             double thePast = (DateTime.Now - ProgrammStarted).TotalMilliseconds - 600000;
             GraphPoints.RemoveAll((k) => { return k.millisecond < thePast; });
             if ((DateTime.Now - DebugGap).TotalMilliseconds > 3000)
             {
                 DebugGap = DateTime.Now;
                 if (GraphPoints.Count > 1)
-                {
-                    GraphPoint ppp = GraphPoints[GraphPoints.Count - 1];
                     DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.FI_Real));
-            } }
+            }
 
+            //Update chart
+            chart.Invoke(new Action( () =>  chart.Series[0].Add(ppp.millisecond, ppp.FI_Real) ));
         }
+
+
         System.Threading.Thread TailKiller; 
-            DateTime DebugGap = DateTime.Now;
+        DateTime DebugGap = DateTime.Now;
         public class GraphPoint
         {
             public double millisecond;
@@ -1512,6 +1530,34 @@ namespace SimplestSpinWPF
         private void button5_Click(object sender, RoutedEventArgs e)
         {
             chart.Walls.Back.Transparent = true;
+            chart.Axes.Bottom.Labels.Color = chart.Axes.Bottom.Labels.Color = Color.White;
+            chart.Axes.Bottom.Ticks.DrawingPen.Color = Color.Blue;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SwitchToSmallScreen();
+        }
+
+        void SwitchToSmallScreen()
+        {
+            var allMonitors = System.Windows.Forms.Screen.AllScreens;
+
+            // Ищем второй монитор, FUllHD или похожий
+            var secondMonitor = allMonitors.FirstOrDefault(m => !m.Primary && ((float)m.Bounds.Width / m.Bounds.Height < 1.78) && ((float)m.Bounds.Width / m.Bounds.Height > 1.76));
+
+            // Если второй монитор найден, устанавливаем окно на этот монитор
+            if (secondMonitor != null)
+            {
+                //mainWindow.Left = secondMonitor.WorkingArea.Left;
+                //mainWindow.Top = secondMonitor.WorkingArea.Top;
+
+                ResizeMode = ResizeMode.CanResize;
+                WindowState = WindowState.Normal;
+                Left = secondMonitor.WorkingArea.Left; Top = secondMonitor.WorkingArea.Top;
+                WindowState = WindowState.Maximized;
+                ResizeMode = ResizeMode.NoResize;
+            }
         }
 
         public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
