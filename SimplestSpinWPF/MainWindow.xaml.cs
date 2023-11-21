@@ -33,6 +33,7 @@ using System.Windows;
 using System.Windows.Controls;
 using RadioButton = System.Windows.Controls.RadioButton;
 using MessageBox = System.Windows.MessageBox;
+using OxyPlot;
 
 namespace SimplestSpinWPF
 {
@@ -58,7 +59,7 @@ namespace SimplestSpinWPF
         //Thread ModeSelectThread;
         public MainWindow()
         {
-            //InitializeComponent();
+            InitializeComponent();
 
             //RadioButton rb = new RadioButton { IsChecked = true, GroupName = "Languages", Content = "JavaScript" };
             //rb.Checked += RadioButton_Checked;
@@ -99,6 +100,7 @@ namespace SimplestSpinWPF
             //ModeSelectThread = new Thread(ModeSelection);
             RefreshThread.Start();
             //ModeSelectThread.Start();
+            GraphGrid.Visibility = System.Windows.Visibility.Hidden;
         }
 
         const int PortSpeed = 115200;
@@ -147,7 +149,50 @@ namespace SimplestSpinWPF
         static List<IGXDeviceInfo> CamList = null;
 
 
+        void InitPlot()
+        {
+            OxyPlot.Wpf.PlotView plotView = new OxyPlot.Wpf.PlotView();
 
+
+            OxyPlot.Series.LineSeries l = new OxyPlot.Series.LineSeries();
+            GraphGrid.SetRow( 0);
+            GraphGrid.SetColumn( 0);
+            GraphGrid.Children.Add(plotView);
+
+            PlotModel plotModel = new PlotModel();
+            plotView.Model = plotModel;
+            var series = new OxyPlot.Series.LineSeries()
+            {
+                Title = "Sample Series",
+            };
+            series.StrokeThickness = 2;
+
+            for (int i = 0; i < 200; i++)
+                series.Points.Add(new DataPoint(i, i * i));
+
+            series.Points.Add(new DataPoint(0, 0));
+            series.Points.Add(new DataPoint(1, 1));
+            series.Points.Add(new DataPoint(2, 2));
+
+            plotModel.Series.Add(series);
+            //var xAxis = new OxyPlot.Axes. LinearAxis()
+            //{
+            //    Title = "X-Axis",
+            //};
+
+            //var yAxis = new OxyPlot.Axes.LinearAxis()
+            //{
+            //    Title = "Y-Axis",
+            //    Angle =   45
+            //};
+
+            //plotModel.Axes.Add(xAxis);
+            //plotModel.Axes.Add(yAxis);
+
+            plotView.InvalidatePlot(true);
+            plotView.Width = 600;
+            plotView.Height = 200;
+        }
 
         void DAOCamInit()
         {
@@ -933,6 +978,16 @@ namespace SimplestSpinWPF
             FI_Real = SummFluor / SummWhite;
             FI = FI_Real / FI_norma;
             FIcounter += 1;
+
+            GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+            if(TailKiller == null)
+            {
+                TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
+                TailKiller.Start();
+            }
+            if (TailKiller.ThreadState != System.Threading.ThreadState.Running)
+                TailKiller.Start();
+            
             //FI += FI;
             if (FIcounter == averageLimit)
             {
@@ -950,6 +1005,29 @@ namespace SimplestSpinWPF
             return wb;
         }
 
+        public void CutGraphPointsTail()
+        {
+            double thePast = (DateTime.Now - ProgrammStarted).TotalMilliseconds - 600000;
+            GraphPoints.RemoveAll((k) => { return k.millisecond < thePast; });
+            if ((DateTime.Now - DebugGap).TotalMilliseconds > 3000)
+            {
+                DebugGap = DateTime.Now;
+                if (GraphPoints.Count > 1)
+                {
+                    GraphPoint ppp = GraphPoints[GraphPoints.Count - 1];
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.FI_Real));
+            } }
+
+        }
+        System.Threading.Thread TailKiller; 
+            DateTime DebugGap = DateTime.Now;
+        public class GraphPoint
+        {
+            public double millisecond;
+            public double FI_Real;
+        }
+        public List<GraphPoint> GraphPoints = new List<GraphPoint>();
+        DateTime ProgrammStarted = DateTime.Now;
 
         private System.Drawing.Bitmap BitmapFromWriteableBitmap(WriteableBitmap writeBmp)
         {
@@ -1448,6 +1526,15 @@ namespace SimplestSpinWPF
                 else break;
             }
         }
+
+        private void ShowGraphButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(GraphGrid.Visibility != System.Windows.Visibility.Visible)
+                GraphGrid.Visibility = System.Windows.Visibility.Visible;
+            else
+                GraphGrid.Visibility = System.Windows.Visibility.Hidden;
+        }
+
 
         public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
         {
