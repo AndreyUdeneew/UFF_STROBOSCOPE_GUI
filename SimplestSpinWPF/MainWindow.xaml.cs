@@ -517,6 +517,18 @@ namespace SimplestSpinWPF
                         p.Write("M1\n");
                     if(CMD == "M2")
                         p.Write("M2\n");
+                    if (CMD == "M7")
+                        p.Write("M7\n");
+                    if (CMD == "M6")
+                        p.Write("M6\n");
+                    if (CMD == "M4")
+                        p.Write("M4\n");
+                    if (CMD == "M3")
+                        p.Write("M3\n");
+                    //if (CMD == "FC0")
+                    //    p.Write("FC0\n");
+                    //if (CMD == "FC1")
+                    //    p.Write("FC1\n");
                     Debug.WriteLine(CMD);
                     CMD = "";
                 }
