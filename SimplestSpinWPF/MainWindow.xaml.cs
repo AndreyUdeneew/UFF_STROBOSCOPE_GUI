@@ -658,7 +658,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonOxy = (RadioButton)sender;
             if (radioButtonOxy.IsChecked == true)
             {
-                AIM_color = "blue";
+                AIM_color = "white";
                 filterChange(1);
                 CMD = "M4";
                 SendCMD();
@@ -693,7 +693,7 @@ namespace SimplestSpinWPF
             RadioButton radioButtonBothLEDs = (RadioButton)sender;
             if (radioButtonBothLEDs.IsChecked == true)
             {
-                AIM_color = "blue";
+                AIM_color = "white";
                 filterChange(0);
                 CMD = "M3";
                 SendCMD();
@@ -1027,6 +1027,10 @@ namespace SimplestSpinWPF
                     if (AIM_color == "red")
                     {
                         bb[g] = 0; bb[b] = 255; bb[r] = 0;
+                    }
+                    if (AIM_color == "white")
+                    {
+                        bb[g] = 255; bb[b] = 255; bb[r] = 255;
                     }
                     if (AIM_color == "blue")
                     {
