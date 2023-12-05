@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,7 +33,8 @@ using System.Windows;
 using System.Windows.Controls;
 using RadioButton = System.Windows.Controls.RadioButton;
 using MessageBox = System.Windows.MessageBox;
-using Emgu.CV;
+using Steema.TeeChart;
+
 
 namespace SimplestSpinWPF
 {
@@ -59,7 +60,7 @@ namespace SimplestSpinWPF
         //Thread ModeSelectThread;
         public MainWindow()
         {
-            //InitializeComponent();
+            InitializeComponent();
 
             //RadioButton rb = new RadioButton { IsChecked = true, GroupName = "Languages", Content = "JavaScript" };
             //rb.Checked += RadioButton_Checked;
@@ -102,6 +103,8 @@ namespace SimplestSpinWPF
             //ModeSelectThread = new Thread(ModeSelection);
             RefreshThread.Start();
             //ModeSelectThread.Start();
+            GraphGrid.Visibility = System.Windows.Visibility.Hidden;
+            InitPlot();
         }
 
         const int PortSpeed = 115200;
@@ -149,7 +152,26 @@ namespace SimplestSpinWPF
         DispatcherTimer Timer = new DispatcherTimer();
         int FPSFrameCounter = 0;
         static List<IGXDeviceInfo> CamList = null;
+        TChart chart = new TChart();
 
+        void InitPlot()
+        {
+            WinFormsHost.Child = chart;
+            Steema.TeeChart.Styles.Line lineSeries = new Steema.TeeChart.Styles.Line();
+            lineSeries.Title = "Central cursor";
+            lineSeries.FillSampleValues(); // Optional: Generate sample data for the series
+            chart.Series.Add(lineSeries);
+            chart.Header.Visible = false;
+            chart.Axes.Bottom.Title.Text = "Millisecond";
+            chart.Axes.Left.Title.Text = "A.U.";
+            chart.Legend.Visible = false;
+            chart.Panel.Transparency = 100;
+            chart.Aspect.Chart3DPercent = 0;
+            chart.Aspect.Width3D = 0; chart.Aspect.View3D = false;
+            lineSeries.LinePen.Width = 3;
+            chart.Axes.Bottom.AxisPen.Color = Color.White;
+            chart.Axes.Left.AxisPen.Color = Color.White;
+        }
 
 
 
@@ -1061,6 +1083,20 @@ namespace SimplestSpinWPF
             FI_Real = SummFluor / SummWhite;
             FI = FI_Real / FI_norma;
             FIcounter += 1;
+
+            GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+            if(TailKiller == null)
+            {
+                TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
+                TailKiller.Start();
+                try { chart.Series[0].Clear(); } catch { }
+            }
+            //if (TailKiller.ThreadState != System.Threading.ThreadState.Running)
+            //    try
+            //    {
+            //        TailKiller.Start();
+            //    }
+            //    catch { }
             //FI += FI;
             if (FIcounter == averageLimit)
             {
@@ -1071,13 +1107,41 @@ namespace SimplestSpinWPF
                 //FI = 0;
             }
             //sss = String.Format("{0:F1}", FI);
-            //sss = String.Format("{0:F1}", FI);
-            //FI_Label.Content = sss;
+            sss = String.Format("{0:F1}", FI);
+            FI_Label.Content = sss;
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
         }
 
+        public void CutGraphPointsTail()
+        {                    
+            GraphPoint ppp = GraphPoints[GraphPoints.Count - 1];
+            if(double.IsNaN(ppp.FI_Real) || double.IsInfinity(ppp.FI_Real) || Math.Abs(ppp.FI_Real) > 10e20 || Math.Abs(ppp.FI_Real) < 10e-20)
+                ppp.FI_Real = 0;
+            double thePast = (DateTime.Now - ProgrammStarted).TotalMilliseconds - 600000;
+            GraphPoints.RemoveAll((k) => { return k.millisecond < thePast; });
+            if ((DateTime.Now - DebugGap).TotalMilliseconds > 3000)
+            {
+                DebugGap = DateTime.Now;
+                if (GraphPoints.Count > 1)
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.FI_Real));
+            }
+
+            //Update chart
+            chart.Invoke(new Action( () =>  chart.Series[0].Add(ppp.millisecond, ppp.FI_Real) ));
+        }
+
+
+        System.Threading.Thread TailKiller; 
+        DateTime DebugGap = DateTime.Now;
+        public class GraphPoint
+        {
+            public double millisecond;
+            public double FI_Real;
+        }
+        public List<GraphPoint> GraphPoints = new List<GraphPoint>();
+        DateTime ProgrammStarted = DateTime.Now;
 
         private System.Drawing.Bitmap BitmapFromWriteableBitmap(WriteableBitmap writeBmp)
         {
@@ -1602,6 +1666,52 @@ namespace SimplestSpinWPF
                     }
                     else break;
                 else break;
+            }
+        }
+
+        private void ShowGraphButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(GraphGrid.Visibility != System.Windows.Visibility.Visible)
+                GraphGrid.Visibility = System.Windows.Visibility.Visible;
+            else
+                GraphGrid.Visibility = System.Windows.Visibility.Hidden;
+        }
+
+        private void button6_Click(object sender, RoutedEventArgs e)
+        {
+            chart.BackColor = Color.FromArgb(255,0,0,0);
+        }
+
+        private void button5_Click(object sender, RoutedEventArgs e)
+        {
+            chart.Walls.Back.Transparent = true;
+            chart.Axes.Bottom.Labels.Color = chart.Axes.Bottom.Labels.Color = Color.White;
+            chart.Axes.Bottom.Ticks.DrawingPen.Color = Color.Blue;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SwitchToSmallScreen();
+        }
+
+        void SwitchToSmallScreen()
+        {
+            var allMonitors = System.Windows.Forms.Screen.AllScreens;
+
+            // Ищем второй монитор, FUllHD или похожий
+            var secondMonitor = allMonitors.FirstOrDefault(m => !m.Primary && ((float)m.Bounds.Width / m.Bounds.Height < 1.78) && ((float)m.Bounds.Width / m.Bounds.Height > 1.76));
+
+            // Если второй монитор найден, устанавливаем окно на этот монитор
+            if (secondMonitor != null)
+            {
+                //mainWindow.Left = secondMonitor.WorkingArea.Left;
+                //mainWindow.Top = secondMonitor.WorkingArea.Top;
+
+                ResizeMode = ResizeMode.CanResize;
+                WindowState = WindowState.Normal;
+                Left = secondMonitor.WorkingArea.Left; Top = secondMonitor.WorkingArea.Top;
+                WindowState = WindowState.Maximized;
+                ResizeMode = ResizeMode.NoResize;
             }
         }
 
