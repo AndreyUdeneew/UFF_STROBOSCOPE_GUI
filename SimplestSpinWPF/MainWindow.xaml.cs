@@ -485,7 +485,7 @@ namespace SimplestSpinWPF
                         {
                             Debug.WriteLine(i.ToString() + " " + ex.Message + "\n" + ex.StackTrace.ToString());
                         }
-                        }
+                        -}
         }
 
         void RefreshScreen()
@@ -1107,8 +1107,8 @@ namespace SimplestSpinWPF
                 //FI = 0;
             }
             //sss = String.Format("{0:F1}", FI);
-            sss = String.Format("{0:F1}", FI);
-            FI_Label.Content = sss;
+            FI_string = String.Format("{0:F1}", FI);
+            FI_Label.Content = FI_string;
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;

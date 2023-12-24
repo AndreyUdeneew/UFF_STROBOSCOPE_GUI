@@ -29,7 +29,7 @@
         <DockPanel x:Name="LayoutLeft" Grid.Column="0" Grid.ColumnSpan="2"  >
         </DockPanel>
         <CheckBox x:Name="DrawDiffCheckBox" Content="Fluor" Grid.Column="4" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" IsChecked="True" Foreground="Gray"/>
-        <Slider x:Name="AmplificationSlider" Grid.Column="4" HorizontalAlignment="Left" Height="180" Margin="20,142,0,0" VerticalAlignment="Top" Width="29" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray"/>
+        <Slider x:Name="AmplificationSlider" Grid.Column="4" HorizontalAlignment="Left" Height="180" Margin="9,140,0,0" VerticalAlignment="Top" Width="16" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray"/>
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonGreen" Content="Green" Grid.Column="4" HorizontalAlignment="Left" Margin="20,333,0,0" VerticalAlignment="Top" IsThreeState="False"  Background="#FFBFBFBF" Checked="RadioButtonGreen_Checked"/>
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonRed" Content="Red" Grid.Column="4" HorizontalAlignment="Center" Margin="0,353,0,0" VerticalAlignment="Top" IsChecked="True" Background="#FFBFBFBF" Checked="RadioButtonRed_Checked"/>
         <!--<CheckBox x:Name="checkBoxGray" Content="In gray" Grid.Column="4" HorizontalAlignment="Left" Margin="9,459,0,0" VerticalAlignment="Top" Foreground="Gray" IsThreeState="False" IsChecked="true"/>-->
@@ -76,6 +76,11 @@
             <Button x:Name="button6" Content="Button" HorizontalAlignment="Left" Height="21" Margin="10,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="87" Click="button6_Click"/>
         </Grid>
         <Button Background="DarkGray"  x:Name="ShowGraphButton" Content="Graph" Grid.Column="4" HorizontalAlignment="Center" Margin="0,735,0,0" VerticalAlignment="Top" Width="62" RenderTransformOrigin="0.506,-2.505" Click="ShowGraphButton_Click"/>
+        <Slider x:Name="Slider_Gain" Grid.Column="4" HorizontalAlignment="Center" Height="180" Margin="0,140,0,0" VerticalAlignment="Top" Width="16" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray"/>
+        <Slider x:Name="Slider_Exposure" Grid.Column="4" HorizontalAlignment="Left" Height="180" Margin="57,140,0,0" VerticalAlignment="Top" Width="16" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray"/>
+        <Label x:Name="Label_coef" Grid.Column="4" Content="Coef" HorizontalAlignment="Left" Margin="0,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
+        <Label x:Name="Label_Gain" Grid.Column="4" Content="G" HorizontalAlignment="Center" Margin="0,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
+        <Label x:Name="Label_Exposure" Grid.Column="4" Content="E" HorizontalAlignment="Left" Margin="57,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
     </Grid>
 
