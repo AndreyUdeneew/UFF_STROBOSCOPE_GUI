@@ -76,8 +76,8 @@
             <Button x:Name="button6" Content="Button" HorizontalAlignment="Left" Height="21" Margin="10,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="87" Click="button6_Click"/>
         </Grid>
         <Button Background="DarkGray"  x:Name="ShowGraphButton" Content="Graph" Grid.Column="4" HorizontalAlignment="Center" Margin="0,735,0,0" VerticalAlignment="Top" Width="62" RenderTransformOrigin="0.506,-2.505" Click="ShowGraphButton_Click"/>
-        <Slider x:Name="Slider_Gain" Grid.Column="4" HorizontalAlignment="Center" Height="180" Margin="0,140,0,0" VerticalAlignment="Top" Width="16" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray"/>
-        <Slider x:Name="Slider_Exposure" Grid.Column="4" HorizontalAlignment="Left" Height="180" Margin="57,140,0,0" VerticalAlignment="Top" Width="16" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray"/>
+        <Slider x:Name="Slider_Gain" Grid.Column="4" HorizontalAlignment="Center" Height="180" Margin="0,140,0,0" VerticalAlignment="Top" Width="16" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray" ValueChanged="Slider_Gain_ValueChanged"/>
+        <Slider x:Name="Slider_Exposure" Grid.Column="4" HorizontalAlignment="Left" Height="180" Margin="57,140,0,0" VerticalAlignment="Top" Width="16" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray" ValueChanged="Slider_Exposure_ValueChanged"/>
         <Label x:Name="Label_coef" Grid.Column="4" Content="Coef" HorizontalAlignment="Left" Margin="0,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
         <Label x:Name="Label_Gain" Grid.Column="4" Content="G" HorizontalAlignment="Center" Margin="0,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
         <Label x:Name="Label_Exposure" Grid.Column="4" Content="E" HorizontalAlignment="Left" Margin="57,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>

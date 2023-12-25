@@ -485,7 +485,7 @@ namespace SimplestSpinWPF
                         {
                             Debug.WriteLine(i.ToString() + " " + ex.Message + "\n" + ex.StackTrace.ToString());
                         }
-                        -}
+                        }
         }
 
         void RefreshScreen()
@@ -1713,6 +1713,16 @@ namespace SimplestSpinWPF
                 WindowState = WindowState.Maximized;
                 ResizeMode = ResizeMode.NoResize;
             }
+        }
+
+        private void Slider_Gain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+        }
+
+        private void Slider_Exposure_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
         }
 
         public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
