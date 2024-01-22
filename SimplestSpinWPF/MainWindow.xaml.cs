@@ -535,6 +535,8 @@ namespace SimplestSpinWPF
                 {
                     //string CMD2send = CMD;
                     //p.Write(CMD+"\n");
+                    if (CMD == "M0")
+                        p.Write("M0\n");
                     if (CMD == "M1")
                         p.Write("M1\n");
                     if(CMD == "M2")
@@ -761,8 +763,27 @@ namespace SimplestSpinWPF
             }
         }
 
+        private void RadioButtonNoLight_Checked(object sender, EventArgs e)
+        {
+            // приводим отправителя к элементу типа RadioButton
+            RadioButton radioNoLight = (RadioButton)sender;
+            if (radioButtonNoLight.IsChecked == true)
+            {
+                AIM_color = "white";
+                filterChange(0);
+                CMD = "M0";
+                SendCMD();
+                //if (p != null)
+                //        if (p.IsOpen)
+                //        {
+                //            p.Write("M6");
+                //        }
+            }
+        }
+
         unsafe public WriteableBitmap FindColoredDifference(BitmapSource bs1, BitmapSource bs2, byte mode)
         {
+            bool NoLight = (bool)radioButtonNoLight.IsChecked;
             bool GreenFlu = (bool)radioButtonGreen.IsChecked;
             bool RedFlu = (bool)radioButtonRed.IsChecked;
             bool R2G = (bool)radioButtonR2G.IsChecked;
@@ -1721,6 +1742,11 @@ namespace SimplestSpinWPF
         }
 
         private void Slider_Exposure_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+
+        }
+
+        private void RadioButtonGreen_Checked(object sender, RoutedEventArgs e)
         {
 
         }
