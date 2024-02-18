@@ -485,7 +485,7 @@ namespace SimplestSpinWPF
                         {
                             Debug.WriteLine(i.ToString() + " " + ex.Message + "\n" + ex.StackTrace.ToString());
                         }
-                        }
+                    }
         }
 
         void RefreshScreen()
@@ -539,7 +539,7 @@ namespace SimplestSpinWPF
                         p.Write("M0\n");
                     if (CMD == "M1")
                         p.Write("M1\n");
-                    if(CMD == "M2")
+                    if (CMD == "M2")
                         p.Write("M2\n");
                     if (CMD == "M7")
                         p.Write("M7\n");
@@ -601,12 +601,12 @@ namespace SimplestSpinWPF
                 CMD = "FC1";
                 SendCMD();
             }
-                
+
         }
 
         private void RadioButtonR2G_Checked(object sender, EventArgs e)
         {
-            // РїСЂРёРІРѕРґРёРј РѕС‚РїСЂР°РІРёС‚РµР»СЏ Рє СЌР»РµРјРµРЅС‚Сѓ С‚РёРїР° RadioButton
+            // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonR2G = (RadioButton)sender;
             if (radioButtonR2G.IsChecked == true)
             {
@@ -624,7 +624,7 @@ namespace SimplestSpinWPF
 
         private void RadioButtonR_G_Checked(object sender, EventArgs e)
         {
-            // РїСЂРёРІРѕРґРёРј РѕС‚РїСЂР°РІРёС‚РµР»СЏ Рє СЌР»РµРјРµРЅС‚Сѓ С‚РёРїР° RadioButton
+            // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonR_G = (RadioButton)sender;
             if (radioButtonR_G.IsChecked == true)
             {
@@ -642,7 +642,7 @@ namespace SimplestSpinWPF
 
         private void RadioButtonGreen_Checked(object sender, EventArgs e)
         {
-            // РїСЂРёРІРѕРґРёРј РѕС‚РїСЂР°РІРёС‚РµР»СЏ Рє СЌР»РµРјРµРЅС‚Сѓ С‚РёРїР° RadioButton
+            // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonGreen = (RadioButton)sender;
             if (radioButtonGreen.IsChecked == true)
             {
@@ -660,7 +660,7 @@ namespace SimplestSpinWPF
 
         private void RadioButtonRed_Checked(object sender, EventArgs e)
         {
-            // РїСЂРёРІРѕРґРёРј РѕС‚РїСЂР°РІРёС‚РµР»СЏ Рє СЌР»РµРјРµРЅС‚Сѓ С‚РёРїР° RadioButton
+            // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonRed = (RadioButton)sender;
             if (radioButtonRed.IsChecked == true)
             {
@@ -678,7 +678,7 @@ namespace SimplestSpinWPF
 
         private void RadioButtonOxy_Checked(object sender, EventArgs e)
         {
-            // РїСЂРёРІРѕРґРёРј РѕС‚РїСЂР°РІРёС‚РµР»СЏ Рє СЌР»РµРјРµРЅС‚Сѓ С‚РёРїР° RadioButton
+            // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonOxy = (RadioButton)sender;
             if (radioButtonOxy.IsChecked == true)
             {
@@ -696,7 +696,7 @@ namespace SimplestSpinWPF
         }
         private void RadioButtonRedLED_Checked(object sender, RoutedEventArgs e)
         {
-            // РїСЂРёРІРѕРґРёРј РѕС‚РїСЂР°РІРёС‚РµР»СЏ Рє СЌР»РµРјРµРЅС‚Сѓ С‚РёРїР° RadioButton
+            // приводим отправителя к элементу типа RadioButton
             RadioButton RadioButtonRedLED = (RadioButton)sender;
             if (radioButtonRedLED.IsChecked == true)
             {
@@ -713,7 +713,7 @@ namespace SimplestSpinWPF
         }
         private void RadioButtonBothLEDs_Checked(object sender, EventArgs e)
         {
-            // РїСЂРёРІРѕРґРёРј РѕС‚РїСЂР°РІРёС‚РµР»СЏ Рє СЌР»РµРјРµРЅС‚Сѓ С‚РёРїР° RadioButton
+            // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonBothLEDs = (RadioButton)sender;
             if (radioButtonBothLEDs.IsChecked == true)
             {
@@ -730,7 +730,7 @@ namespace SimplestSpinWPF
         }
         private void RadioButtonICG_Checked(object sender, EventArgs e)
         {
-            // РїСЂРёРІРѕРґРёРј РѕС‚РїСЂР°РІРёС‚РµР»СЏ Рє СЌР»РµРјРµРЅС‚Сѓ С‚РёРїР° RadioButton
+            // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonICG = (RadioButton)sender;
             if (radioButtonICG.IsChecked == true)
             {
@@ -747,7 +747,7 @@ namespace SimplestSpinWPF
         }
         private void RadioButtonSeq_Checked(object sender, EventArgs e)
         {
-            // РїСЂРёРІРѕРґРёРј РѕС‚РїСЂР°РІРёС‚РµР»СЏ Рє СЌР»РµРјРµРЅС‚Сѓ С‚РёРїР° RadioButton
+            // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonSeq = (RadioButton)sender;
             if (radioButtonSeq.IsChecked == true)
             {
@@ -765,7 +765,7 @@ namespace SimplestSpinWPF
 
         private void RadioButtonNoLight_Checked(object sender, EventArgs e)
         {
-            // РїСЂРёРІРѕРґРёРј РѕС‚РїСЂР°РІРёС‚РµР»СЏ Рє СЌР»РµРјРµРЅС‚Сѓ С‚РёРїР° RadioButton
+            // приводим отправителя к элементу типа RadioButton
             RadioButton radioNoLight = (RadioButton)sender;
             if (radioButtonNoLight.IsChecked == true)
             {
@@ -1106,7 +1106,7 @@ namespace SimplestSpinWPF
             FIcounter += 1;
 
             GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
-            if(TailKiller == null)
+            if (TailKiller == null)
             {
                 TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
                 TailKiller.Start();
@@ -1136,9 +1136,9 @@ namespace SimplestSpinWPF
         }
 
         public void CutGraphPointsTail()
-        {                    
+        {
             GraphPoint ppp = GraphPoints[GraphPoints.Count - 1];
-            if(double.IsNaN(ppp.FI_Real) || double.IsInfinity(ppp.FI_Real) || Math.Abs(ppp.FI_Real) > 10e20 || Math.Abs(ppp.FI_Real) < 10e-20)
+            if (double.IsNaN(ppp.FI_Real) || double.IsInfinity(ppp.FI_Real) || Math.Abs(ppp.FI_Real) > 10e20 || Math.Abs(ppp.FI_Real) < 10e-20)
                 ppp.FI_Real = 0;
             double thePast = (DateTime.Now - ProgrammStarted).TotalMilliseconds - 600000;
             GraphPoints.RemoveAll((k) => { return k.millisecond < thePast; });
@@ -1150,11 +1150,11 @@ namespace SimplestSpinWPF
             }
 
             //Update chart
-            chart.Invoke(new Action( () =>  chart.Series[0].Add(ppp.millisecond, ppp.FI_Real) ));
+            chart.Invoke(new Action(() => chart.Series[0].Add(ppp.millisecond, ppp.FI_Real)));
         }
 
 
-        System.Threading.Thread TailKiller; 
+        System.Threading.Thread TailKiller;
         DateTime DebugGap = DateTime.Now;
         public class GraphPoint
         {
@@ -1692,7 +1692,7 @@ namespace SimplestSpinWPF
 
         private void ShowGraphButton_Click(object sender, RoutedEventArgs e)
         {
-            if(GraphGrid.Visibility != System.Windows.Visibility.Visible)
+            if (GraphGrid.Visibility != System.Windows.Visibility.Visible)
                 GraphGrid.Visibility = System.Windows.Visibility.Visible;
             else
                 GraphGrid.Visibility = System.Windows.Visibility.Hidden;
@@ -1700,7 +1700,7 @@ namespace SimplestSpinWPF
 
         private void button6_Click(object sender, RoutedEventArgs e)
         {
-            chart.BackColor = Color.FromArgb(255,0,0,0);
+            chart.BackColor = Color.FromArgb(255, 0, 0, 0);
         }
 
         private void button5_Click(object sender, RoutedEventArgs e)
@@ -1719,10 +1719,10 @@ namespace SimplestSpinWPF
         {
             var allMonitors = System.Windows.Forms.Screen.AllScreens;
 
-            // РС‰РµРј РІС‚РѕСЂРѕР№ РјРѕРЅРёС‚РѕСЂ, FUllHD РёР»Рё РїРѕС…РѕР¶РёР№
+            // Ищем второй монитор, FUllHD или похожий
             var secondMonitor = allMonitors.FirstOrDefault(m => !m.Primary && ((float)m.Bounds.Width / m.Bounds.Height < 1.78) && ((float)m.Bounds.Width / m.Bounds.Height > 1.76));
 
-            // Р•СЃР»Рё РІС‚РѕСЂРѕР№ РјРѕРЅРёС‚РѕСЂ РЅР°Р№РґРµРЅ, СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РѕРєРЅРѕ РЅР° СЌС‚РѕС‚ РјРѕРЅРёС‚РѕСЂ
+            // Если второй монитор найден, устанавливаем окно на этот монитор
             if (secondMonitor != null)
             {
                 //mainWindow.Left = secondMonitor.WorkingArea.Left;
