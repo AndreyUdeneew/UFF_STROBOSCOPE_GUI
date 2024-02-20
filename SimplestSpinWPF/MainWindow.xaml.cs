@@ -1751,6 +1751,11 @@ namespace SimplestSpinWPF
 
         }
 
+        private void ComboboxCameras_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
         public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
         {
             BitmapImage bitmap = new BitmapImage(new Uri(inputFile)); // inputFile must be absolute path
