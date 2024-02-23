@@ -48,6 +48,7 @@ namespace SimplestSpinWPF
         /// </summary>
         //static bool InitFlir = false;
         //static bool InitDAO = true;
+        static bool CameraIsSelected = false;
 
 
         IManagedCamera SpinCamColor = null;
@@ -61,10 +62,6 @@ namespace SimplestSpinWPF
         public MainWindow()
         {
             InitializeComponent();
-
-            //RadioButton rb = new RadioButton { IsChecked = true, GroupName = "Languages", Content = "JavaScript" };
-            //rb.Checked += RadioButton_Checked;
-            //stackPanel.Children.Add(rb);
 
             for (int i = 0; i < 256; i++)
                 for (int j = 0; j < 256; j++)
@@ -90,21 +87,13 @@ namespace SimplestSpinWPF
             //if (InitDAO)
             //    DAOCamInit();
 
-
-            if (FLiRCamCount < 1 && DAOCamCount < 1)
-            {
-                System.Windows.MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                this.Close();
-                return;
-            }
-
-
             RefreshThread = new Thread(GetImages);
             //ModeSelectThread = new Thread(ModeSelection);
             RefreshThread.Start();
             //ModeSelectThread.Start();
             GraphGrid.Visibility = System.Windows.Visibility.Hidden;
             InitPlot();
+ 
         }
 
         const int PortSpeed = 115200;
@@ -139,6 +128,8 @@ namespace SimplestSpinWPF
         volatile string CMD = "";
         bool Oxy = false;
         string AIM_color = "blue";
+        string selectedCamera = "";
+        string selectedcameraIndex = "";
 
         public long PrevImageSum = 0;
 
@@ -177,6 +168,7 @@ namespace SimplestSpinWPF
 
         void DAOCamInit()
         {
+            //MessageBox.Show("DAO_init!!!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             int n = 0; ///cam number
 
             if (CamDriver == null)
@@ -324,6 +316,7 @@ namespace SimplestSpinWPF
 
         void FlirCamInit()
         {
+            //MessageBox.Show("FLIR_init!!!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             //Camera search and initialization
             // Retrieve singleton reference to system object
             ManagedSystem system = new ManagedSystem();
@@ -414,6 +407,27 @@ namespace SimplestSpinWPF
         }
         private void GetImages()
         {
+            while (CameraIsSelected == false)
+            {
+                Trace.WriteLine("waiting wor camera selecion\r\n");
+                //String selectedCamera = ComboboxCamerascomboBoxInfo.SelectedItem.ToString()
+            }
+            //Trace.WriteLine("Camera is selected\r\n");
+            //Trace.WriteLine(selectedCamera);
+            //MessageBox.Show("Camera is selected!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //MessageBox.Show(selectedCamera, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (selectedCamera == "FLIR")
+                FlirCamInit();
+            if (selectedCamera == "DAO")
+                DAOCamInit();
+            if (FLiRCamCount < 1 && DAOCamCount < 1)
+            {
+                System.Windows.MessageBox.Show("You must choose the camera! No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                //System.Windows.MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.Close();
+                return;
+            }
+
             if (FLiRCamCount > 0)
                 for (; ; )
                     if (Refreshing)
@@ -1753,13 +1767,19 @@ namespace SimplestSpinWPF
 
         private void ComboboxCameras_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ComboboxCameras.SelectedValue == "FLIR") // если не равно null
+            if (ComboboxCameras.SelectedValue.ToString() != null) // если не равно null
             {
-                FlirCamInit();
-            }
-            if (ComboboxCameras.SelectedValue == "DAO") // если не равно null
-            {
-                DAOCamInit();
+                selectedcameraIndex = ComboboxCameras.SelectedIndex.ToString();
+                if (selectedcameraIndex == "1")
+                {
+                    selectedCamera = "FLIR";
+                }
+                if (selectedcameraIndex == "2")
+                {
+                    selectedCamera = "DAO";
+                }
+                //MessageBox.Show(selectedCamera);
+                CameraIsSelected = true;
             }
         }
 
