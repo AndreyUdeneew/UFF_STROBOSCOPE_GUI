@@ -83,7 +83,8 @@
         <Label x:Name="Label_Exposure" Grid.Column="4" Content="E" HorizontalAlignment="Left" Margin="57,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonNoLight" Content="NoLight" Grid.Column="4" HorizontalAlignment="Left" Margin="14,362,0,0" VerticalAlignment="Top" IsThreeState="False" IsChecked="True"  Background="#FFBFBFBF" Checked="RadioButtonNoLight_Checked"/>
         <Image x:Name="CC_Копировать"  RenderTransformOrigin="0.5,0.5" Margin="0,0,20,0" Grid.ColumnSpan="4" />
-        <ComboBox x:Name="ComboboxCameras" Grid.Column="2" HorizontalAlignment="Left" Margin="64,267,0,0" VerticalAlignment="Top" Width="62" SelectedItem="ComboboxCameras_SelectedItem" SelectionChanged="ComboboxCameras_SelectionChanged">
+        <ComboBox x:Name="ComboboxCameras" SelectedValuePath="Name" Grid.Column="2" HorizontalAlignment="Left" Margin="64,267,0,0" VerticalAlignment="Top" Width="62" SelectedItem="SelectCam" SelectionChanged="ComboboxCameras_SelectionChanged">
+            <ComboBoxItem Content="SelectCam"/>
             <ComboBoxItem Content="FLIR"/>
             <ComboBoxItem Content="DAO"/>
         </ComboBox>

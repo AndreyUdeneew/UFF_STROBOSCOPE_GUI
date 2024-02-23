@@ -46,8 +46,8 @@ namespace SimplestSpinWPF
         /// <summary>
         /// Init flags
         /// </summary>
-        static bool InitFlir = false;
-        static bool InitDAO = true;
+        //static bool InitFlir = false;
+        //static bool InitDAO = true;
 
 
         IManagedCamera SpinCamColor = null;
@@ -85,10 +85,10 @@ namespace SimplestSpinWPF
 
             //LayoutLeft.Children.Add(gridControl);
 
-            if (InitFlir)
-                FlirCamInit();
-            if (InitDAO)
-                DAOCamInit();
+            //if (InitFlir)
+            //    FlirCamInit();
+            //if (InitDAO)
+            //    DAOCamInit();
 
 
             if (FLiRCamCount < 1 && DAOCamCount < 1)
@@ -1753,7 +1753,14 @@ namespace SimplestSpinWPF
 
         private void ComboboxCameras_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            if (ComboboxCameras.SelectedValue == "FLIR") // если не равно null
+            {
+                FlirCamInit();
+            }
+            if (ComboboxCameras.SelectedValue == "DAO") // если не равно null
+            {
+                DAOCamInit();
+            }
         }
 
         public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
