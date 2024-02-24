@@ -34,6 +34,8 @@ using System.Windows.Controls;
 using RadioButton = System.Windows.Controls.RadioButton;
 using MessageBox = System.Windows.MessageBox;
 using Steema.TeeChart;
+using TextBox = System.Windows.Controls.TextBox;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 namespace SimplestSpinWPF
@@ -41,7 +43,7 @@ namespace SimplestSpinWPF
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : System.Windows.Window
     {
         /// <summary>
         /// Init flags
@@ -145,6 +147,7 @@ namespace SimplestSpinWPF
         string AIM_color = "blue";
         string selectedCamera = "";
         string selectedcameraIndex = "";
+        string bleachingDegreeString = "";
 
         public long PrevImageSum = 0;
 
@@ -443,7 +446,7 @@ namespace SimplestSpinWPF
             }
             if (FLiRCamCount < 1 && DAOCamCount < 1)
             {
-                System.Windows.MessageBox.Show("You must choose the camera! No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 //System.Windows.MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();
                 return;
@@ -526,19 +529,25 @@ namespace SimplestSpinWPF
         void RefreshScreen()
         {
             bool Sequent = (bool)radioButtonSeq.IsChecked;
+            int bleachingDegree = int.Parse(bleachingDegreeString);
             if (convertedImage == null)
                 return;
             if (!(bool)DrawDiffCheckBox.IsChecked)
             {
                 if(Sequent)
                 {
-                    if(framesCounter == savingInterval)
+                    while(FIR > bleachingDegree)
                     {
-                        CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
-                        CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 6);
-                        framesCounter = 0;
+                        if (framesCounter == savingInterval)
+                        {
+                            CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
+                            CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 6);
+                            framesCounter = 0;
+                        }
+                        framesCounter += 1;
                     }
-                    framesCounter += 1;
+                    SendCMD();//STOP
+                    
                 }
                 else
                 {
@@ -1297,6 +1306,12 @@ namespace SimplestSpinWPF
             bitmap.UnlockBits(bitmapData);
 
             return bitmapSource;
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            //MessageBox.Show(textBox.Text);
         }
 
         private void button_Click(object sender, RoutedEventArgs e)

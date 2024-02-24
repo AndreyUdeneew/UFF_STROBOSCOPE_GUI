@@ -88,6 +88,8 @@
             <ComboBoxItem Content="FLIR"/>
             <ComboBoxItem Content="DAO"/>
         </ComboBox>
+        <TextBox Grid.Column="2" HorizontalAlignment="Left" Margin="20,352,0,0" TextWrapping="Wrap" TextChanged="TextBox_TextChanged" Text="50" VerticalAlignment="Top" Width="120"/>
+        <Label Grid.Column="2" Content="Required bleaching degree, %" HorizontalAlignment="Left" Margin="20,321,0,0" VerticalAlignment="Top" Width="174" Background="#00000000" Foreground="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"/>
         <!--<RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonGreen" Content="Daheng" Grid.Column="2" HorizontalAlignment="Left" Margin="82,269,0,0" VerticalAlignment="Top" IsThreeState="False"  Background="#FFBFBFBF" Checked="RadioButtonGreen_Checked"/>-->
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
     </Grid>
