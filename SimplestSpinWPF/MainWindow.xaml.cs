@@ -117,11 +117,26 @@ namespace SimplestSpinWPF
         public BitmapSource bsOut = null;
         int FIcounter = 0;
         int averageLimit = 10;
+        int savingInterval = 400;
+        int framesCounter = 0;
         int checkNpixelsInCursor = 0;
+        int fontSize = 50;
+
         double FI_norma = 1;
         double FI = 0;
         double FI_Real = 0;
         string FI_string = "";
+
+        double FIR_norma = 1;
+        double FIR = 0;
+        double FIR_Real = 0;
+        string FIR_string = "";
+
+        double FIV_norma = 1;
+        double FIV = 0;
+        double FIV_Real = 0;
+        string FIV_string = "";
+
         string fileName4Saving = "";
         string fileNameDecreased = "";
         string _portName = "";
@@ -417,9 +432,15 @@ namespace SimplestSpinWPF
             //MessageBox.Show("Camera is selected!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             //MessageBox.Show(selectedCamera, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             if (selectedCamera == "FLIR")
+            { 
+                fontSize = 50;
                 FlirCamInit();
+            }
             if (selectedCamera == "DAO")
+            { 
                 DAOCamInit();
+                fontSize = 5000;
+            }
             if (FLiRCamCount < 1 && DAOCamCount < 1)
             {
                 System.Windows.MessageBox.Show("You must choose the camera! No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -917,7 +938,10 @@ namespace SimplestSpinWPF
             int firstCursorPixel;
 
             firstCursorPixel = (width * ((height / 2) - (wCursor / 2))) + (width / 2);
+
             FIcounter += 1;
+            framesCounter += 1;
+
             fixed (byte* DC = DivideCache, HSVC = HSVToRGBCache)
             {
                 for (int b = 0, g = 1, r = 2, i = 0; b < L; b += 3, r += 3, g += 3, i++)
@@ -1115,17 +1139,31 @@ namespace SimplestSpinWPF
             //    FIcounter = 0;
             //    FI_textbox.Text = FI.ToString("F1");
             //}
-            FI_Real = SummFluor / SummWhite;
-            FI = FI_Real / FI_norma;
-            FIcounter += 1;
 
-            GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
-            if (TailKiller == null)
+            if(!Sequent)
             {
-                TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
-                TailKiller.Start();
-                try { chart.Series[0].Clear(); } catch { }
+                FI_Real = SummFluor / SummWhite;
+                FI = FI_Real / FI_norma;
+                FIcounter += 1;
+
+                GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+                if (TailKiller == null)
+                {
+                    TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
+                    TailKiller.Start();
+                    try { chart.Series[0].Clear(); } catch { }
+                }
             }
+            if(Sequent)
+            { 
+                FIR_Real = SummFluor / SummWhite;
+                FIR = FIR_Real / FI_norma;
+                FIV_Real = SummFluor / SummWhite;
+                FIV = FIV_Real / FI_norma;
+                FIcounter += 1;
+            }
+
+
             //if (TailKiller.ThreadState != System.Threading.ThreadState.Running)
             //    try
             //    {
@@ -1141,9 +1179,12 @@ namespace SimplestSpinWPF
                 FIcounter = 0;
                 //FI = 0;
             }
-            //sss = String.Format("{0:F1}", FI);
-            FI_string = String.Format("{0:F1}", FI);
-            FI_Label.Content = FI_string;
+
+            if (framesCounter == savingInterval)
+            {
+
+            }
+
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
@@ -1374,7 +1415,7 @@ namespace SimplestSpinWPF
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.Blue, 0, 0);
+                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
                     BitmapFrame frame = BitmapFrame.Create(frameSource);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
@@ -1437,7 +1478,7 @@ namespace SimplestSpinWPF
 
                     Bitmap bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.Red, 0, 0);
+                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Red, 0, 0);
                     Debug.WriteLine(FI_string);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
@@ -1463,7 +1504,7 @@ namespace SimplestSpinWPF
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.White, 0, 0);
+                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
@@ -1487,7 +1528,7 @@ namespace SimplestSpinWPF
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.White, 0, 0);
+                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
@@ -1510,7 +1551,7 @@ namespace SimplestSpinWPF
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.White, 0, 0);
+                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
@@ -1518,6 +1559,51 @@ namespace SimplestSpinWPF
                         );
                     bmp.Save(Filename);
                 }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+
+            if (Sequent)
+            {
+                try
+                {
+                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1); //viol
+
+                    System.Drawing.Bitmap bmp;
+                    bmp = BitmapFromWriteableBitmap(frameSource);
+                    Graphics gr = Graphics.FromImage(bmp);
+                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    DateTime d = DateTime.Now;
+                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Viol" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIV_" + FI_string)
+                        );
+                    bmp.Save(Filename);
+                }
+
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                try
+                {
+                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 6); //RLED
+
+                    System.Drawing.Bitmap bmp;
+                    bmp = BitmapFromWriteableBitmap(frameSource);
+                    Graphics gr = Graphics.FromImage(bmp);
+                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Red, 0, 0);
+                    DateTime d = DateTime.Now;
+                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("RLED" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FI_string)
+                        );
+                    bmp.Save(Filename);
+                }
+
                 catch (Exception ex)
                 {
                     System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);

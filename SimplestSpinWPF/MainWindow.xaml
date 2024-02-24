@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimplestSpinWPF"
         mc:Ignorable="d"
-        Title="test" Height="919.275" Width="840" Closing="Window_Closing" WindowStyle="None" WindowStartupLocation="CenterScreen" WindowState="Maximized" Loaded="Window_Loaded">
+        Title="test" Height="919.275" Width="840" Closing="Window_Closing" WindowStyle="None" WindowStartupLocation="CenterOwner" WindowState="Maximized" Loaded="Window_Loaded">
 
 
 
