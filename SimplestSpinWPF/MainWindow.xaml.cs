@@ -1160,7 +1160,7 @@ namespace SimplestSpinWPF
                 FI = FI_Real / FI_norma;
                 FIcounter += 1;
 
-                GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+                GraphPoints.Add(new GraphPoint { FI = FI, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
                 if (TailKiller == null)
                 {
                     TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
@@ -1175,7 +1175,7 @@ namespace SimplestSpinWPF
                     FIV_Real = SummFluor / SummWhite;
                     FIV = FIV_Real / FI_norma;
 
-                    GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+                    GraphPoints.Add(new GraphPoint { FIV = FIV, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
                     if (TailKiller == null)
                     {
                         TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
@@ -1188,7 +1188,7 @@ namespace SimplestSpinWPF
                     FIR_Real = SummFluor / SummWhite;
                     FIR = FIR_Real / FI_norma;
 
-                    GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+                    GraphPoints.Add(new GraphPoint { FIR = FIR, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
                     if (TailKiller == null)
                     {
                         TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
@@ -1229,19 +1229,31 @@ namespace SimplestSpinWPF
         public void CutGraphPointsTail()
         {
             GraphPoint ppp = GraphPoints[GraphPoints.Count - 1];
-            if (double.IsNaN(ppp.FI_Real) || double.IsInfinity(ppp.FI_Real) || Math.Abs(ppp.FI_Real) > 10e20 || Math.Abs(ppp.FI_Real) < 10e-20)
-                ppp.FI_Real = 0;
+            GraphPoint pppRed = GraphPoints[GraphPoints.Count - 1];
+            GraphPoint pppViol = GraphPoints[GraphPoints.Count - 1];
+            if (double.IsNaN(ppp.FI) || double.IsInfinity(ppp.FI) || Math.Abs(ppp.FI) > 10e20 || Math.Abs(ppp.FI) < 10e-20)
+                ppp.FI = 0;
+            if (double.IsNaN(pppRed.FIR) || double.IsInfinity(pppRed.FIR) || Math.Abs(pppRed.FIR) > 10e20 || Math.Abs(pppRed.FIR) < 10e-20)
+                pppRed.FIR = 0;
+            if (double.IsNaN(pppViol.FIV) || double.IsInfinity(pppViol.FIV) || Math.Abs(pppViol.FIV) > 10e20 || Math.Abs(pppViol.FIV) < 10e-20)
+                pppRed.FIR = 0;
             double thePast = (DateTime.Now - ProgrammStarted).TotalMilliseconds - 600000;
             GraphPoints.RemoveAll((k) => { return k.millisecond < thePast; });
             if ((DateTime.Now - DebugGap).TotalMilliseconds > 3000)
             {
                 DebugGap = DateTime.Now;
                 if (GraphPoints.Count > 1)
-                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.FI_Real));
+                {
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.FI));
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", pppRed.millisecond, pppRed.FIR));
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", pppViol.millisecond, pppViol.FIV));
+                }
             }
 
             //Update chart
-            chart.Invoke(new Action(() => chart.Series[0].Add(ppp.millisecond, ppp.FI_Real)));
+            chart.Invoke(new Action(() => chart.Series[0].Add(ppp.millisecond, ppp.FI)));
+            chart.Invoke(new Action(() => chart.Series[0].Add(pppRed.millisecond, pppRed.FIR)));
+            chart.Invoke(new Action(() => chart.Series[0].Add(pppViol.millisecond, pppRed.FIV)));
         }
 
 
@@ -1250,7 +1262,9 @@ namespace SimplestSpinWPF
         public class GraphPoint
         {
             public double millisecond;
-            public double FI_Real;
+            public double FI;
+            public double FIR;
+            public double FIV;
         }
         public List<GraphPoint> GraphPoints = new List<GraphPoint>();
         DateTime ProgrammStarted = DateTime.Now;
