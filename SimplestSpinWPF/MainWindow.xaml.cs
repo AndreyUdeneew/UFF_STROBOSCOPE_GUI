@@ -525,11 +525,23 @@ namespace SimplestSpinWPF
 
         void RefreshScreen()
         {
+            bool Sequent = (bool)radioButtonSeq.IsChecked;
             if (convertedImage == null)
                 return;
             if (!(bool)DrawDiffCheckBox.IsChecked)
             {
-                CC.Source = convertedImage;
+                if(Sequent)
+                {
+                    if(framesCounter == savingInterval)
+                    {
+                        CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
+                        CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 6);
+                    }
+                }
+                else
+                {
+                    CC.Source = convertedImage;
+                }
 
             }
             else
@@ -1155,11 +1167,33 @@ namespace SimplestSpinWPF
                 }
             }
             if(Sequent)
-            { 
-                FIR_Real = SummFluor / SummWhite;
-                FIR = FIR_Real / FI_norma;
-                FIV_Real = SummFluor / SummWhite;
-                FIV = FIV_Real / FI_norma;
+            {
+                if(mode == 1)
+                {
+                    FIV_Real = SummFluor / SummWhite;
+                    FIV = FIV_Real / FI_norma;
+
+                    GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+                    if (TailKiller == null)
+                    {
+                        TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
+                        TailKiller.Start();
+                        try { chart.Series[0].Clear(); } catch { }
+                    }
+                }
+                if(mode == 6)
+                {
+                    FIR_Real = SummFluor / SummWhite;
+                    FIR = FIR_Real / FI_norma;
+
+                    GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+                    if (TailKiller == null)
+                    {
+                        TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
+                        TailKiller.Start();
+                        try { chart.Series[0].Clear(); } catch { }
+                    }
+                }
                 FIcounter += 1;
             }
 
