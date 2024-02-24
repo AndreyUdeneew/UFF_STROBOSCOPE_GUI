@@ -536,7 +536,9 @@ namespace SimplestSpinWPF
                     {
                         CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
                         CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 6);
+                        framesCounter = 0;
                     }
+                    framesCounter += 1;
                 }
                 else
                 {
@@ -952,7 +954,7 @@ namespace SimplestSpinWPF
             firstCursorPixel = (width * ((height / 2) - (wCursor / 2))) + (width / 2);
 
             FIcounter += 1;
-            framesCounter += 1;
+            
 
             fixed (byte* DC = DivideCache, HSVC = HSVToRGBCache)
             {
@@ -1214,10 +1216,10 @@ namespace SimplestSpinWPF
                 //FI = 0;
             }
 
-            if (framesCounter == savingInterval)
-            {
+            //if (framesCounter == savingInterval)
+            //{
 
-            }
+            //}
 
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
