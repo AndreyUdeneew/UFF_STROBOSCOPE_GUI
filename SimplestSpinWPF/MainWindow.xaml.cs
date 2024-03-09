@@ -1132,13 +1132,13 @@ namespace SimplestSpinWPF
             {
                 //FI = FI / averageLimit;
                 FI_string = String.Format("{0:F1}", FI);
-                FI_Label.Content = FI_string;
+                FIV_Label.Content = FI_string;
                 FIcounter = 0;
                 //FI = 0;
             }
             //sss = String.Format("{0:F1}", FI);
             FI_string = String.Format("{0:F1}", FI);
-            FI_Label.Content = FI_string;
+            FIV_Label.Content = FI_string;
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
