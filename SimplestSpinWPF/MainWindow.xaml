@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimplestSpinWPF"
         mc:Ignorable="d"
-        Title="test" Height="919.275" Width="840" Closing="Window_Closing" WindowStyle="None" WindowStartupLocation="CenterOwner" WindowState="Maximized" Loaded="Window_Loaded">
+        Title="test" Height="919.275" Width="840" Closing="Window_Closing" WindowStyle="None" WindowStartupLocation="CenterScreen" WindowState="Maximized" Loaded="Window_Loaded">
 
 
 
@@ -28,9 +28,9 @@
         <Image x:Name="CC"  RenderTransformOrigin="0.5,0.5" Margin="0,0,20,0" Grid.ColumnSpan="4" />
         <DockPanel x:Name="LayoutLeft" Grid.Column="0" Grid.ColumnSpan="2"  >
         </DockPanel>
-        <CheckBox x:Name="DrawDiffCheckBox" Content="Fluor" Grid.Column="4" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" IsChecked="True" Foreground="Gray"/>
+        <CheckBox x:Name="DrawDiffCheckBox" Content="Fluor" Grid.Column="4" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" IsChecked="False" Foreground="Gray"/>
         <Slider x:Name="AmplificationSlider" Grid.Column="4" HorizontalAlignment="Left" Height="180" Margin="9,140,0,0" VerticalAlignment="Top" Width="16" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray"/>
-        <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonGreen" Content="Green" Grid.Column="4" HorizontalAlignment="Center" Margin="0,382,0,0" VerticalAlignment="Top" IsThreeState="False"  Background="#FFBFBFBF" Checked="RadioButtonGreen_Checked"/>
+        <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonGreen" Content="Green" Grid.Column="4" HorizontalAlignment="Center" Margin="0,382,0,0" VerticalAlignment="Top"  Background="#FFBFBFBF" Checked="RadioButtonGreen_Checked"/>
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonRed" Content="Red" Grid.Column="4" HorizontalAlignment="Left" Margin="16,402,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonRed_Checked"/>
         <!--<CheckBox x:Name="checkBoxGray" Content="In gray" Grid.Column="4" HorizontalAlignment="Left" Margin="9,459,0,0" VerticalAlignment="Top" Foreground="Gray" IsThreeState="False" IsChecked="true"/>-->
         <Button Background="DarkGray"  x:Name="button3" Content="Quit" Grid.Column="4" HorizontalAlignment="Center" Margin="0,851,0,0" VerticalAlignment="Top" Width="54" Click="button3_Click"/>
@@ -82,15 +82,6 @@
         <Label x:Name="Label_Gain" Grid.Column="4" Content="G" HorizontalAlignment="Center" Margin="0,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
         <Label x:Name="Label_Exposure" Grid.Column="4" Content="E" HorizontalAlignment="Left" Margin="57,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonNoLight" Content="NoLight" Grid.Column="4" HorizontalAlignment="Left" Margin="14,362,0,0" VerticalAlignment="Top" IsThreeState="False" IsChecked="True"  Background="#FFBFBFBF" Checked="RadioButtonNoLight_Checked"/>
-        <!--<Image x:Name="CC"  RenderTransformOrigin="0.5,0.5" Margin="0,0,20,0" Grid.ColumnSpan="4" />-->
-        <ComboBox x:Name="ComboboxCameras" SelectedValuePath="Name" Grid.Column="2" HorizontalAlignment="Left" Margin="64,267,0,0" VerticalAlignment="Top" Width="62" SelectedItem="SelectCam" SelectionChanged="ComboboxCameras_SelectionChanged">
-            <ComboBoxItem Content="SelectCam"/>
-            <ComboBoxItem Content="FLIR"/>
-            <ComboBoxItem Content="DAO"/>
-        </ComboBox>
-        <TextBox Grid.Column="2" HorizontalAlignment="Left" Margin="20,352,0,0" TextWrapping="Wrap" TextChanged="TextBox_TextChanged" Text="50" VerticalAlignment="Top" Width="120"/>
-        <Label Grid.Column="2" Content="Required bleaching degree, %" HorizontalAlignment="Left" Margin="20,321,0,0" VerticalAlignment="Top" Width="174" Background="#00000000" Foreground="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}"/>
-        <!--<RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonGreen" Content="Daheng" Grid.Column="2" HorizontalAlignment="Left" Margin="82,269,0,0" VerticalAlignment="Top" IsThreeState="False"  Background="#FFBFBFBF" Checked="RadioButtonGreen_Checked"/>-->
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
     </Grid>
 

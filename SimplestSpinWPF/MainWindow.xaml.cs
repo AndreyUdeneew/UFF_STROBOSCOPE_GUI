@@ -34,8 +34,6 @@ using System.Windows.Controls;
 using RadioButton = System.Windows.Controls.RadioButton;
 using MessageBox = System.Windows.MessageBox;
 using Steema.TeeChart;
-using TextBox = System.Windows.Controls.TextBox;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 namespace SimplestSpinWPF
@@ -43,14 +41,14 @@ namespace SimplestSpinWPF
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : System.Windows.Window
+    public partial class MainWindow : Window
     {
         /// <summary>
         /// Init flags
         /// </summary>
-        //static bool InitFlir = false;
-        //static bool InitDAO = true;
-        static bool CameraIsSelected = false;
+        static bool InitFlir = true;
+        static bool InitDAO = false;
+        int fontSize = 50;
 
 
         IManagedCamera SpinCamColor = null;
@@ -64,6 +62,10 @@ namespace SimplestSpinWPF
         public MainWindow()
         {
             InitializeComponent();
+
+            //RadioButton rb = new RadioButton { IsChecked = true, GroupName = "Languages", Content = "JavaScript" };
+            //rb.Checked += RadioButton_Checked;
+            //stackPanel.Children.Add(rb);
 
             for (int i = 0; i < 256; i++)
                 for (int j = 0; j < 256; j++)
@@ -84,10 +86,26 @@ namespace SimplestSpinWPF
 
             //LayoutLeft.Children.Add(gridControl);
 
-            //if (InitFlir)
-            //    FlirCamInit();
-            //if (InitDAO)
-            //    DAOCamInit();
+            if (InitFlir)
+            {
+                fontSize = 50;
+                FlirCamInit();
+            }
+                
+            if (InitDAO)
+            {
+                fontSize = 5000;
+                DAOCamInit();
+            }
+
+
+            if (FLiRCamCount < 1 && DAOCamCount < 1)
+            {
+                System.Windows.MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.Close();
+                return;
+            }
+
 
             RefreshThread = new Thread(GetImages);
             //ModeSelectThread = new Thread(ModeSelection);
@@ -95,7 +113,6 @@ namespace SimplestSpinWPF
             //ModeSelectThread.Start();
             GraphGrid.Visibility = System.Windows.Visibility.Hidden;
             InitPlot();
- 
         }
 
         const int PortSpeed = 115200;
@@ -119,35 +136,18 @@ namespace SimplestSpinWPF
         public BitmapSource bsOut = null;
         int FIcounter = 0;
         int averageLimit = 10;
-        int savingInterval = 400;
-        int framesCounter = 0;
         int checkNpixelsInCursor = 0;
-        int fontSize = 50;
-
         double FI_norma = 1;
         double FI = 0;
         double FI_Real = 0;
         string FI_string = "";
-
-        double FIR_norma = 1;
-        double FIR = 0;
-        double FIR_Real = 0;
-        string FIR_string = "";
-
-        double FIV_norma = 1;
-        double FIV = 0;
-        double FIV_Real = 0;
-        string FIV_string = "";
-
         string fileName4Saving = "";
         string fileNameDecreased = "";
         string _portName = "";
         volatile string CMD = "";
         bool Oxy = false;
         string AIM_color = "blue";
-        string selectedCamera = "";
-        string selectedcameraIndex = "";
-        string bleachingDegreeString = "";
+        
 
         public long PrevImageSum = 0;
 
@@ -186,7 +186,6 @@ namespace SimplestSpinWPF
 
         void DAOCamInit()
         {
-            //MessageBox.Show("DAO_init!!!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             int n = 0; ///cam number
 
             if (CamDriver == null)
@@ -334,7 +333,6 @@ namespace SimplestSpinWPF
 
         void FlirCamInit()
         {
-            //MessageBox.Show("FLIR_init!!!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             //Camera search and initialization
             // Retrieve singleton reference to system object
             ManagedSystem system = new ManagedSystem();
@@ -425,33 +423,6 @@ namespace SimplestSpinWPF
         }
         private void GetImages()
         {
-            while (CameraIsSelected == false)
-            {
-                Trace.WriteLine("waiting wor camera selecion\r\n");
-                //String selectedCamera = ComboboxCamerascomboBoxInfo.SelectedItem.ToString()
-            }
-            //Trace.WriteLine("Camera is selected\r\n");
-            //Trace.WriteLine(selectedCamera);
-            //MessageBox.Show("Camera is selected!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            //MessageBox.Show(selectedCamera, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            if (selectedCamera == "FLIR")
-            { 
-                fontSize = 50;
-                FlirCamInit();
-            }
-            if (selectedCamera == "DAO")
-            { 
-                DAOCamInit();
-                fontSize = 5000;
-            }
-            if (FLiRCamCount < 1 && DAOCamCount < 1)
-            {
-                System.Windows.MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                //System.Windows.MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                this.Close();
-                return;
-            }
-
             if (FLiRCamCount > 0)
                 for (; ; )
                     if (Refreshing)
@@ -528,31 +499,11 @@ namespace SimplestSpinWPF
 
         void RefreshScreen()
         {
-            bool Sequent = (bool)radioButtonSeq.IsChecked;
-            int bleachingDegree = int.Parse(bleachingDegreeString);
             if (convertedImage == null)
                 return;
             if (!(bool)DrawDiffCheckBox.IsChecked)
             {
-                if(Sequent)
-                {
-                    while(FIR > bleachingDegree)
-                    {
-                        if (framesCounter == savingInterval)
-                        {
-                            CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
-                            CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 6);
-                            framesCounter = 0;
-                        }
-                        framesCounter += 1;
-                    }
-                    SendCMD();//STOP
-                    
-                }
-                else
-                {
-                    CC.Source = convertedImage;
-                }
+                CC.Source = convertedImage;
 
             }
             else
@@ -961,10 +912,7 @@ namespace SimplestSpinWPF
             int firstCursorPixel;
 
             firstCursorPixel = (width * ((height / 2) - (wCursor / 2))) + (width / 2);
-
             FIcounter += 1;
-            
-
             fixed (byte* DC = DivideCache, HSVC = HSVToRGBCache)
             {
                 for (int b = 0, g = 1, r = 2, i = 0; b < L; b += 3, r += 3, g += 3, i++)
@@ -1130,7 +1078,7 @@ namespace SimplestSpinWPF
                     //bb[g] >>= 1; bb[b] >>= 1; bb[r] >>= 1;
                     if (AIM_color == "red")
                     {
-                        bb[g] = 0; bb[b] = 255; bb[r] = 0;
+                        bb[g] = 0; bb[b] = 0; bb[r] = 255;
                     }
                     if (AIM_color == "white")
                     {
@@ -1138,7 +1086,7 @@ namespace SimplestSpinWPF
                     }
                     if (AIM_color == "blue")
                     {
-                        bb[g] = 0; bb[b] = 0; bb[r] = 255;
+                        bb[g] = 0; bb[b] = 255; bb[r] = 0;
                     }
 
                     if (background == wb1)
@@ -1162,53 +1110,17 @@ namespace SimplestSpinWPF
             //    FIcounter = 0;
             //    FI_textbox.Text = FI.ToString("F1");
             //}
+            FI_Real = SummFluor / SummWhite;
+            FI = FI_Real / FI_norma;
+            FIcounter += 1;
 
-            if(!Sequent)
+            GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+            if (TailKiller == null)
             {
-                FI_Real = SummFluor / SummWhite;
-                FI = FI_Real / FI_norma;
-                FIcounter += 1;
-
-                GraphPoints.Add(new GraphPoint { FI = FI, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
-                if (TailKiller == null)
-                {
-                    TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
-                    TailKiller.Start();
-                    try { chart.Series[0].Clear(); } catch { }
-                }
+                TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
+                TailKiller.Start();
+                try { chart.Series[0].Clear(); } catch { }
             }
-            if(Sequent)
-            {
-                if(mode == 1)
-                {
-                    FIV_Real = SummFluor / SummWhite;
-                    FIV = FIV_Real / FI_norma;
-
-                    GraphPoints.Add(new GraphPoint { FIV = FIV, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
-                    if (TailKiller == null)
-                    {
-                        TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
-                        TailKiller.Start();
-                        try { chart.Series[0].Clear(); } catch { }
-                    }
-                }
-                if(mode == 6)
-                {
-                    FIR_Real = SummFluor / SummWhite;
-                    FIR = FIR_Real / FI_norma;
-
-                    GraphPoints.Add(new GraphPoint { FIR = FIR, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
-                    if (TailKiller == null)
-                    {
-                        TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
-                        TailKiller.Start();
-                        try { chart.Series[0].Clear(); } catch { }
-                    }
-                }
-                FIcounter += 1;
-            }
-
-
             //if (TailKiller.ThreadState != System.Threading.ThreadState.Running)
             //    try
             //    {
@@ -1224,12 +1136,9 @@ namespace SimplestSpinWPF
                 FIcounter = 0;
                 //FI = 0;
             }
-
-            //if (framesCounter == savingInterval)
-            //{
-
-            //}
-
+            //sss = String.Format("{0:F1}", FI);
+            FI_string = String.Format("{0:F1}", FI);
+            FI_Label.Content = FI_string;
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
@@ -1238,31 +1147,19 @@ namespace SimplestSpinWPF
         public void CutGraphPointsTail()
         {
             GraphPoint ppp = GraphPoints[GraphPoints.Count - 1];
-            GraphPoint pppRed = GraphPoints[GraphPoints.Count - 1];
-            GraphPoint pppViol = GraphPoints[GraphPoints.Count - 1];
-            if (double.IsNaN(ppp.FI) || double.IsInfinity(ppp.FI) || Math.Abs(ppp.FI) > 10e20 || Math.Abs(ppp.FI) < 10e-20)
-                ppp.FI = 0;
-            if (double.IsNaN(pppRed.FIR) || double.IsInfinity(pppRed.FIR) || Math.Abs(pppRed.FIR) > 10e20 || Math.Abs(pppRed.FIR) < 10e-20)
-                pppRed.FIR = 0;
-            if (double.IsNaN(pppViol.FIV) || double.IsInfinity(pppViol.FIV) || Math.Abs(pppViol.FIV) > 10e20 || Math.Abs(pppViol.FIV) < 10e-20)
-                pppRed.FIR = 0;
+            if (double.IsNaN(ppp.FI_Real) || double.IsInfinity(ppp.FI_Real) || Math.Abs(ppp.FI_Real) > 10e20 || Math.Abs(ppp.FI_Real) < 10e-20)
+                ppp.FI_Real = 0;
             double thePast = (DateTime.Now - ProgrammStarted).TotalMilliseconds - 600000;
             GraphPoints.RemoveAll((k) => { return k.millisecond < thePast; });
             if ((DateTime.Now - DebugGap).TotalMilliseconds > 3000)
             {
                 DebugGap = DateTime.Now;
                 if (GraphPoints.Count > 1)
-                {
-                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.FI));
-                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", pppRed.millisecond, pppRed.FIR));
-                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", pppViol.millisecond, pppViol.FIV));
-                }
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.FI_Real));
             }
 
             //Update chart
-            chart.Invoke(new Action(() => chart.Series[0].Add(ppp.millisecond, ppp.FI)));
-            chart.Invoke(new Action(() => chart.Series[0].Add(pppRed.millisecond, pppRed.FIR)));
-            chart.Invoke(new Action(() => chart.Series[0].Add(pppViol.millisecond, pppRed.FIV)));
+            chart.Invoke(new Action(() => chart.Series[0].Add(ppp.millisecond, ppp.FI_Real)));
         }
 
 
@@ -1271,9 +1168,7 @@ namespace SimplestSpinWPF
         public class GraphPoint
         {
             public double millisecond;
-            public double FI;
-            public double FIR;
-            public double FIV;
+            public double FI_Real;
         }
         public List<GraphPoint> GraphPoints = new List<GraphPoint>();
         DateTime ProgrammStarted = DateTime.Now;
@@ -1306,12 +1201,6 @@ namespace SimplestSpinWPF
             bitmap.UnlockBits(bitmapData);
 
             return bitmapSource;
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox textBox = (TextBox)sender;
-            //MessageBox.Show(textBox.Text);
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
@@ -1454,25 +1343,25 @@ namespace SimplestSpinWPF
             if (GreenFlu || RedFlu || R2G || R_G)
             {
 
-                //try
-                //{
-                //    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
-                //    System.Drawing.Bitmap bmp;
-                //    bmp = BitmapFromWriteableBitmap(frameSource);
-                //    Graphics gr = Graphics.FromImage(bmp);
-                //    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.Blue, 0, 0);
-                //    BitmapFrame frame = BitmapFrame.Create(frameSource);
-                //    DateTime d = DateTime.Now;
-                //    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                //        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                //        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_string)
-                //        );
-                //    bmp.Save(Filename);
-                //}
-                //catch (Exception ex)
-                //{
-                //    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                //}
+                try
+                {
+                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
+                    System.Drawing.Bitmap bmp;
+                    bmp = BitmapFromWriteableBitmap(frameSource);
+                    Graphics gr = Graphics.FromImage(bmp);
+                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    BitmapFrame frame = BitmapFrame.Create(frameSource);
+                    DateTime d = DateTime.Now;
+                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_string)
+                        );
+                    bmp.Save(Filename);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
 
                 try
                 {
@@ -1494,45 +1383,45 @@ namespace SimplestSpinWPF
                     System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                //try
-                //{
-                //    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 3);
+                try
+                {
+                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 3);
 
-                //    System.Drawing.Bitmap bmp;
-                //    bmp = BitmapFromWriteableBitmap(frameSource);
-                //    Graphics gr = Graphics.FromImage(bmp);
-                //    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.Blue, 0, 0);
-                //    DateTime d = DateTime.Now;
-                //    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                //        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                //        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + FI_string)
-                //        );
-                //    bmp.Save(Filename);
-                //}
-                //catch (Exception ex)
-                //{
-                //    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                //}
+                    System.Drawing.Bitmap bmp;
+                    bmp = BitmapFromWriteableBitmap(frameSource);
+                    Graphics gr = Graphics.FromImage(bmp);
+                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    DateTime d = DateTime.Now;
+                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + FI_string)
+                        );
+                    bmp.Save(Filename);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
 
-                //try
-                //{
-                //    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 5);
+                try
+                {
+                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 5);
 
-                //    System.Drawing.Bitmap bmp;
-                //    bmp = BitmapFromWriteableBitmap(frameSource);
-                //    Graphics gr = Graphics.FromImage(bmp);
-                //    gr.DrawString(FI_string, new Font("Tahoma", 5000), System.Drawing.Brushes.Blue, 0, 0);
-                //    DateTime d = DateTime.Now;
-                //    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                //        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                //        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + FI_string)
-                //        );
-                //    bmp.Save(Filename);
-                //}
-                //catch (Exception ex)
-                //{
-                //    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                //}
+                    System.Drawing.Bitmap bmp;
+                    bmp = BitmapFromWriteableBitmap(frameSource);
+                    Graphics gr = Graphics.FromImage(bmp);
+                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    DateTime d = DateTime.Now;
+                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + FI_string)
+                        );
+                    bmp.Save(Filename);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
 
             if (RLED)
@@ -1624,51 +1513,6 @@ namespace SimplestSpinWPF
                         );
                     bmp.Save(Filename);
                 }
-                catch (Exception ex)
-                {
-                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-
-            if (Sequent)
-            {
-                try
-                {
-                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1); //viol
-
-                    System.Drawing.Bitmap bmp;
-                    bmp = BitmapFromWriteableBitmap(frameSource);
-                    Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
-                    DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Viol" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIV_" + FI_string)
-                        );
-                    bmp.Save(Filename);
-                }
-
-                catch (Exception ex)
-                {
-                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-
-                try
-                {
-                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 6); //RLED
-
-                    System.Drawing.Bitmap bmp;
-                    bmp = BitmapFromWriteableBitmap(frameSource);
-                    Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Red, 0, 0);
-                    DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("RLED" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FI_string)
-                        );
-                    bmp.Save(Filename);
-                }
-
                 catch (Exception ex)
                 {
                     System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -1911,28 +1755,10 @@ namespace SimplestSpinWPF
 
         }
 
-        private void RadioButtonGreen_Checked(object sender, RoutedEventArgs e)
-        {
+        //private void RadioButtonGreen_Checked(object sender, RoutedEventArgs e)
+        //{
 
-        }
-
-        private void ComboboxCameras_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ComboboxCameras.SelectedValue.ToString() != null) // если не равно null
-            {
-                selectedcameraIndex = ComboboxCameras.SelectedIndex.ToString();
-                if (selectedcameraIndex == "1")
-                {
-                    selectedCamera = "FLIR";
-                }
-                if (selectedcameraIndex == "2")
-                {
-                    selectedCamera = "DAO";
-                }
-                //MessageBox.Show(selectedCamera);
-                CameraIsSelected = true;
-            }
-        }
+        //}
 
         public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
         {
