@@ -46,8 +46,8 @@ namespace SimplestSpinWPF
         /// <summary>
         /// Init flags
         /// </summary>
-        static bool InitFlir = true;
-        static bool InitDAO = false;
+        static bool InitFlir = false;
+        static bool InitDAO = true;
         int fontSize = 50;
 
 
@@ -90,12 +90,14 @@ namespace SimplestSpinWPF
             {
                 fontSize = 50;
                 FlirCamInit();
+                DrawDiffCheckBox.IsChecked = false;
             }
                 
             if (InitDAO)
             {
                 fontSize = 5000;
                 DAOCamInit();
+                DrawDiffCheckBox.IsChecked = true;
             }
 
 
@@ -136,18 +138,34 @@ namespace SimplestSpinWPF
         public BitmapSource bsOut = null;
         int FIcounter = 0;
         int averageLimit = 10;
+        int framesCounter = 0;
+        int nFramesBeforeSaving = 100;
         int checkNpixelsInCursor = 0;
-        double FI_norma = 1;
-        double FI = 0;
-        double FI_Real = 0;
-        string FI_string = "";
-        string fileName4Saving = "";
-        string fileNameDecreased = "";
+
         string _portName = "";
         volatile string CMD = "";
         bool Oxy = false;
         string AIM_color = "blue";
-        
+
+        double FI_norma = 1;
+        double FI = 0;
+        double FI_Real = 0;
+        string FI_string = "";
+
+        double FIR_norma = 1;
+        double FIR = 0;
+        double FIR_Real = 0;
+        string FIR_string = "";
+
+        double FIV_norma = 1;
+        double FIV = 0;
+        double FIV_Real = 0;
+        string FIV_string = "";
+
+        string fileName4Saving = "";
+        string fileNameDecreased = "";
+
+        string bleachingDegreeString = "";
 
         public long PrevImageSum = 0;
 
@@ -510,7 +528,19 @@ namespace SimplestSpinWPF
             {
                 CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 0);
             }
-
+            
+            //Debug.WriteLine(framesCounter.ToString());
+            if(radioButtonSeq.IsChecked == true)
+            {
+                framesCounter += 1;
+                if (framesCounter == nFramesBeforeSaving)
+                {
+                    //System.Windows.MessageBox.Show("framesCounter = " + framesCounter.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    sequentalSaving();
+                    framesCounter = 0;
+                }
+            }
+            
             Title = "STROBE II: Reads count:" + i.ToString() + " last sum:" + LastImageSum.ToString();
         }
 
@@ -611,6 +641,16 @@ namespace SimplestSpinWPF
                 SendCMD();
             }
 
+        }
+
+        public void sequentalSaving()
+        {
+            DrawDiffCheckBox.IsChecked = true;
+            radioButtonRed.IsChecked = true;
+            this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+            radioButtonRedLED.IsChecked = true;
+            this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+            radioButtonSeq.IsChecked = true;
         }
 
         private void RadioButtonR2G_Checked(object sender, EventArgs e)
@@ -761,6 +801,7 @@ namespace SimplestSpinWPF
             if (radioButtonSeq.IsChecked == true)
             {
                 AIM_color = "blue";
+                DrawDiffCheckBox.IsChecked = false;
                 filterChange(0);
                 CMD = "M6";
                 SendCMD();
@@ -920,11 +961,16 @@ namespace SimplestSpinWPF
                     if (GreenFlu)
                     {
                         dif = (bb1[g] - bb2[g]);
+                        if (dif < 0)
+                            dif = -dif;
+
                     }
 
                     if (RedFlu)
                     {
                         dif = (bb1[r] - bb2[r]);
+                        if (dif < 0)
+                            dif = -dif;
                     }
 
                     if (R2G)
@@ -943,6 +989,8 @@ namespace SimplestSpinWPF
                         }
 
                         dif = DC[(difRed << 8) + difGreen];
+                        if (dif < 0)
+                            dif = -dif;
                     }
 
                     if (Oxy)
@@ -992,6 +1040,7 @@ namespace SimplestSpinWPF
                     if (RLED)
                     {
                         dif = bb1[r] - bb2[r];
+                        //dif = bb1[r] + bb1[r] + bb1[b] - bb2[r] - bb2[g] - bb2[b];
                         if (dif < 0)
                             dif = -dif;
 
@@ -1009,6 +1058,7 @@ namespace SimplestSpinWPF
                     if (ICG)
                     {
                         dif = bb1[r] - bb2[r];
+                        //dif = bb1[r] + bb1[r] + bb1[b] - bb2[r] - bb2[g] - bb2[b];
                         if (dif < 0)
                             dif = -dif;
 
@@ -1022,8 +1072,8 @@ namespace SimplestSpinWPF
 
                     }
 
-                    if (dif < 0)
-                        dif = -dif;
+                    //if (dif < 0)
+                    //    dif = -dif;
 
 
                     res = bb[g];
@@ -1110,8 +1160,16 @@ namespace SimplestSpinWPF
             //    FIcounter = 0;
             //    FI_textbox.Text = FI.ToString("F1");
             //}
-            FI_Real = SummFluor / SummWhite;
-            FI = FI_Real / FI_norma;
+            if(GreenFlu || RedFlu || R2G || R_G)
+            {
+                FIV_Real = SummFluor / SummWhite;
+                FIV = FIV_Real / FIV_norma;
+            }
+            if (RLED || ICG)
+            {
+                FIR_Real = SummFluor / SummWhite;
+                FIR = FIR_Real / FIR_norma;
+            }
             FIcounter += 1;
 
             GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
@@ -1131,14 +1189,16 @@ namespace SimplestSpinWPF
             if (FIcounter == averageLimit)
             {
                 //FI = FI / averageLimit;
-                FI_string = String.Format("{0:F1}", FI);
-                FIV_Label.Content = FI_string;
+                FIV_string = String.Format("{0:F1}", FIV);
+                FIR_string = String.Format("{0:F1}", FIR);
+                FIV_Label.Content = FIV_string;
+                FIR_Label.Content = FIR_string;
                 FIcounter = 0;
                 //FI = 0;
             }
             //sss = String.Format("{0:F1}", FI);
-            FI_string = String.Format("{0:F1}", FI);
-            FIV_Label.Content = FI_string;
+            //FIR_string = String.Format("{0:F1}", FI);
+            //FIV_Label.Content = FI_string;
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
@@ -1218,13 +1278,42 @@ namespace SimplestSpinWPF
 
         private void ButtonNorma_Click(object sender, RoutedEventArgs e)
         {
+            bool NoLight = (bool)radioButtonNoLight.IsChecked;
+            bool GreenFlu = (bool)radioButtonGreen.IsChecked;
+            bool RedFlu = (bool)radioButtonRed.IsChecked;
+            bool R2G = (bool)radioButtonR2G.IsChecked;
+            bool R_G = (bool)radioButtonR_G.IsChecked;
+            bool Grayed = (bool)radioButtonGray.IsChecked;
+            bool Pseudo = (bool)radioButtonHeatmap.IsChecked;
+            bool Oxy = (bool)radioButtonOxy.IsChecked;
+            bool RLED = (bool)radioButtonRedLED.IsChecked;
+            bool BOTH = (bool)radioButtonBothLEDs.IsChecked;
+            bool ICG = (bool)radioButtonICG.IsChecked;
+            bool Sequent = (bool)radioButtonSeq.IsChecked;
+
+            bool OxyAlter = (bool)CheckBoxOxyAlter.IsChecked;
             //if (SpinCamColor == null)
             //    return;
-            try
+
+            if (GreenFlu || RedFlu || R2G || R_G)
             {
-                FI_norma = FI;
+                try
+                {
+                    FIV_norma = FIV;
+                    //System.Windows.MessageBox.Show("FIV_norma = " + FIV_norma.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                
+                catch { }
             }
-            catch { }
+            if (RLED || ICG)
+            {
+                try
+                {
+                    FIR_norma = FIR;
+                    //System.Windows.MessageBox.Show("FIR_norma = " + FIR_norma.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                catch { }
+            }                  
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
@@ -1288,7 +1377,7 @@ namespace SimplestSpinWPF
             System.Windows.Application.Current.Shutdown();
         }
 
-        private void button4_Click(object sender, RoutedEventArgs e)    //Save button
+        private void SavingButton_Click(object sender, RoutedEventArgs e)    //Save button
         {
             bool pseudo = (bool)radioButtonHeatmap.IsChecked;
             bool GreenFlu = (bool)radioButtonGreen.IsChecked;
@@ -1349,12 +1438,12 @@ namespace SimplestSpinWPF
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    gr.DrawString(FIV_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
                     BitmapFrame frame = BitmapFrame.Create(frameSource);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FIV_" + FIV_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1369,12 +1458,12 @@ namespace SimplestSpinWPF
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    gr.DrawString(FIV_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
                     BitmapFrame frame = BitmapFrame.Create(frameSource);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FI_" + FI_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FIV_" + FIV_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1390,11 +1479,11 @@ namespace SimplestSpinWPF
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    gr.DrawString(FIV_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FI_" + FI_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FIV_" + FIV_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1410,11 +1499,11 @@ namespace SimplestSpinWPF
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    gr.DrawString(FIV_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + FI_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIV_" + FIV_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1432,12 +1521,12 @@ namespace SimplestSpinWPF
 
                     Bitmap bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Red, 0, 0);
+                    gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Red, 0, 0);
                     Debug.WriteLine(FI_string);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("RLED" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + FI_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("RLED" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FIR_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1458,11 +1547,11 @@ namespace SimplestSpinWPF
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
+                    gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("BOTH" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + FI_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("BOTH" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FIR_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1482,11 +1571,11 @@ namespace SimplestSpinWPF
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
+                    gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("IR" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + FI_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("IR" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FIR_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1505,11 +1594,11 @@ namespace SimplestSpinWPF
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FI_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
+                    gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Oxy_" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FI_" + FI_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Oxy_" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FIR_string)
                         );
                     bmp.Save(Filename);
                 }

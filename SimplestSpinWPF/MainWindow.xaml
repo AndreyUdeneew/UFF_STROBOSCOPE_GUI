@@ -34,7 +34,7 @@
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonRed" Content="Red" Grid.Column="4" HorizontalAlignment="Left" Margin="16,402,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonRed_Checked"/>
         <!--<CheckBox x:Name="checkBoxGray" Content="In gray" Grid.Column="4" HorizontalAlignment="Left" Margin="9,459,0,0" VerticalAlignment="Top" Foreground="Gray" IsThreeState="False" IsChecked="true"/>-->
         <Button Background="DarkGray"  x:Name="button3" Content="Quit" Grid.Column="4" HorizontalAlignment="Center" Margin="0,851,0,0" VerticalAlignment="Top" Width="54" Click="button3_Click"/>
-        <Button x:Name="button4" Content="Save" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,734,0,0" VerticalAlignment="Top" Width="62" Click="button4_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
+        <Button x:Name="SavingButton" Content="Save" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,734,0,0" VerticalAlignment="Top" Width="62" Click="SavingButton_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
         <Button x:Name="buttonPortOpen" Content="Open" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,621,0,0" VerticalAlignment="Top" Width="62" Click="buttonPortOpen_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonR2G"  Content="R/G" HorizontalAlignment="Left" Margin="16,422,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonR2G_Checked"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonR_G"  Content="R-G" HorizontalAlignment="Left" Margin="16,442,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonR_G_Checked"/>
@@ -55,9 +55,9 @@
         </RadioButton>
         <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonGray"  Content="In gray" HorizontalAlignment="Left" Margin="9,694,0,0" IsChecked="True" VerticalAlignment="Top" Background="#FFBFBFBF"/>
         <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonHeatmap"  Content="Pseudo" HorizontalAlignment="Left" Margin="9,714,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
-        <Label x:Name="FIV_Label" Grid.Column="2" Foreground="Blue" Content="Label" HorizontalAlignment="Left" Margin="204,5,0,0" VerticalAlignment="Top" Width="184" FontSize="50" Grid.ColumnSpan="2"/>
-        <Label x:Name="FIR_Label" Grid.Column="2" Foreground="Red" Content="Label" HorizontalAlignment="Left" Margin="204,55,0,0" VerticalAlignment="Top" Width="184" FontSize="50" Grid.ColumnSpan="2"/>
-        <Button Background="DarkGray"  x:Name="Norma" Content="Norm" Grid.Column="4" HorizontalAlignment="Center" Margin="0,759,0,0" VerticalAlignment="Top" Width="62" Click="ButtonNorma_Click_1" RenderTransformOrigin="0.506,-2.505"/>
+        <Label x:Name="FIV_Label" Grid.Column="2" Foreground="Blue" Content="FIV" HorizontalAlignment="Left" Margin="204,5,0,0" VerticalAlignment="Top" Width="184" FontSize="50" Grid.ColumnSpan="2"/>
+        <Label x:Name="FIR_Label" Grid.Column="2" Foreground="Red" Content="FIR" HorizontalAlignment="Left" Margin="204,55,0,0" VerticalAlignment="Top" Width="184" FontSize="50" Grid.ColumnSpan="2"/>
+        <Button Background="DarkGray"  x:Name="Norma" Content="Norm" Grid.Column="4" HorizontalAlignment="Center" Margin="0,759,0,0" VerticalAlignment="Top" Width="62" Click="ButtonNorma_Click" RenderTransformOrigin="0.506,-2.505"/>
         <CheckBox x:Name="CheckBoxOxyAlter" Content="OxyAlter" Grid.Column="4" HorizontalAlignment="Left" Margin="10,105,0,0" VerticalAlignment="Top" Foreground="Gray"/>
         <ComboBox x:Name="ComboboxPorts" Grid.Column="4" HorizontalAlignment="Center" Margin="0,594,0,0" VerticalAlignment="Top" Width="62" DropDownOpened="ComboboxPorts_DropDownOpened"/>
         <Button x:Name="ChangeMode" Content="Mode" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,569,0,0" VerticalAlignment="Top" Width="62" Click="ChangeMode_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
