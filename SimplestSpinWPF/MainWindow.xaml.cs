@@ -34,6 +34,7 @@ using System.Windows.Controls;
 using RadioButton = System.Windows.Controls.RadioButton;
 using MessageBox = System.Windows.MessageBox;
 using Steema.TeeChart;
+using System.Windows.Media.Animation;
 
 
 namespace SimplestSpinWPF
@@ -46,8 +47,8 @@ namespace SimplestSpinWPF
         /// <summary>
         /// Init flags
         /// </summary>
-        static bool InitFlir = false;
-        static bool InitDAO = true;
+        static bool InitFlir = true;
+        static bool InitDAO = false;
         int fontSize = 50;
 
 
@@ -139,7 +140,8 @@ namespace SimplestSpinWPF
         int FIcounter = 0;
         int averageLimit = 10;
         int framesCounter = 0;
-        int nFramesBeforeSaving = 100;
+        string savingMode = "";
+        int nFramesBeforeSaving = 200;
         int checkNpixelsInCursor = 0;
 
         string _portName = "";
@@ -530,17 +532,33 @@ namespace SimplestSpinWPF
             }
             
             //Debug.WriteLine(framesCounter.ToString());
-            if(radioButtonSeq.IsChecked == true)
+            if ((savingMode == "seq")||(savingMode == "red"))
             {
                 framesCounter += 1;
-                if (framesCounter == nFramesBeforeSaving)
+                if(framesCounter == nFramesBeforeSaving)
                 {
-                    //System.Windows.MessageBox.Show("framesCounter = " + framesCounter.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    sequentalSaving();
+                    radioButtonRed.IsChecked = true;
+                }
+                if (framesCounter == nFramesBeforeSaving+5)
+                {
+                    this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+                    //savingMode = "red";
+                }
+                if (framesCounter == nFramesBeforeSaving+15)
+                {
+                    radioButtonRedLED.IsChecked = true;
+                }
+                if (framesCounter == (nFramesBeforeSaving  + 25))
+                {
+                    this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+                }
+                if (framesCounter == (nFramesBeforeSaving + 35))
+                {
                     framesCounter = 0;
+                    savingMode = "";
+                    radioButtonSeq.IsChecked = true;
                 }
             }
-            
             Title = "STROBE II: Reads count:" + i.ToString() + " last sum:" + LastImageSum.ToString();
         }
 
@@ -643,14 +661,18 @@ namespace SimplestSpinWPF
 
         }
 
-        public void sequentalSaving()
+        public void sequentalSavingViol()
         {
-            DrawDiffCheckBox.IsChecked = true;
-            radioButtonRed.IsChecked = true;
+            
             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-            radioButtonRedLED.IsChecked = true;
+            savingMode = "red";
+
+        }
+
+        public void sequentalSavingRed()
+        {
+            
             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-            radioButtonSeq.IsChecked = true;
         }
 
         private void RadioButtonR2G_Checked(object sender, EventArgs e)
@@ -661,6 +683,7 @@ namespace SimplestSpinWPF
             {
                 CMD = "M1";
                 AIM_color = "blue";
+                savingMode = "";
                 SendCMD();
                 //filterChange(0);
                 //if (p != null)
@@ -734,6 +757,7 @@ namespace SimplestSpinWPF
                 AIM_color = "white";
                 filterChange(1);
                 CMD = "M4";
+                savingMode = "";
                 SendCMD();
                 //if (p != null)
                 //    if (p.IsOpen)
@@ -746,7 +770,7 @@ namespace SimplestSpinWPF
         private void RadioButtonRedLED_Checked(object sender, RoutedEventArgs e)
         {
             // приводим отправителя к элементу типа RadioButton
-            RadioButton RadioButtonRedLED = (RadioButton)sender;
+            RadioButton radioButtonRedLED = (RadioButton)sender;
             if (radioButtonRedLED.IsChecked == true)
             {
                 AIM_color = "red";
@@ -769,6 +793,7 @@ namespace SimplestSpinWPF
                 AIM_color = "white";
                 filterChange(0);
                 CMD = "M3";
+                savingMode = "";
                 SendCMD();
                 //if (p != null)
                 //    if (p.IsOpen)
@@ -786,6 +811,7 @@ namespace SimplestSpinWPF
                 AIM_color = "blue";
                 filterChange(1);
                 CMD = "M7";
+                savingMode = "";
                 SendCMD();
                 //if (p != null)
                 //    if (p.IsOpen)
@@ -801,9 +827,10 @@ namespace SimplestSpinWPF
             if (radioButtonSeq.IsChecked == true)
             {
                 AIM_color = "blue";
-                DrawDiffCheckBox.IsChecked = false;
+                //DrawDiffCheckBox.IsChecked = false;
                 filterChange(0);
-                CMD = "M6";
+                CMD = "M0";
+                savingMode = "seq";
                 SendCMD();
                 //if (p != null)
                 //        if (p.IsOpen)
@@ -822,6 +849,7 @@ namespace SimplestSpinWPF
                 AIM_color = "white";
                 filterChange(0);
                 CMD = "M0";
+                savingMode = "";
                 SendCMD();
                 //if (p != null)
                 //        if (p.IsOpen)
@@ -869,7 +897,7 @@ namespace SimplestSpinWPF
             }
             if (mode == 6)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false;
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = true;
             }
             if (mode == 7)
             {
