@@ -154,20 +154,29 @@ namespace SimplestSpinWPF
         double FI_Real = 0;
         string FI_string = "";
 
+        double FIR_MAX = 0;
         double FIR_norma = 1;
         double FIR = 0;
         double FIR_Real = 0;
         string FIR_string = "";
+        string FIR_MAX_string = "";
 
+        double FIV_MAX = 0;
         double FIV_norma = 1;
         double FIV = 0;
         double FIV_Real = 0;
         string FIV_string = "";
+        string FIV_MAX_string = "";
 
         string fileName4Saving = "";
         string fileNameDecreased = "";
 
-        string bleachingDegreeString = "";
+        double bleaching_red = 0;
+        double bleaching_viol = 0;
+        string bleaching_viol_string = "";
+        string bleaching_red_string = "";
+
+        bool SeqEnabled = false;
 
         public long PrevImageSum = 0;
 
@@ -530,33 +539,48 @@ namespace SimplestSpinWPF
             {
                 CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 0);
             }
-            
+
             //Debug.WriteLine(framesCounter.ToString());
-            if ((savingMode == "seq")||(savingMode == "red"))
+            if (CheckBoxSeqEnabled.IsChecked == true)
             {
-                framesCounter += 1;
-                if(framesCounter == nFramesBeforeSaving)
+                if (savingMode == "seq")
                 {
-                    radioButtonRed.IsChecked = true;
-                }
-                if (framesCounter == nFramesBeforeSaving+5)
-                {
-                    this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-                    //savingMode = "red";
-                }
-                if (framesCounter == nFramesBeforeSaving+15)
-                {
-                    radioButtonRedLED.IsChecked = true;
-                }
-                if (framesCounter == (nFramesBeforeSaving  + 25))
-                {
-                    this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-                }
-                if (framesCounter == (nFramesBeforeSaving + 35))
-                {
-                    framesCounter = 0;
-                    savingMode = "";
-                    radioButtonSeq.IsChecked = true;
+                    framesCounter += 1;
+                    if (framesCounter == nFramesBeforeSaving)
+                    {
+                        CMD = "T_OFF";
+                        SendCMD();
+                    }
+                    if (framesCounter == nFramesBeforeSaving + 2)
+                    {
+                        radioButtonRed.IsChecked = true;
+                    }
+                    if (framesCounter == nFramesBeforeSaving + 8)
+                    {
+                        this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+                    }
+                    if (framesCounter == nFramesBeforeSaving + 15)
+                    {
+                        radioButtonRedLED.IsChecked = true;
+                    }
+                    if (framesCounter == (nFramesBeforeSaving + 25))
+                    {
+                        this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+                    }
+                    if (framesCounter == (nFramesBeforeSaving + 30))
+                    {
+                        ;
+                        CMD = "M0";
+                        SendCMD();
+                    }
+                    if (framesCounter == (nFramesBeforeSaving + 35))
+                    {
+                        framesCounter = 0;
+                        //savingMode = "";
+                        radioButtonSeq.IsChecked = true;
+                        CMD = "T_ON";
+                        SendCMD();
+                    }
                 }
             }
             Title = "STROBE II: Reads count:" + i.ToString() + " last sum:" + LastImageSum.ToString();
@@ -606,6 +630,10 @@ namespace SimplestSpinWPF
                         p.Write("M4\n");
                     if (CMD == "M3")
                         p.Write("M3\n");
+                    if (CMD == "T_ON")
+                        p.Write("T_ON\n");
+                    if (CMD == "T_OFF")
+                        p.Write("T_OFF\n");
                     //if (CMD == "FC0")
                     //    p.Write("FC0\n");
                     //if (CMD == "FC1")
@@ -661,19 +689,19 @@ namespace SimplestSpinWPF
 
         }
 
-        public void sequentalSavingViol()
-        {
+        //public void sequentalSavingViol()
+        //{
             
-            this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-            savingMode = "red";
+        //    this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+        //    savingMode = "red";
 
-        }
+        //}
 
-        public void sequentalSavingRed()
-        {
+        //public void sequentalSavingRed()
+        //{
             
-            this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-        }
+        //    this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+        //}
 
         private void RadioButtonR2G_Checked(object sender, EventArgs e)
         {
@@ -681,6 +709,8 @@ namespace SimplestSpinWPF
             RadioButton radioButtonR2G = (RadioButton)sender;
             if (radioButtonR2G.IsChecked == true)
             {
+                //CMD = "T_OFF";
+                //SendCMD();
                 CMD = "M1";
                 AIM_color = "blue";
                 savingMode = "";
@@ -700,6 +730,8 @@ namespace SimplestSpinWPF
             RadioButton radioButtonR_G = (RadioButton)sender;
             if (radioButtonR_G.IsChecked == true)
             {
+                //CMD = "T_OFF";
+                //SendCMD();
                 AIM_color = "blue";
                 filterChange(0);
                 CMD = "M1";
@@ -718,6 +750,8 @@ namespace SimplestSpinWPF
             RadioButton radioButtonGreen = (RadioButton)sender;
             if (radioButtonGreen.IsChecked == true)
             {
+                //CMD = "T_OFF";
+                //SendCMD();
                 AIM_color = "blue";
                 filterChange(0);
                 CMD = "M1";
@@ -736,6 +770,8 @@ namespace SimplestSpinWPF
             RadioButton radioButtonRed = (RadioButton)sender;
             if (radioButtonRed.IsChecked == true)
             {
+                //CMD = "T_OFF";
+                //SendCMD();
                 AIM_color = "blue";
                 filterChange(0);
                 CMD = "M1";
@@ -754,6 +790,8 @@ namespace SimplestSpinWPF
             RadioButton radioButtonOxy = (RadioButton)sender;
             if (radioButtonOxy.IsChecked == true)
             {
+                //CMD = "T_OFF";
+                //SendCMD();
                 AIM_color = "white";
                 filterChange(1);
                 CMD = "M4";
@@ -773,6 +811,8 @@ namespace SimplestSpinWPF
             RadioButton radioButtonRedLED = (RadioButton)sender;
             if (radioButtonRedLED.IsChecked == true)
             {
+                //CMD = "T_OFF";
+                //SendCMD();
                 AIM_color = "red";
                 filterChange(0);
                 CMD = "M2";
@@ -790,6 +830,8 @@ namespace SimplestSpinWPF
             RadioButton radioButtonBothLEDs = (RadioButton)sender;
             if (radioButtonBothLEDs.IsChecked == true)
             {
+                //CMD = "T_OFF";
+                //SendCMD();
                 AIM_color = "white";
                 filterChange(0);
                 CMD = "M3";
@@ -804,6 +846,8 @@ namespace SimplestSpinWPF
         }
         private void RadioButtonICG_Checked(object sender, EventArgs e)
         {
+            //CMD = "T_OFF";
+            //SendCMD();
             // приводим отправителя к элементу типа RadioButton
             RadioButton radioButtonICG = (RadioButton)sender;
             if (radioButtonICG.IsChecked == true)
@@ -827,11 +871,15 @@ namespace SimplestSpinWPF
             if (radioButtonSeq.IsChecked == true)
             {
                 AIM_color = "blue";
+
+                CMD = "T_ON";
+                SendCMD();
+
                 //DrawDiffCheckBox.IsChecked = false;
                 filterChange(0);
-                CMD = "M0";
+                //CMD = "M0";
                 savingMode = "seq";
-                SendCMD();
+                //SendCMD();
                 //if (p != null)
                 //        if (p.IsOpen)
                 //        {
@@ -1192,11 +1240,19 @@ namespace SimplestSpinWPF
             {
                 FIV_Real = SummFluor / SummWhite;
                 FIV = FIV_Real / FIV_norma;
+                if(FIV > FIV_MAX)
+                {
+                    FIV_MAX = FIV;
+                }
             }
             if (RLED || ICG)
             {
                 FIR_Real = SummFluor / SummWhite;
                 FIR = FIR_Real / FIR_norma;
+                if (FIR > FIR_MAX)
+                {
+                    FIR_MAX = FIR;
+                }
             }
             FIcounter += 1;
 
@@ -1219,8 +1275,24 @@ namespace SimplestSpinWPF
                 //FI = FI / averageLimit;
                 FIV_string = String.Format("{0:F1}", FIV);
                 FIR_string = String.Format("{0:F1}", FIR);
+                
                 FIV_Label.Content = FIV_string;
                 FIR_Label.Content = FIR_string;
+
+                FIV_MAX_string = String.Format("MAX {0:F1}", FIV_MAX);
+                FIR_MAX_string = String.Format("MAX {0:F1}", FIR_MAX);
+
+                FIV_MAX_Label.Content = FIV_MAX_string;
+                FIR_MAX_Label.Content = FIR_MAX_string;
+
+                bleaching_viol = 100.0 - (FIV / FIV_MAX) * 100.0;
+                bleaching_red = 100.0 - (FIR / FIR_MAX) * 100.0;
+
+                bleaching_viol_string = String.Format("{0:F1}%", bleaching_viol);
+                bleaching_red_string = String.Format("{0:F1}%", bleaching_red);
+
+                bleaching_viol_Label.Content = bleaching_viol_string;
+                bleaching_red_Label.Content = bleaching_red_string;
                 FIcounter = 0;
                 //FI = 0;
             }
@@ -1328,6 +1400,7 @@ namespace SimplestSpinWPF
                 try
                 {
                     FIV_norma = FIV;
+                    FIV_MAX = 0;
                     //System.Windows.MessageBox.Show("FIV_norma = " + FIV_norma.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 
@@ -1338,6 +1411,7 @@ namespace SimplestSpinWPF
                 try
                 {
                     FIR_norma = FIR;
+                    FIR_MAX = 0;
                     //System.Windows.MessageBox.Show("FIR_norma = " + FIR_norma.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 catch { }
@@ -1870,6 +1944,12 @@ namespace SimplestSpinWPF
         private void Slider_Exposure_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
 
+        }
+
+        private void CheckBoxSeqEnabled_Checked(object sender, RoutedEventArgs e)
+        {
+            SeqEnabled = true;
+            radioButtonSeq.IsChecked = true;
         }
 
         //private void RadioButtonGreen_Checked(object sender, RoutedEventArgs e)
