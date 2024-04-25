@@ -177,6 +177,7 @@ namespace SimplestSpinWPF
         string bleaching_red_string = "";
 
         bool SeqEnabled = false;
+        string isSerial = "";
 
         public long PrevImageSum = 0;
 
@@ -1493,6 +1494,11 @@ namespace SimplestSpinWPF
             bool ICG = (bool)radioButtonICG.IsChecked;
             //bool Grayed = (bool)radioButtonGray.IsChecked;
 
+            if (CheckBoxSeqEnabled.IsChecked == true)
+                isSerial = "_ser_";
+            else
+                isSerial = "";
+
             try
             {
                 BitmapEncoder encoder = new PngBitmapEncoder();
@@ -1565,7 +1571,7 @@ namespace SimplestSpinWPF
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FIV_" + FIV_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FIV_" + FIV_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1628,7 +1634,7 @@ namespace SimplestSpinWPF
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("RLED" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FIR_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "RLED" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FIR_string)
                         );
                     bmp.Save(Filename);
                 }
