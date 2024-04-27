@@ -1237,24 +1237,28 @@ namespace SimplestSpinWPF
             //    FIcounter = 0;
             //    FI_textbox.Text = FI.ToString("F1");
             //}
-            if(GreenFlu || RedFlu || R2G || R_G)
+            if (radioButtonSeq.IsChecked == false)
             {
-                FIV_Real = SummFluor / SummWhite;
-                FIV = FIV_Real / FIV_norma;
-                if(FIV > FIV_MAX)
+                if (GreenFlu || RedFlu || R2G || R_G)
                 {
-                    FIV_MAX = FIV;
+                    FIV_Real = SummFluor / SummWhite;
+                    FIV = FIV_Real / FIV_norma;
+                    if (FIV > FIV_MAX)
+                    {
+                        FIV_MAX = FIV;
+                    }
+                }
+                if (RLED || ICG)
+                {
+                    FIR_Real = SummFluor / SummWhite;
+                    FIR = FIR_Real / FIR_norma;
+                    if (FIR > FIR_MAX)
+                    {
+                        FIR_MAX = FIR;
+                    }
                 }
             }
-            if (RLED || ICG)
-            {
-                FIR_Real = SummFluor / SummWhite;
-                FIR = FIR_Real / FIR_norma;
-                if (FIR > FIR_MAX)
-                {
-                    FIR_MAX = FIR;
-                }
-            }
+            
             FIcounter += 1;
 
             GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
