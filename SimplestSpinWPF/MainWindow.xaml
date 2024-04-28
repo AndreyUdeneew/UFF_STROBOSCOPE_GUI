@@ -61,6 +61,7 @@
         <Label x:Name="FIR_MAX_Label" Grid.Column="3" Foreground="Red" Content="FIR_MAX" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top" Width="250" FontSize="50"/>
         <Label x:Name="bleaching_viol_Label" Grid.Column="3" Foreground="Blue" Content="Bleaching" HorizontalAlignment="Left" Margin="300,0,0,0" VerticalAlignment="Top" Width="300" FontSize="50"/>
         <Label x:Name="bleaching_red_Label" Grid.Column="3" Foreground="Red" Content="Bleaching" HorizontalAlignment="Left" Margin="300,50,0,0" VerticalAlignment="Top" Width="300" FontSize="50"/>
+        <Label x:Name="Stopwatch_Label" Grid.Column="3" Foreground="BlueViolet" Content="Stopwatch" HorizontalAlignment="Left" Margin="600,0,0,0" VerticalAlignment="Top" Width="600" FontSize="50"/>
         <Button Background="DarkGray"  x:Name="Norma" Content="Norm" Grid.Column="4" HorizontalAlignment="Center" Margin="0,759,0,0" VerticalAlignment="Top" Width="62" Click="ButtonNorma_Click" RenderTransformOrigin="0.506,-2.505"/>
         <CheckBox x:Name="CheckBoxOxyAlter" Content="OxyAlter" Grid.Column="4" HorizontalAlignment="Left" Margin="10,105,0,0" VerticalAlignment="Top" Foreground="Gray"/>
         <ComboBox x:Name="ComboboxPorts" Grid.Column="4" HorizontalAlignment="Center" Margin="0,594,0,0" VerticalAlignment="Top" Width="62" DropDownOpened="ComboboxPorts_DropDownOpened"/>

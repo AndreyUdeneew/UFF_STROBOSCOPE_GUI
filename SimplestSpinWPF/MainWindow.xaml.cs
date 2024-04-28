@@ -176,6 +176,15 @@ namespace SimplestSpinWPF
         string bleaching_viol_string = "";
         string bleaching_red_string = "";
 
+        string TimerValueString = "";
+        string TimerValueStartString = "";
+        int startMin = 0;
+        int startSec = 0;
+        int curMin = 0;
+        int curSec = 0;
+
+        Stopwatch d = Stopwatch.StartNew();
+
         bool SeqEnabled = false;
         string isSerial = "";
 
@@ -544,11 +553,18 @@ namespace SimplestSpinWPF
             //Debug.WriteLine(framesCounter.ToString());
             if (CheckBoxSeqEnabled.IsChecked == true)
             {
+                TimerValueString = String.Format("{0}", d.Elapsed);
+                Stopwatch_Label.Content = TimerValueString;
                 if (savingMode == "seq")
                 {
+                    //DateTime d = DateTime.Now;
+                    //curMin = d.Minute - startMin;
+                    //curSec = d.Second - startSec;
+                    //d.Stop();
                     framesCounter += 1;
                     if (framesCounter == nFramesBeforeSaving)
                     {
+                        d.Stop();
                         CMD = "T_OFF";
                         SendCMD();
                     }
@@ -580,6 +596,8 @@ namespace SimplestSpinWPF
                         //savingMode = "";
                         radioButtonSeq.IsChecked = true;
                         CMD = "T_ON";
+                        d.Start();
+                        //TimerValueString = String.Format("{0}", d.Elapsed);
                         SendCMD();
                     }
                 }
@@ -1958,8 +1976,16 @@ namespace SimplestSpinWPF
 
         private void CheckBoxSeqEnabled_Checked(object sender, RoutedEventArgs e)
         {
+            d.Restart();
+            startMin = 0;
+            startSec = 0;
+            //DateTime d = DateTime.Now;
+            //startMin = d.Minute;
+            //startSec = d.Second;
             SeqEnabled = true;
             radioButtonSeq.IsChecked = true;
+            TimerValueString = String.Format("{0}", d.Elapsed);
+            Stopwatch_Label.Content = TimerValueString;
         }
 
         //private void RadioButtonGreen_Checked(object sender, RoutedEventArgs e)
