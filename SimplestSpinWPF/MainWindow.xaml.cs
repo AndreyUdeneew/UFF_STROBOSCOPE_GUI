@@ -1986,6 +1986,14 @@ namespace SimplestSpinWPF
             radioButtonSeq.IsChecked = true;
             TimerValueString = String.Format("{0}", d.Elapsed);
             Stopwatch_Label.Content = TimerValueString;
+            FIV_MAX = FIV;
+            FIR_MAX = FIR;
+        }
+
+        private void CheckBoxSeqEnabled_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CMD = "T_OFF";
+            SendCMD();
         }
 
         //private void RadioButtonGreen_Checked(object sender, RoutedEventArgs e)

@@ -88,7 +88,7 @@
         <Label x:Name="Label_Gain" Grid.Column="4" Content="G" HorizontalAlignment="Center" Margin="0,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
         <Label x:Name="Label_Exposure" Grid.Column="4" Content="E" HorizontalAlignment="Left" Margin="57,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonNoLight" Content="NoLight" Grid.Column="4" HorizontalAlignment="Left" Margin="14,362,0,0" VerticalAlignment="Top" IsThreeState="False" IsChecked="True"  Background="#FFBFBFBF" Checked="RadioButtonNoLight_Checked"/>
-        <CheckBox x:Name="CheckBoxSeqEnabled" Content="SeqEn" Grid.Column="4" HorizontalAlignment="Left" Margin="5,332,0,0" VerticalAlignment="Top" Foreground="Gray" Checked="CheckBoxSeqEnabled_Checked"/>
+        <CheckBox x:Name="CheckBoxSeqEnabled" Content="SeqEn" Grid.Column="4" HorizontalAlignment="Left" Margin="5,332,0,0" VerticalAlignment="Top" Foreground="Gray" Checked="CheckBoxSeqEnabled_Checked" Unchecked="CheckBoxSeqEnabled_Unchecked"/>
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
     </Grid>
 
