@@ -33,9 +33,9 @@
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonGreen" Content="Green" Grid.Column="4" HorizontalAlignment="Center" Margin="0,382,0,0" VerticalAlignment="Top"  Background="#FFBFBFBF" Checked="RadioButtonGreen_Checked"/>
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonRed" Content="Red" Grid.Column="4" HorizontalAlignment="Left" Margin="16,402,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonRed_Checked"/>
         <!--<CheckBox x:Name="checkBoxGray" Content="In gray" Grid.Column="4" HorizontalAlignment="Left" Margin="9,459,0,0" VerticalAlignment="Top" Foreground="Gray" IsThreeState="False" IsChecked="true"/>-->
-        <Button Background="DarkGray"  x:Name="button3" Content="Quit" Grid.Column="4" HorizontalAlignment="Center" Margin="0,851,0,0" VerticalAlignment="Top" Width="54" Click="button3_Click"/>
-        <Button x:Name="SavingButton" Content="Save" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,734,0,0" VerticalAlignment="Top" Width="62" Click="SavingButton_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
-        <Button x:Name="buttonPortOpen" Content="Open" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,621,0,0" VerticalAlignment="Top" Width="62" Click="buttonPortOpen_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
+        <Button Background="DarkGray"  x:Name="button3" Content="Quit" Grid.Column="4" HorizontalAlignment="Center" Margin="0,861,0,0" VerticalAlignment="Top" Width="54" Click="button3_Click"/>
+        <Button x:Name="SavingButton" Content="Save" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,771,0,0" VerticalAlignment="Top" Width="62" Click="SavingButton_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
+        <Button x:Name="buttonPortOpen" Content="Open" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,658,0,0" VerticalAlignment="Top" Width="62" Click="buttonPortOpen_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonR2G"  Content="R/G" HorizontalAlignment="Left" Margin="16,422,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonR2G_Checked"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonR_G"  Content="R-G" HorizontalAlignment="Left" Margin="16,442,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonR_G_Checked"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonOxy"  Content="Oxy" HorizontalAlignment="Left" Margin="16,462,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonOxy_Checked"/>
@@ -43,7 +43,7 @@
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonBothLEDs"  Content="Both" HorizontalAlignment="Center" Margin="0,502,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonBothLEDs_Checked"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonICG"  Content="ICG" HorizontalAlignment="Left" Margin="17,522,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonICG_Checked"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonSeq"  Content="Sequent" HorizontalAlignment="Left" Margin="10,540,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonSeq_Checked" Focusable="False" IsHitTestVisible="False"/>
-        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonColor"  Content="Color" HorizontalAlignment="Left" Margin="9,672,0,0" VerticalAlignment="Top"  RenderTransformOrigin="0.5,0.5" Width="73">
+        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonColor"  Content="Color" HorizontalAlignment="Left" Margin="10,709,0,0" VerticalAlignment="Top"  RenderTransformOrigin="0.5,0.5" Width="73">
             <RadioButton.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
@@ -53,8 +53,8 @@
                 </TransformGroup>
             </RadioButton.RenderTransform>
         </RadioButton>
-        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonGray"  Content="In gray" HorizontalAlignment="Left" Margin="9,694,0,0" IsChecked="True" VerticalAlignment="Top" Background="#FFBFBFBF"/>
-        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonHeatmap"  Content="Pseudo" HorizontalAlignment="Left" Margin="9,714,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
+        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonGray"  Content="In gray" HorizontalAlignment="Left" Margin="10,731,0,0" IsChecked="True" VerticalAlignment="Top" Background="#FFBFBFBF"/>
+        <RadioButton GroupName="Appearance" Grid.Column="4" Foreground="Gray" x:Name="radioButtonHeatmap"  Content="Pseudo" HorizontalAlignment="Center" Margin="0,751,0,0" VerticalAlignment="Top" Background="#FFBFBFBF"/>
         <Label x:Name="FIV_Label" Grid.Column="2" Foreground="Blue" Content="FIV" HorizontalAlignment="Left" Margin="204,0,0,0" VerticalAlignment="Top" Width="112" FontSize="50" Grid.ColumnSpan="2"/>
         <Label x:Name="FIR_Label" Grid.Column="2" Foreground="Red" Content="FIR" HorizontalAlignment="Left" Margin="204,50,0,0" VerticalAlignment="Top" Width="184" FontSize="50" Grid.ColumnSpan="2"/>
         <Label x:Name="FIV_MAX_Label" Grid.Column="3" Foreground="Blue" Content="FIV_MAX" HorizontalAlignment="Left" Margin="10,0,0,0" VerticalAlignment="Top" Width="250" FontSize="50"/>
@@ -62,10 +62,10 @@
         <Label x:Name="bleaching_viol_Label" Grid.Column="3" Foreground="Blue" Content="Bleaching" HorizontalAlignment="Left" Margin="300,0,0,0" VerticalAlignment="Top" Width="300" FontSize="50"/>
         <Label x:Name="bleaching_red_Label" Grid.Column="3" Foreground="Red" Content="Bleaching" HorizontalAlignment="Left" Margin="300,50,0,0" VerticalAlignment="Top" Width="300" FontSize="50"/>
         <Label x:Name="Stopwatch_Label" Grid.Column="3" Foreground="BlueViolet" Content="Stopwatch" HorizontalAlignment="Left" Margin="600,0,0,0" VerticalAlignment="Top" Width="600" FontSize="50"/>
-        <Button Background="DarkGray"  x:Name="Norma" Content="Norm" Grid.Column="4" HorizontalAlignment="Center" Margin="0,759,0,0" VerticalAlignment="Top" Width="62" Click="ButtonNorma_Click" RenderTransformOrigin="0.506,-2.505"/>
+        <Button Background="DarkGray"  x:Name="Norma" Content="Norm" Grid.Column="4" HorizontalAlignment="Center" Margin="0,796,0,0" VerticalAlignment="Top" Width="62" Click="ButtonNorma_Click" RenderTransformOrigin="0.506,-2.505"/>
         <CheckBox x:Name="CheckBoxOxyAlter" Content="OxyAlter" Grid.Column="4" HorizontalAlignment="Left" Margin="10,105,0,0" VerticalAlignment="Top" Foreground="Gray"/>
-        <ComboBox x:Name="ComboboxPorts" Grid.Column="4" HorizontalAlignment="Center" Margin="0,594,0,0" VerticalAlignment="Top" Width="62" DropDownOpened="ComboboxPorts_DropDownOpened"/>
-        <Button x:Name="ChangeMode" Content="Mode" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,569,0,0" VerticalAlignment="Top" Width="62" Click="ChangeMode_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
+        <ComboBox x:Name="ComboboxPorts" Grid.Column="4" HorizontalAlignment="Center" Margin="0,631,0,0" VerticalAlignment="Top" Width="62" DropDownOpened="ComboboxPorts_DropDownOpened"/>
+        <!--<Button x:Name="ChangeMode" Content="Mode" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,606,0,0" VerticalAlignment="Top" Width="62" Click="ChangeMode_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>-->
         <CheckBox x:Name="CheckBoxAutofocus" Content="Autofocus" Grid.Column="2" HorizontalAlignment="Left" Margin="37,23,0,0" VerticalAlignment="Top" Foreground="Gray"/>
         <Button Background="DarkGray" x:Name="buttonZoomPlus" Content="Zoom+" Grid.Column="2" HorizontalAlignment="Left" Margin="64,103,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
         <Button Background="DarkGray" x:Name="buttonZoomMinus" Content="Zoom-" Grid.Column="2" HorizontalAlignment="Left" Margin="64,190,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
@@ -81,7 +81,7 @@
             <Button x:Name="button5" Content="Button" HorizontalAlignment="Left" Height="20" Margin="102,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="87" Click="button5_Click"/>
             <Button x:Name="button6" Content="Button" HorizontalAlignment="Left" Height="21" Margin="10,9,0,0" Grid.Row="1" VerticalAlignment="Top" Width="87" Click="button6_Click"/>
         </Grid>
-        <Button Background="DarkGray"  x:Name="ShowGraphButton" Content="Graph" Grid.Column="4" HorizontalAlignment="Center" Margin="0,784,0,0" VerticalAlignment="Top" Width="62" RenderTransformOrigin="0.506,-2.505" Click="ShowGraphButton_Click"/>
+        <Button Background="DarkGray"  x:Name="ShowGraphButton" Content="Graph" Grid.Column="4" HorizontalAlignment="Center" Margin="0,821,0,0" VerticalAlignment="Top" Width="62" RenderTransformOrigin="0.506,-2.505" Click="ShowGraphButton_Click"/>
         <Slider x:Name="Slider_Gain" Grid.Column="4" HorizontalAlignment="Center" Height="180" Margin="0,140,0,0" VerticalAlignment="Top" Width="16" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray" ValueChanged="Slider_Gain_ValueChanged"/>
         <Slider x:Name="Slider_Exposure" Grid.Column="4" HorizontalAlignment="Left" Height="180" Margin="57,140,0,0" VerticalAlignment="Top" Width="16" Orientation="Vertical" Minimum="0" Maximum="10" SmallChange="0.25" Foreground="Gray" ValueChanged="Slider_Exposure_ValueChanged"/>
         <Label x:Name="Label_coef" Grid.Column="4" Content="Coef" HorizontalAlignment="Left" Margin="0,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
@@ -89,6 +89,10 @@
         <Label x:Name="Label_Exposure" Grid.Column="4" Content="E" HorizontalAlignment="Left" Margin="57,120,0,0" VerticalAlignment="Top" Width="17" Foreground="White"/>
         <RadioButton GroupName="Mode" Foreground="Gray" x:Name="radioButtonNoLight" Content="NoLight" Grid.Column="4" HorizontalAlignment="Left" Margin="14,362,0,0" VerticalAlignment="Top" IsThreeState="False" IsChecked="True"  Background="#FFBFBFBF" Checked="RadioButtonNoLight_Checked"/>
         <CheckBox x:Name="CheckBoxSeqEnabled" Content="SeqEn" Grid.Column="4" HorizontalAlignment="Left" Margin="5,332,0,0" VerticalAlignment="Top" Foreground="Gray" Checked="CheckBoxSeqEnabled_Checked" Unchecked="CheckBoxSeqEnabled_Unchecked"/>
+        <Button x:Name="SaveC" Content="Save C" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,567,0,0" VerticalAlignment="Top" Width="62" Click="SaveC_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>
+        <Label Grid.Column="2" Content="Desired Bleaching Degree, %" HorizontalAlignment="Left" Margin="18,254,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <TextBox x:Name="BleachingTextBox" Grid.Column="2" HorizontalAlignment="Left" Margin="37,285,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="102" TextChanged="BleachingTextBox_TextChanged"/>
+        <Label Grid.Column="4" Content="COM PORT" Foreground="Gray" HorizontalAlignment="Left" Height="25" Margin="8,606,0,0" VerticalAlignment="Top" Width="72"/>
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
     </Grid>
 

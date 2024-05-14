@@ -35,6 +35,8 @@ using RadioButton = System.Windows.Controls.RadioButton;
 using MessageBox = System.Windows.MessageBox;
 using Steema.TeeChart;
 using System.Windows.Media.Animation;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Window = System.Windows.Window;
 
 
 namespace SimplestSpinWPF
@@ -182,6 +184,20 @@ namespace SimplestSpinWPF
         int startSec = 0;
         int curMin = 0;
         int curSec = 0;
+
+        int ampRed = 0;
+        int ampGreen = 0;
+        int ampR2G = 0;
+        int ampR_G = 0;
+        int ampRLED = 0;
+        int ampICG = 0;
+        int ampOxy = 0;
+        int ampBOTH = 0;
+        int ampCur = 0;
+
+        int desiredBleaching = 0;
+        int bleachingMeas = 0;
+        int startFrames = 0;
 
         Stopwatch d = Stopwatch.StartNew();
 
@@ -553,10 +569,44 @@ namespace SimplestSpinWPF
             //Debug.WriteLine(framesCounter.ToString());
             if (CheckBoxSeqEnabled.IsChecked == true)
             {
-                TimerValueString = String.Format("{0}", d.Elapsed);
-                Stopwatch_Label.Content = TimerValueString;
+                if(startFrames == 0)
+                {
+                    TimerValueString = String.Format("{0}", d.Elapsed);
+                    Stopwatch_Label.Content = TimerValueString;
+                }
+
+
                 if (savingMode == "seq")
                 {
+                    if (startFrames == 1)
+                    {
+                        if (framesCounter == 2)
+                        {
+                            radioButtonRed.IsChecked = true;
+                        }
+                        if (framesCounter == 8)
+                        {
+                            FIV_MAX = FIV;
+                            this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+                        }
+                        if (framesCounter == 15)
+                        {
+                            radioButtonRedLED.IsChecked = true;
+                        }
+                        if (framesCounter == 25)
+                        {
+                            FIR_MAX = FIR;
+                            this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+                            CMD = "M0";
+                            SendCMD();
+                            d.Restart();
+                            startMin = 0;
+                            startSec = 0;
+                            TimerValueString = String.Format("{0}", d.Elapsed);
+                            Stopwatch_Label.Content = TimerValueString;
+                            startFrames = 0;
+                        }                       
+                    }
                     //DateTime d = DateTime.Now;
                     //curMin = d.Minute - startMin;
                     //curSec = d.Second - startSec;
@@ -1023,7 +1073,73 @@ namespace SimplestSpinWPF
             int temp;
             byte res = 0;
 
-            int amp = (int)(AmplificationSlider.Value);
+            int ampCur = (int)(AmplificationSlider.Value);
+            if (radioButtonRed.IsChecked == true)
+            {   
+                if(CheckBoxSeqEnabled.IsChecked == true)
+                {
+                    ampCur = ampRed;
+                    AmplificationSlider.Value = ampCur;
+                }
+                
+            }
+            if (radioButtonGreen.IsChecked == true)
+            {
+                if (CheckBoxSeqEnabled.IsChecked == true)
+                {
+                    ampCur = ampGreen;
+                    AmplificationSlider.Value = ampCur;
+                }
+            }
+            if (radioButtonR2G.IsChecked == true)
+            {
+                if (CheckBoxSeqEnabled.IsChecked == true)
+                {
+                    ampCur = ampR2G;
+                    AmplificationSlider.Value = ampCur;
+                }
+            }
+            if (radioButtonR_G.IsChecked == true)
+            {
+                if (CheckBoxSeqEnabled.IsChecked == true)
+                {
+                    ampCur = ampR_G;
+                    AmplificationSlider.Value = ampCur;
+                }
+            }
+            if (radioButtonRedLED.IsChecked == true)
+            {
+                if (CheckBoxSeqEnabled.IsChecked == true)
+                {
+                    ampCur = ampRLED;
+                    AmplificationSlider.Value = ampCur;
+                }
+            }
+            if (radioButtonICG.IsChecked == true)
+            {
+                if (CheckBoxSeqEnabled.IsChecked == true)
+                {
+                    ampCur = ampICG;
+                    AmplificationSlider.Value = ampCur;
+                };
+            }
+            if (radioButtonOxy.IsChecked == true)
+            {
+                if (CheckBoxSeqEnabled.IsChecked == true)
+                {
+                    ampCur = ampOxy;
+                    AmplificationSlider.Value = ampCur;
+                }
+            }
+            if (radioButtonBothLEDs.IsChecked == true)
+            {
+                if (CheckBoxSeqEnabled.IsChecked == true)
+                {
+                    ampCur = ampBOTH;
+                    AmplificationSlider.Value = ampCur;
+                }
+            }
+
             long L = (int)wb1.PixelWidth * (int)wb1.PixelHeight * 3;
             int width = (int)wb1.PixelWidth * 3;
             int height = (int)wb1.PixelHeight;
@@ -1172,7 +1288,7 @@ namespace SimplestSpinWPF
 
 
                     res = bb[g];
-                    dif <<= amp;
+                    dif <<= ampCur;
 
                     //if (Oxy)
                     //{
@@ -1310,6 +1426,16 @@ namespace SimplestSpinWPF
 
                 bleaching_viol = 100.0 - (FIV / FIV_MAX) * 100.0;
                 bleaching_red = 100.0 - (FIR / FIR_MAX) * 100.0;
+
+                //if((bleaching_red >= desiredBleaching) && (bleachingMeas == 1))
+                //{
+                //    d.Stop();
+                //    CMD = "T_OFF";
+                //    SendCMD();
+                //    Stopwatch_Label.Content += " STOP";
+                //    radioButtonRedLED.IsChecked = true;
+                //    bleachingMeas = 0;
+                //}
 
                 bleaching_viol_string = String.Format("{0:F1}%", bleaching_viol);
                 bleaching_red_string = String.Format("{0:F1}%", bleaching_red);
@@ -1517,7 +1643,7 @@ namespace SimplestSpinWPF
             //bool Grayed = (bool)radioButtonGray.IsChecked;
 
             if (CheckBoxSeqEnabled.IsChecked == true)
-                isSerial = "_ser_";
+                isSerial = "ser_";
             else
                 isSerial = "";
 
@@ -1528,7 +1654,7 @@ namespace SimplestSpinWPF
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("White" + "_Coef" + (int)(AmplificationSlider.Value))
+                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("White" + "_Coef" + ampCur)
                     );
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
@@ -1547,7 +1673,7 @@ namespace SimplestSpinWPF
                 DateTime d = DateTime.Now;
                 string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                   !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("FLUOR" + "_Coef" + (int)(AmplificationSlider.Value))
+                   !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("FLUOR" + "_Coef" + ampCur)
                    );
                 using (var fileStream = new System.IO.FileStream(Filename, System.IO.FileMode.Create))
                 {
@@ -1573,7 +1699,7 @@ namespace SimplestSpinWPF
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + (int)(AmplificationSlider.Value) + "_FIV_" + FIV_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + ampCur + "_FIV_" + FIV_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1593,7 +1719,7 @@ namespace SimplestSpinWPF
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "Fluo_" + "Red" + "_Coef" + (int)(AmplificationSlider.Value) + "_FIV_" + FIV_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "Fluo_" + "Red" + "_Coef" + ampCur + "_FIV_" + FIV_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1613,7 +1739,7 @@ namespace SimplestSpinWPF
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + (int)(AmplificationSlider.Value) * additionalCoef + "_FIV_" + FIV_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + ampCur * additionalCoef + "_FIV_" + FIV_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1633,7 +1759,7 @@ namespace SimplestSpinWPF
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIV_" + FIV_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + ampCur * 1 + "_FIV_" + FIV_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1656,7 +1782,7 @@ namespace SimplestSpinWPF
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "RLED" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FIR_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "RLED" + "_Coef" + ampCur * 1 + "_FIR_" + FIR_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1681,7 +1807,7 @@ namespace SimplestSpinWPF
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("BOTH" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FIR_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("BOTH" + "_Coef" + ampCur * 1 + "_FIR_" + FIR_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1705,7 +1831,7 @@ namespace SimplestSpinWPF
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("IR" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FIR_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("IR" + "_Coef" + ampCur * 1 + "_FIR_" + FIR_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1728,7 +1854,7 @@ namespace SimplestSpinWPF
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Oxy_" + "_Coef" + (int)(AmplificationSlider.Value) * 1 + "_FIR_" + FIR_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Oxy_" + "_Coef" + ampCur * 1 + "_FIR_" + FIR_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -1884,13 +2010,42 @@ namespace SimplestSpinWPF
                 return;
         }
 
-        private void ChangeMode_Click(object sender, RoutedEventArgs e)
+        private void SaveC_Click(object sender, RoutedEventArgs e)
         {
-            if (radioButtonOxy.IsChecked == true) MessageBox.Show(radioButtonOxy.Content.ToString());
-            if (radioButtonRedLED.IsChecked == true) MessageBox.Show(radioButtonRedLED.Content.ToString());
-            if (radioButtonBothLEDs.IsChecked == true) MessageBox.Show(radioButtonBothLEDs.Content.ToString());
-            if (radioButtonICG.IsChecked == true) MessageBox.Show(radioButtonICG.Content.ToString());
-            if (radioButtonSeq.IsChecked == true) MessageBox.Show(radioButtonSeq.Content.ToString());
+            int amp = (int)(AmplificationSlider.Value);
+            if(radioButtonRed.IsChecked == true)
+            {
+                ampRed = amp;
+            }
+            if (radioButtonGreen.IsChecked == true)
+            {
+                ampGreen = amp;
+            }
+            if (radioButtonR2G.IsChecked == true)
+            {
+                ampR2G = amp;
+            }
+            if (radioButtonR_G.IsChecked == true)
+            {
+                ampR_G = amp;
+            }
+            if (radioButtonRedLED.IsChecked == true)
+            {
+                ampRLED = amp;
+            }
+            if (radioButtonICG.IsChecked == true)
+            {
+                ampICG = amp;
+            }
+            if (radioButtonOxy.IsChecked == true)
+            {
+                ampOxy = amp;
+            }
+            if (radioButtonBothLEDs.IsChecked == true)
+            {
+                ampBOTH = amp;
+            }
+
         }
 
         void KeepReading()
@@ -1976,24 +2131,25 @@ namespace SimplestSpinWPF
 
         private void CheckBoxSeqEnabled_Checked(object sender, RoutedEventArgs e)
         {
-            d.Restart();
-            startMin = 0;
-            startSec = 0;
-            //DateTime d = DateTime.Now;
-            //startMin = d.Minute;
-            //startSec = d.Second;
+
+            bleachingMeas = 1;
+            startFrames = 1;
+            framesCounter = 0;
             SeqEnabled = true;
             radioButtonSeq.IsChecked = true;
-            TimerValueString = String.Format("{0}", d.Elapsed);
-            Stopwatch_Label.Content = TimerValueString;
-            FIV_MAX = FIV;
-            FIR_MAX = FIR;
         }
 
         private void CheckBoxSeqEnabled_Unchecked(object sender, RoutedEventArgs e)
         {
             CMD = "T_OFF";
             SendCMD();
+        }
+
+        private void BleachingTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //desiredBleaching = int(BleachingTextBox.Text);
+            desiredBleaching = int.Parse(BleachingTextBox.Text);
+            desiredBleaching = Convert.ToInt32(BleachingTextBox.Text);
         }
 
         //private void RadioButtonGreen_Checked(object sender, RoutedEventArgs e)
