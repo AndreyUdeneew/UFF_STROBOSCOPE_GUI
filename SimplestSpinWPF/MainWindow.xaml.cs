@@ -106,7 +106,7 @@ namespace SimplestSpinWPF
 
             if (FLiRCamCount < 1 && DAOCamCount < 1)
             {
-                System.Windows.MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                System.Windows.MessageBox.Show("No FLIR camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();
                 return;
             }
@@ -143,7 +143,7 @@ namespace SimplestSpinWPF
         int averageLimit = 10;
         int framesCounter = 0;
         string savingMode = "";
-        int nFramesBeforeSaving = 200;
+        int nFramesBeforeSaving = 100;
         int checkNpixelsInCursor = 0;
 
         string _portName = "";
@@ -339,7 +339,7 @@ namespace SimplestSpinWPF
 
             string ErrorHappend = "";
             if (Camera == null || CamStream == null)
-                ErrorHappend = "No camera found";
+                ErrorHappend = "No DAO camera found";
 
             if (FPSFrameCounter % 100 == 0)
                 GC.Collect();
@@ -409,7 +409,7 @@ namespace SimplestSpinWPF
 
             if (cameraList.Count < 1)
             {
-                MessageBox.Show("No camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("No FLIR camera is found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();
                 Thread.CurrentThread.Abort();
                 return;
@@ -598,14 +598,19 @@ namespace SimplestSpinWPF
                             FIR_MAX = FIR;
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                             CMD = "M0";
-                            SendCMD();
+                            SendCMD();                            
+                        }
+                        if (framesCounter == 30)
+                        {
                             d.Restart();
                             startMin = 0;
                             startSec = 0;
                             TimerValueString = String.Format("{0}", d.Elapsed);
                             Stopwatch_Label.Content = TimerValueString;
                             startFrames = 0;
-                        }                       
+                            CMD = "T_ON";
+                            SendCMD();
+                        }
                     }
                     //DateTime d = DateTime.Now;
                     //curMin = d.Minute - startMin;
@@ -636,7 +641,6 @@ namespace SimplestSpinWPF
                     }
                     if (framesCounter == (nFramesBeforeSaving + 30))
                     {
-                        ;
                         CMD = "M0";
                         SendCMD();
                     }
@@ -941,8 +945,8 @@ namespace SimplestSpinWPF
             {
                 AIM_color = "blue";
 
-                CMD = "T_ON";
-                SendCMD();
+                //CMD = "T_ON";
+                //SendCMD();
 
                 //DrawDiffCheckBox.IsChecked = false;
                 filterChange(0);
@@ -2137,11 +2141,14 @@ namespace SimplestSpinWPF
             framesCounter = 0;
             SeqEnabled = true;
             radioButtonSeq.IsChecked = true;
+            CMD = "T_OFF";
+            SendCMD();
         }
 
         private void CheckBoxSeqEnabled_Unchecked(object sender, RoutedEventArgs e)
         {
             CMD = "T_OFF";
+            startFrames = 0;
             SendCMD();
         }
 
