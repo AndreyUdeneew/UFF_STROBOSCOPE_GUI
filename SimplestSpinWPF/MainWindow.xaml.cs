@@ -1391,9 +1391,22 @@ namespace SimplestSpinWPF
                         FIV_MAX = FIV;
                     }
                 }
-                if (RLED || ICG || Oxy)
+                if (RLED || ICG )
                 {
                     FIR_Real = SummFluor / SummWhite;
+                    FIR = FIR_Real / FIR_norma;
+                    if (FIR > FIR_MAX)
+                    {
+                        FIR_MAX = FIR;
+                    }
+                }
+                if (Oxy)
+                {
+                    FIR_Real = SummFluor / SummWhite;
+                    if(FIR_Real > 1)
+                    {
+                        FIR_Real = SummWhite / SummFluor;
+                    }
                     FIR = FIR_Real / FIR_norma;
                     if (FIR > FIR_MAX)
                     {
@@ -1421,14 +1434,14 @@ namespace SimplestSpinWPF
             if (FIcounter == averageLimit)
             {
                 //FI = FI / averageLimit;
-                FIV_string = String.Format("{0:F1}", FIV);
-                FIR_string = String.Format("{0:F1}", FIR);
+                FIV_string = String.Format("{0:F2}", FIV);
+                FIR_string = String.Format("{0:F2}", FIR);
                 
                 FIV_Label.Content = FIV_string;
                 FIR_Label.Content = FIR_string;
 
-                FIV_MAX_string = String.Format("MAX {0:F1}", FIV_MAX);
-                FIR_MAX_string = String.Format("MAX {0:F1}", FIR_MAX);
+                FIV_MAX_string = String.Format("MAX {0:F2}", FIV_MAX);
+                FIR_MAX_string = String.Format("MAX {0:F2}", FIR_MAX);
 
                 FIV_MAX_Label.Content = FIV_MAX_string;
                 FIR_MAX_Label.Content = FIR_MAX_string;
@@ -1446,8 +1459,8 @@ namespace SimplestSpinWPF
                 //    bleachingMeas = 0;
                 //}
 
-                bleaching_viol_string = String.Format("{0:F1}%", bleaching_viol);
-                bleaching_red_string = String.Format("{0:F1}%", bleaching_red);
+                bleaching_viol_string = String.Format("{0:F2}%", bleaching_viol);
+                bleaching_red_string = String.Format("{0:F2}%", bleaching_red);
 
                 bleaching_viol_Label.Content = bleaching_viol_string;
                 bleaching_red_Label.Content = bleaching_red_string;
