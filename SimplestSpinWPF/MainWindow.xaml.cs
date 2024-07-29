@@ -1402,12 +1402,12 @@ namespace SimplestSpinWPF
                 }
                 if (Oxy)
                 {
-                    FIR_Real = SummFluor / SummWhite;
-                    if(FIR_Real > 1)
-                    {
-                        FIR_Real = SummWhite / SummFluor;
-                    }
-                    FIR = FIR_Real / FIR_norma;
+                    FIR_Real = SummFluor / (SummWhite + SummFluor);
+                    //if (FIR_Real > 1)
+                    //{
+                    //    FIR_Real = SummWhite / SummFluor;
+                    //}
+                    FIR = FIR_Real;
                     if (FIR > FIR_MAX)
                     {
                         FIR_MAX = FIR;
