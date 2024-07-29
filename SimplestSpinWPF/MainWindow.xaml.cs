@@ -49,8 +49,8 @@ namespace SimplestSpinWPF
         /// <summary>
         /// Init flags
         /// </summary>
-        static bool InitFlir = true;
-        static bool InitDAO = false;
+        static bool InitFlir = false;
+        static bool InitDAO = true;
         int fontSize = 50;
 
 
@@ -1213,11 +1213,11 @@ namespace SimplestSpinWPF
                         dataRed = bb1[r];
                         dataIR = bb2[r];
 
-                        if (OxyAlter)
-                        {
-                            dataRed = bb2[r];
-                            dataIR = bb1[r];
-                        }
+                        //if (OxyAlter)
+                        //{
+                        //    dataRed = bb2[r];
+                        //    dataIR = bb1[r];
+                        //}
 
                         if (dataIR == 0)
                         {
@@ -1292,7 +1292,7 @@ namespace SimplestSpinWPF
 
 
                     res = bb[g];
-                    dif <<= ampCur;
+                    dif = ampCur;
 
                     //if (Oxy)
                     //{
@@ -1308,6 +1308,10 @@ namespace SimplestSpinWPF
                     {
                         //res = (byte)(dif);
                         temp = res + dif;
+                        if (OxyAlter)
+                        {
+                            temp = 255 - temp;
+                        }
                         //temp = dif;
                     }
 
@@ -1318,6 +1322,7 @@ namespace SimplestSpinWPF
                         //int j = dif << 1;
                         //int j = dif;
                         int j = temp << 2;
+                        ;
                         //int j = (i % w) << 2;
                         bb[b] = HSVC[j++];
                         bb[g] = HSVC[j++];
@@ -1386,7 +1391,7 @@ namespace SimplestSpinWPF
                         FIV_MAX = FIV;
                     }
                 }
-                if (RLED || ICG)
+                if (RLED || ICG || Oxy)
                 {
                     FIR_Real = SummFluor / SummWhite;
                     FIR = FIR_Real / FIR_norma;
