@@ -1308,10 +1308,7 @@ namespace SimplestSpinWPF
                     {
                         //res = (byte)(dif);
                         temp = res + dif;
-                        if (OxyAlter)
-                        {
-                            temp = 255 - temp;
-                        }
+
                         //temp = dif;
                     }
 
@@ -1321,7 +1318,8 @@ namespace SimplestSpinWPF
                         //int j = dif << 2;
                         //int j = dif << 1;
                         //int j = dif;
-                        int j = temp << 2;
+                        //int j = (255 - temp) << 2;
+                        int j = (255 - temp) << 3;
                         ;
                         //int j = (i % w) << 2;
                         bb[b] = HSVC[j++];
@@ -1402,7 +1400,8 @@ namespace SimplestSpinWPF
                 }
                 if (Oxy)
                 {
-                    FIR_Real = SummFluor / (SummWhite + SummFluor);
+                    //FIR_Real = SummFluor / (SummWhite + SummFluor);
+                    FIR_Real = SummWhite / (SummWhite + SummFluor);
                     //if (FIR_Real > 1)
                     //{
                     //    FIR_Real = SummWhite / SummFluor;
