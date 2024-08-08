@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -95,7 +95,7 @@ namespace SimplestSpinWPF
                 FlirCamInit();
                 DrawDiffCheckBox.IsChecked = false;
             }
-                
+
             if (InitDAO)
             {
                 fontSize = 5000;
@@ -170,22 +170,13 @@ namespace SimplestSpinWPF
         string FIV_string = "";
         string FIV_MAX_string = "";
 
-        double FIG_MAX = 0;
-        double FIG_norma = 1;
-        double FIG = 0;
-        double FIG_Real = 0;
-        string FIG_string = "";
-        string FIG_MAX_string = "";
-
         string fileName4Saving = "";
         string fileNameDecreased = "";
 
         double bleaching_red = 0;
         double bleaching_viol = 0;
-        double bleaching_green = 0;
         string bleaching_viol_string = "";
         string bleaching_red_string = "";
-        string bleaching_green_string = "";
 
         string TimerValueString = "";
         string TimerValueStartString = "";
@@ -199,7 +190,6 @@ namespace SimplestSpinWPF
         int ampR2G = 0;
         int ampR_G = 0;
         int ampRLED = 0;
-        int ampGLED = 0;
         int ampICG = 0;
         int ampOxy = 0;
         int ampBOTH = 0;
@@ -579,7 +569,7 @@ namespace SimplestSpinWPF
             //Debug.WriteLine(framesCounter.ToString());
             if (CheckBoxSeqEnabled.IsChecked == true)
             {
-                if(startFrames == 0)
+                if (startFrames == 0)
                 {
                     TimerValueString = String.Format("{0}", d.Elapsed);
                     Stopwatch_Label.Content = TimerValueString;
@@ -594,34 +584,23 @@ namespace SimplestSpinWPF
                         {
                             radioButtonRed.IsChecked = true;
                         }
-                        if (framesCounter == 4)
+                        if (framesCounter == 8)
                         {
                             FIV_MAX = FIV;
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                         }
-                        if (framesCounter == 6)
+                        if (framesCounter == 15)
                         {
                             radioButtonRedLED.IsChecked = true;
                         }
-                        if (framesCounter == 8)
+                        if (framesCounter == 25)
                         {
                             FIR_MAX = FIR;
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                             CMD = "M0";
-                            SendCMD();                            
-                        }
-                        if (framesCounter == 10)
-                        {
-                            radioButtonGreenLED.IsChecked = true;
-                        }
-                        if (framesCounter == 12)
-                        {
-                            FIG_MAX = FIG;
-                            this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-                            CMD = "M0";
                             SendCMD();
                         }
-                        if (framesCounter == 14)
+                        if (framesCounter == 30)
                         {
                             d.Restart();
                             startMin = 0;
@@ -644,41 +623,29 @@ namespace SimplestSpinWPF
                         CMD = "T_OFF";
                         SendCMD();
                     }
-                    if (framesCounter == nFramesBeforeSaving + 2)
+                    if (framesCounter == nFramesBeforeSaving + 3)
                     {
                         radioButtonRed.IsChecked = true;
+
                     }
-                    if (framesCounter == nFramesBeforeSaving + 4)
+                    if (framesCounter == nFramesBeforeSaving + 8)
                     {
                         this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                     }
-                    if (framesCounter == nFramesBeforeSaving + 6)
+                    if (framesCounter == nFramesBeforeSaving + 15)
                     {
                         radioButtonRedLED.IsChecked = true;
                     }
-                    if (framesCounter == (nFramesBeforeSaving + 8))
+                    if (framesCounter == (nFramesBeforeSaving + 25))
                     {
                         this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                     }
-                    if (framesCounter == nFramesBeforeSaving + 10)
-                    {
-                        radioButtonGreenLED.IsChecked = true;
-                    }
-                    if (framesCounter == (nFramesBeforeSaving + 12))
-                    {
-                        this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-                    }
-                    if (framesCounter == (nFramesBeforeSaving + 14))
+                    if (framesCounter == (nFramesBeforeSaving + 30))
                     {
                         CMD = "M0";
                         SendCMD();
                     }
-                    if (framesCounter == (nFramesBeforeSaving + 16))
-                    {
-                        CMD = "M0";
-                        SendCMD();
-                    }
-                    if (framesCounter == (nFramesBeforeSaving + 18))
+                    if (framesCounter == (nFramesBeforeSaving + 35))
                     {
                         framesCounter = 0;
                         //savingMode = "";
@@ -737,8 +704,6 @@ namespace SimplestSpinWPF
                         p.Write("M4\n");
                     if (CMD == "M3")
                         p.Write("M3\n");
-                    if (CMD == "M5")
-                        p.Write("M5\n");
                     if (CMD == "T_ON")
                         p.Write("T_ON\n");
                     if (CMD == "T_OFF")
@@ -800,7 +765,7 @@ namespace SimplestSpinWPF
 
         //public void sequentalSavingViol()
         //{
-            
+
         //    this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
         //    savingMode = "red";
 
@@ -808,13 +773,13 @@ namespace SimplestSpinWPF
 
         //public void sequentalSavingRed()
         //{
-            
+
         //    this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
         //}
 
         private void RadioButtonR2G_Checked(object sender, EventArgs e)
         {
-            // приводим отправителя к элементу типа RadioButton
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ RadioButton
             RadioButton radioButtonR2G = (RadioButton)sender;
             if (radioButtonR2G.IsChecked == true)
             {
@@ -835,7 +800,7 @@ namespace SimplestSpinWPF
 
         private void RadioButtonR_G_Checked(object sender, EventArgs e)
         {
-            // приводим отправителя к элементу типа RadioButton
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ RadioButton
             RadioButton radioButtonR_G = (RadioButton)sender;
             if (radioButtonR_G.IsChecked == true)
             {
@@ -855,7 +820,7 @@ namespace SimplestSpinWPF
 
         private void RadioButtonGreen_Checked(object sender, EventArgs e)
         {
-            // приводим отправителя к элементу типа RadioButton
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ RadioButton
             RadioButton radioButtonGreen = (RadioButton)sender;
             if (radioButtonGreen.IsChecked == true)
             {
@@ -875,7 +840,7 @@ namespace SimplestSpinWPF
 
         private void RadioButtonRed_Checked(object sender, EventArgs e)
         {
-            // приводим отправителя к элементу типа RadioButton
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ RadioButton
             RadioButton radioButtonRed = (RadioButton)sender;
             if (radioButtonRed.IsChecked == true)
             {
@@ -895,7 +860,7 @@ namespace SimplestSpinWPF
 
         private void RadioButtonOxy_Checked(object sender, EventArgs e)
         {
-            // приводим отправителя к элементу типа RadioButton
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ RadioButton
             RadioButton radioButtonOxy = (RadioButton)sender;
             if (radioButtonOxy.IsChecked == true)
             {
@@ -916,7 +881,7 @@ namespace SimplestSpinWPF
         }
         private void RadioButtonRedLED_Checked(object sender, RoutedEventArgs e)
         {
-            // приводим отправителя к элементу типа RadioButton
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ RadioButton
             RadioButton radioButtonRedLED = (RadioButton)sender;
             if (radioButtonRedLED.IsChecked == true)
             {
@@ -933,30 +898,9 @@ namespace SimplestSpinWPF
                 //    }
             }
         }
-
-        private void RadioButtonGreenLED_Checked(object sender, RoutedEventArgs e)
-        {
-            // приводим отправителя к элементу типа RadioButton
-            RadioButton radioButtonGreenLED = (RadioButton)sender;
-            if (radioButtonGreenLED.IsChecked == true)
-            {
-                //CMD = "T_OFF";
-                //SendCMD();
-                AIM_color = "blue";
-                filterChange(0);
-                CMD = "M5";
-                SendCMD();
-                //if (p != null)
-                //    if (p.IsOpen)
-                //    {
-                //        p.Write("M2\r\n");
-                //    }
-            }
-        }
-
         private void RadioButtonBothLEDs_Checked(object sender, EventArgs e)
         {
-            // приводим отправителя к элементу типа RadioButton
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ RadioButton
             RadioButton radioButtonBothLEDs = (RadioButton)sender;
             if (radioButtonBothLEDs.IsChecked == true)
             {
@@ -978,7 +922,7 @@ namespace SimplestSpinWPF
         {
             //CMD = "T_OFF";
             //SendCMD();
-            // приводим отправителя к элементу типа RadioButton
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ RadioButton
             RadioButton radioButtonICG = (RadioButton)sender;
             if (radioButtonICG.IsChecked == true)
             {
@@ -996,7 +940,7 @@ namespace SimplestSpinWPF
         }
         private void RadioButtonSeq_Checked(object sender, EventArgs e)
         {
-            // приводим отправителя к элементу типа RadioButton
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ RadioButton
             RadioButton radioButtonSeq = (RadioButton)sender;
             if (radioButtonSeq.IsChecked == true)
             {
@@ -1020,7 +964,7 @@ namespace SimplestSpinWPF
 
         private void RadioButtonNoLight_Checked(object sender, EventArgs e)
         {
-            // приводим отправителя к элементу типа RadioButton
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ RadioButton
             RadioButton radioNoLight = (RadioButton)sender;
             if (radioButtonNoLight.IsChecked == true)
             {
@@ -1048,7 +992,6 @@ namespace SimplestSpinWPF
             bool Pseudo = (bool)radioButtonHeatmap.IsChecked;
             bool Oxy = (bool)radioButtonOxy.IsChecked;
             bool RLED = (bool)radioButtonRedLED.IsChecked;
-            bool GLED = (bool)radioButtonGreenLED.IsChecked;
             bool BOTH = (bool)radioButtonBothLEDs.IsChecked;
             bool ICG = (bool)radioButtonICG.IsChecked;
             bool Sequent = (bool)radioButtonSeq.IsChecked;
@@ -1060,43 +1003,39 @@ namespace SimplestSpinWPF
 
             if (mode == 1)
             {
-                GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; GLED = false;
+                GreenFlu = true; RedFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
             }
             if (mode == 2)
             {
-                RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; GLED = false;
+                RedFlu = true; GreenFlu = false; R2G = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
             }
             if (mode == 3)
             {
-                R2G = true; GreenFlu = false; RedFlu = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; GLED = false;
+                R2G = true; GreenFlu = false; RedFlu = false; R_G = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
             }
             if (mode == 5)
             {
-                R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; GLED = false;
+                R_G = true; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false;
             }
             if (mode == 6)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = true; GLED = false;
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = true;
             }
             if (mode == 7)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = true; ICG = false; Sequent = false; GLED = false;
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = true; ICG = false; Sequent = false;
             }
             if (mode == 8)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false; GLED = false;
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = true; Sequent = false;
             }
             if (mode == 9)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true; GLED = false;
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = true;
             }
             if (mode == 10)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = true; RLED = false; BOTH = false; ICG = false; Sequent = false; GLED = false;
-            }
-            if (mode == 11)
-            {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = false; BOTH = false; ICG = false; Sequent = false; GLED = true;
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = true; RLED = false; BOTH = false; ICG = false; Sequent = false;
             }
             if (mode == 4)
                 Pseudo = true;
@@ -1141,16 +1080,18 @@ namespace SimplestSpinWPF
 
             int ampCur = (int)(AmplificationSlider.Value);
             if (radioButtonRed.IsChecked == true)
-            {   
-                if(CheckBoxSeqEnabled.IsChecked == true)
+            {
+                AIM_color = "blue";
+                if (CheckBoxSeqEnabled.IsChecked == true)
                 {
                     ampCur = ampRed;
                     AmplificationSlider.Value = ampCur;
                 }
-                
+
             }
             if (radioButtonGreen.IsChecked == true)
             {
+                AIM_color = "blue";
                 if (CheckBoxSeqEnabled.IsChecked == true)
                 {
                     ampCur = ampGreen;
@@ -1159,6 +1100,7 @@ namespace SimplestSpinWPF
             }
             if (radioButtonR2G.IsChecked == true)
             {
+                AIM_color = "blue";
                 if (CheckBoxSeqEnabled.IsChecked == true)
                 {
                     ampCur = ampR2G;
@@ -1167,6 +1109,7 @@ namespace SimplestSpinWPF
             }
             if (radioButtonR_G.IsChecked == true)
             {
+                AIM_color = "blue";
                 if (CheckBoxSeqEnabled.IsChecked == true)
                 {
                     ampCur = ampR_G;
@@ -1175,6 +1118,7 @@ namespace SimplestSpinWPF
             }
             if (radioButtonRedLED.IsChecked == true)
             {
+                AIM_color = "red";
                 if (CheckBoxSeqEnabled.IsChecked == true)
                 {
                     ampCur = ampRLED;
@@ -1202,14 +1146,6 @@ namespace SimplestSpinWPF
                 if (CheckBoxSeqEnabled.IsChecked == true)
                 {
                     ampCur = ampBOTH;
-                    AmplificationSlider.Value = ampCur;
-                }
-            }
-            if (radioButtonGreenLED.IsChecked == true)
-            {
-                if (CheckBoxSeqEnabled.IsChecked == true)
-                {
-                    ampCur = ampGLED;
                     AmplificationSlider.Value = ampCur;
                 }
             }
@@ -1283,11 +1219,11 @@ namespace SimplestSpinWPF
                         dataRed = bb1[r];
                         dataIR = bb2[r];
 
-                        //if (OxyAlter)
-                        //{
-                        //    dataRed = bb2[r];
-                        //    dataIR = bb1[r];
-                        //}
+                        if (OxyAlter)
+                        {
+                            dataRed = bb2[r];
+                            dataIR = bb1[r];
+                        }
 
                         if (dataIR == 0)
                         {
@@ -1328,14 +1264,7 @@ namespace SimplestSpinWPF
                         //dif = bb1[r] + bb1[r] + bb1[b] - bb2[r] - bb2[g] - bb2[b];
                         if (dif < 0)
                             dif = -dif;
-                    }
 
-                    if (GLED)
-                    {
-                        dif = bb1[r] - bb2[r];
-                        //dif = bb1[r] + bb1[r] + bb1[b] - bb2[r] - bb2[g] - bb2[b];
-                        if (dif < 0)
-                            dif = -dif;
                     }
 
                     if (BOTH)
@@ -1369,7 +1298,7 @@ namespace SimplestSpinWPF
 
 
                     res = bb[g];
-                    dif = ampCur;
+                    dif <<= ampCur;
 
                     //if (Oxy)
                     //{
@@ -1385,7 +1314,6 @@ namespace SimplestSpinWPF
                     {
                         //res = (byte)(dif);
                         temp = res + dif;
-
                         //temp = dif;
                     }
 
@@ -1395,9 +1323,7 @@ namespace SimplestSpinWPF
                         //int j = dif << 2;
                         //int j = dif << 1;
                         //int j = dif;
-                        //int j = (255 - temp) << 2;
-                        int j = (255 - temp) << 3;
-                        ;
+                        int j = temp << 2;
                         //int j = (i % w) << 2;
                         bb[b] = HSVC[j++];
                         bb[g] = HSVC[j++];
@@ -1423,7 +1349,7 @@ namespace SimplestSpinWPF
                     //bb[g] >>= 1; bb[b] >>= 1; bb[r] >>= 1;
                     if (AIM_color == "red")
                     {
-                        bb[g] = 0; bb[b] = 0; bb[r] = 255;
+                        bb[g] = 0; bb[b] = 255; bb[r] = 0;
                     }
                     if (AIM_color == "white")
                     {
@@ -1431,7 +1357,7 @@ namespace SimplestSpinWPF
                     }
                     if (AIM_color == "blue")
                     {
-                        bb[g] = 0; bb[b] = 255; bb[r] = 0;
+                        bb[g] = 0; bb[b] = 0; bb[r] = 255;
                     }
 
                     if (background == wb1)
@@ -1475,33 +1401,8 @@ namespace SimplestSpinWPF
                         FIR_MAX = FIR;
                     }
                 }
-
-                if (GLED)
-                {
-                    FIG_Real = SummFluor / SummWhite;
-                    FIG = FIG_Real / FIR_norma;
-                    if (FIG > FIG_MAX)
-                    {
-                        FIG_MAX = FIG;
-                    }
-                }
-
-                if (Oxy)
-                {
-                    //FIR_Real = SummFluor / (SummWhite + SummFluor);
-                    FIR_Real = SummWhite / (SummWhite + SummFluor);
-                    //if (FIR_Real > 1)
-                    //{
-                    //    FIR_Real = SummWhite / SummFluor;
-                    //}
-                    FIR = FIR_Real;
-                    if (FIR > FIR_MAX)
-                    {
-                        FIR_MAX = FIR;
-                    }
-                }
             }
-            
+
             FIcounter += 1;
 
             GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
@@ -1521,25 +1422,20 @@ namespace SimplestSpinWPF
             if (FIcounter == averageLimit)
             {
                 //FI = FI / averageLimit;
-                FIV_string = String.Format("{0:F2}", FIV);
-                FIR_string = String.Format("{0:F2}", FIR);
-                FIG_string = String.Format("{0:F2}", FIG);
+                FIV_string = String.Format("{0:F1}", FIV);
+                FIR_string = String.Format("{0:F1}", FIR);
 
                 FIV_Label.Content = FIV_string;
                 FIR_Label.Content = FIR_string;
-                FIG_Label.Content = FIG_string;
 
-                FIV_MAX_string = String.Format("MAX {0:F2}", FIV_MAX);
-                FIR_MAX_string = String.Format("MAX {0:F2}", FIR_MAX);
-                FIG_MAX_string = String.Format("MAX {0:F2}", FIG_MAX);
+                FIV_MAX_string = String.Format("MAX {0:F1}", FIV_MAX);
+                FIR_MAX_string = String.Format("MAX {0:F1}", FIR_MAX);
 
                 FIV_MAX_Label.Content = FIV_MAX_string;
                 FIR_MAX_Label.Content = FIR_MAX_string;
-                FIG_MAX_Label.Content = FIG_MAX_string;
 
                 bleaching_viol = 100.0 - (FIV / FIV_MAX) * 100.0;
                 bleaching_red = 100.0 - (FIR / FIR_MAX) * 100.0;
-                bleaching_green = 100.0 - (FIG / FIG_MAX) * 100.0;
 
                 //if((bleaching_red >= desiredBleaching) && (bleachingMeas == 1))
                 //{
@@ -1551,13 +1447,11 @@ namespace SimplestSpinWPF
                 //    bleachingMeas = 0;
                 //}
 
-                bleaching_viol_string = String.Format("{0:F2}%", bleaching_viol);
-                bleaching_red_string = String.Format("{0:F2}%", bleaching_red);
-                bleaching_green_string = String.Format("{0:F2}%", bleaching_green);
+                bleaching_viol_string = String.Format("{0:F1}%", bleaching_viol);
+                bleaching_red_string = String.Format("{0:F1}%", bleaching_red);
 
                 bleaching_viol_Label.Content = bleaching_viol_string;
                 bleaching_red_Label.Content = bleaching_red_string;
-                bleaching_green_Label.Content = bleaching_green_string;
                 FIcounter = 0;
                 //FI = 0;
             }
@@ -1668,7 +1562,7 @@ namespace SimplestSpinWPF
                     FIV_MAX = 0;
                     //System.Windows.MessageBox.Show("FIV_norma = " + FIV_norma.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                
+
                 catch { }
             }
             if (RLED || ICG)
@@ -1680,7 +1574,7 @@ namespace SimplestSpinWPF
                     //System.Windows.MessageBox.Show("FIR_norma = " + FIR_norma.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 catch { }
-            }                  
+            }
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
@@ -1756,7 +1650,6 @@ namespace SimplestSpinWPF
             bool RLED = (bool)radioButtonRedLED.IsChecked;
             bool BOTH = (bool)radioButtonBothLEDs.IsChecked;
             bool ICG = (bool)radioButtonICG.IsChecked;
-            bool GLED = (bool)radioButtonGreenLED.IsChecked;
             //bool Grayed = (bool)radioButtonGray.IsChecked;
 
             if (CheckBoxSeqEnabled.IsChecked == true)
@@ -1900,32 +1793,6 @@ namespace SimplestSpinWPF
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                         !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "RLED" + "_Coef" + ampCur * 1 + "_FIR_" + FIR_string)
-                        );
-                    bmp.Save(Filename);
-                }
-
-                catch (Exception ex)
-                {
-                    System.Windows.MessageBox.Show("Error saving picture: " + ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-
-
-            }
-
-            if (GLED)
-            {
-                try
-                {
-                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 11);
-
-                    Bitmap bmp = BitmapFromWriteableBitmap(frameSource);
-                    Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Red, 0, 0);
-                    Debug.WriteLine(FI_string);
-                    DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
-                        d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "GLED" + "_Coef" + ampCur * 1 + "_FIR_" + FIR_string)
                         );
                     bmp.Save(Filename);
                 }
@@ -2156,7 +2023,7 @@ namespace SimplestSpinWPF
         private void SaveC_Click(object sender, RoutedEventArgs e)
         {
             int amp = (int)(AmplificationSlider.Value);
-            if(radioButtonRed.IsChecked == true)
+            if (radioButtonRed.IsChecked == true)
             {
                 ampRed = amp;
             }
@@ -2187,10 +2054,6 @@ namespace SimplestSpinWPF
             if (radioButtonBothLEDs.IsChecked == true)
             {
                 ampBOTH = amp;
-            }
-            if (radioButtonGreenLED.IsChecked == true)
-            {
-                ampGLED = amp;
             }
 
         }
@@ -2249,10 +2112,10 @@ namespace SimplestSpinWPF
         {
             var allMonitors = System.Windows.Forms.Screen.AllScreens;
 
-            // Ищем второй монитор, FUllHD или похожий
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, FUllHD пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             var secondMonitor = allMonitors.FirstOrDefault(m => !m.Primary && ((float)m.Bounds.Width / m.Bounds.Height < 1.78) && ((float)m.Bounds.Width / m.Bounds.Height > 1.76));
 
-            // Если второй монитор найден, устанавливаем окно на этот монитор
+            // пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             if (secondMonitor != null)
             {
                 //mainWindow.Left = secondMonitor.WorkingArea.Left;
