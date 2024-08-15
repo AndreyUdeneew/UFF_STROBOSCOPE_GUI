@@ -1377,7 +1377,7 @@ namespace SimplestSpinWPF
 
 
                     res = bb[g];
-                    dif = ampCur;
+                    dif <<= ampCur;
 
                     //if (Oxy)
                     //{
