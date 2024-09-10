@@ -594,46 +594,52 @@ namespace SimplestSpinWPF
                         {
                             radioButtonRed.IsChecked = true;
                         }
-                        if (framesCounter == 5)
+                        if (framesCounter == 6)
                         {
                             FIV_MAX = FIV;
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                         }
-                        if (framesCounter == 8)
+                        if (framesCounter == 14)
                         {
                             radioButtonRedLED.IsChecked = true;
                         }
-                        if (framesCounter == 11)
+                        if (framesCounter == 18)
                         {
                             FIR_MAX = FIR;
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                             CMD = "M0";
                             SendCMD();
                         }
-                        if (framesCounter == 14)
+                        if (framesCounter == 22)
                         {
                             radioButtonGreenLED.IsChecked = true;
                         }
-                        if (framesCounter == 17)
+                        if (framesCounter == 26)
                         {
                             FIG_MAX = FIG;
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                             CMD = "M0";
                             SendCMD();
                         }
-                        if (framesCounter == 25)
+                        if (framesCounter == 30)
                         {
                             radioButtonGreenLED.IsChecked = true;
                         }
-                        if (framesCounter == 30)
+                        if (framesCounter == 34)
                         {
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                         }
-                        if (framesCounter == 35)
+                        if (framesCounter == (nFramesBeforeSaving + 30))
+                        {
+                            CMD = "M0";
+                            SendCMD();
+                        }
+                        if (framesCounter == 36)
                         {
                             d.Restart();
                             startMin = 0;
                             startSec = 0;
+                            radioButtonSeq.IsChecked = true;
                             TimerValueString = String.Format("{0}", d.Elapsed);
                             Stopwatch_Label.Content = TimerValueString;
                             startFrames = 0;
@@ -656,37 +662,32 @@ namespace SimplestSpinWPF
                     {
                         radioButtonRed.IsChecked = true;
                     }
-                    if (framesCounter == nFramesBeforeSaving + 8)
+                    if (framesCounter == nFramesBeforeSaving + 6)
                     {
                         this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                     }
-                    if (framesCounter == nFramesBeforeSaving + 15)
+                    if (framesCounter == nFramesBeforeSaving + 14)
                     {
                         radioButtonRedLED.IsChecked = true;
                     }
-                    if (framesCounter == (nFramesBeforeSaving + 20))
+                    if (framesCounter == (nFramesBeforeSaving + 18))
                     {
                         this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                     }
-                    if (framesCounter == nFramesBeforeSaving + 25)
+                    if (framesCounter == nFramesBeforeSaving + 22)
                     {
                         radioButtonGreenLED.IsChecked = true;
                     }
-                    if (framesCounter == (nFramesBeforeSaving + 30))
+                    if (framesCounter == (nFramesBeforeSaving + 26))
                     {
                         this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                     }
-                    if (framesCounter == (nFramesBeforeSaving + 40))
+                    if (framesCounter == (nFramesBeforeSaving + 30))
                     {
                         CMD = "M0";
                         SendCMD();
                     }
-                    if (framesCounter == (nFramesBeforeSaving + 45))
-                    {
-                        CMD = "M0";
-                        SendCMD();
-                    }
-                    if (framesCounter == (nFramesBeforeSaving + 50))
+                    if (framesCounter == (nFramesBeforeSaving + 32))
                     {
                         framesCounter = 0;
                         //savingMode = "";
@@ -1839,7 +1840,7 @@ namespace SimplestSpinWPF
 
                 try
                 {
-                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 1);
+                    WriteableBitmap frameSource = FindColoredDifference(convertedImage, PrevConvertedImage, 2);
                     System.Drawing.Bitmap bmp;
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
@@ -1932,12 +1933,12 @@ namespace SimplestSpinWPF
 
                     Bitmap bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
-                    gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Red, 0, 0);
+                    gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Green, 0, 0);
                     Debug.WriteLine(FI_string);
                     DateTime d = DateTime.Now;
                     string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
-                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "GLED" + "_Coef" + ampCur * 1 + "_FIR_" + FIR_string)
+                        !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "GLED" + "_Coef" + ampCur * 1 + "_FIG_" + FIG_string)
                         );
                     bmp.Save(Filename);
                 }
