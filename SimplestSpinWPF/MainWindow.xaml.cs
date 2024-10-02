@@ -599,42 +599,42 @@ namespace SimplestSpinWPF
                             FIV_MAX = FIV;
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                         }
-                        if (framesCounter == 14)
+                        if (framesCounter == 20)
                         {
                             radioButtonRedLED.IsChecked = true;
                         }
-                        if (framesCounter == 18)
+                        if (framesCounter == 24)
                         {
                             FIR_MAX = FIR;
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-                            CMD = "M0";
-                            SendCMD();
+                            //CMD = "M0";
+                            //SendCMD();
                         }
-                        if (framesCounter == 22)
+                        if (framesCounter == 28)
                         {
                             radioButtonGreenLED.IsChecked = true;
-                        }
-                        if (framesCounter == 26)
-                        {
-                            FIG_MAX = FIG;
-                            this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
-                            CMD = "M0";
-                            SendCMD();
                         }
                         if (framesCounter == 30)
                         {
-                            radioButtonGreenLED.IsChecked = true;
+                            FIG_MAX = FIG;
+                            this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
+                            //CMD = "M0";
+                            //SendCMD();
                         }
                         if (framesCounter == 34)
                         {
+                            radioButtonGreenLED.IsChecked = true;
+                        }
+                        if (framesCounter == 38)
+                        {
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                         }
-                        if (framesCounter == (nFramesBeforeSaving + 30))
+                        if (framesCounter == 40)
                         {
                             CMD = "M0";
                             SendCMD();
                         }
-                        if (framesCounter == 36)
+                        if (framesCounter == 42)
                         {
                             d.Restart();
                             startMin = 0;
@@ -658,7 +658,7 @@ namespace SimplestSpinWPF
                         CMD = "T_OFF";
                         SendCMD();
                     }
-                    if (framesCounter == nFramesBeforeSaving + 3)
+                    if (framesCounter == nFramesBeforeSaving + 2)
                     {
                         radioButtonRed.IsChecked = true;
                     }
@@ -666,28 +666,28 @@ namespace SimplestSpinWPF
                     {
                         this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                     }
-                    if (framesCounter == nFramesBeforeSaving + 14)
+                    if (framesCounter == nFramesBeforeSaving + 20)
                     {
                         radioButtonRedLED.IsChecked = true;
                     }
-                    if (framesCounter == (nFramesBeforeSaving + 18))
+                    if (framesCounter == (nFramesBeforeSaving + 24))
                     {
                         this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                     }
-                    if (framesCounter == nFramesBeforeSaving + 22)
+                    if (framesCounter == nFramesBeforeSaving + 28)
                     {
                         radioButtonGreenLED.IsChecked = true;
                     }
-                    if (framesCounter == (nFramesBeforeSaving + 26))
+                    if (framesCounter == (nFramesBeforeSaving + 32))
                     {
                         this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                     }
-                    if (framesCounter == (nFramesBeforeSaving + 30))
+                    if (framesCounter == (nFramesBeforeSaving + 36))
                     {
                         CMD = "M0";
                         SendCMD();
                     }
-                    if (framesCounter == (nFramesBeforeSaving + 32))
+                    if (framesCounter == (nFramesBeforeSaving + 38))
                     {
                         framesCounter = 0;
                         //savingMode = "";
@@ -871,7 +871,7 @@ namespace SimplestSpinWPF
                 //CMD = "T_OFF";
                 //SendCMD();
                 AIM_color = "blue";
-                filterChange(0);
+                //filterChange(0);
                 CMD = "M1";
                 SendCMD();
                 //if (p != null)
@@ -891,7 +891,7 @@ namespace SimplestSpinWPF
                 //CMD = "T_OFF";
                 //SendCMD();
                 AIM_color = "blue";
-                filterChange(0);
+                //filterChange(0);
                 CMD = "M1";
                 SendCMD();
                 //if (p != null)
@@ -911,7 +911,7 @@ namespace SimplestSpinWPF
                 //CMD = "T_OFF";
                 //SendCMD();
                 AIM_color = "white";
-                filterChange(1);
+                //filterChange(1);
                 CMD = "M4";
                 savingMode = "";
                 SendCMD();
@@ -932,7 +932,7 @@ namespace SimplestSpinWPF
                 //CMD = "T_OFF";
                 //SendCMD();
                 AIM_color = "red";
-                filterChange(0);
+                //filterChange(0);
                 CMD = "M2";
                 SendCMD();
                 //if (p != null)
@@ -952,7 +952,7 @@ namespace SimplestSpinWPF
                 //CMD = "T_OFF";
                 //SendCMD();
                 AIM_color = "green";
-                filterChange(0);
+                //filterChange(0);
                 CMD = "M5";
                 SendCMD();
                 //if (p != null)
@@ -972,7 +972,7 @@ namespace SimplestSpinWPF
                 //CMD = "T_OFF";
                 //SendCMD();
                 AIM_color = "white";
-                filterChange(0);
+                //filterChange(0);
                 CMD = "M3";
                 savingMode = "";
                 SendCMD();
@@ -992,7 +992,7 @@ namespace SimplestSpinWPF
             if (radioButtonICG.IsChecked == true)
             {
                 AIM_color = "blue";
-                filterChange(1);
+                //filterChange(1);
                 CMD = "M7";
                 savingMode = "";
                 SendCMD();
@@ -1015,7 +1015,7 @@ namespace SimplestSpinWPF
                 //SendCMD();
 
                 //DrawDiffCheckBox.IsChecked = false;
-                filterChange(0);
+                //filterChange(0);
                 //CMD = "M0";
                 savingMode = "seq";
                 //SendCMD();
@@ -1034,7 +1034,7 @@ namespace SimplestSpinWPF
             if (radioButtonNoLight.IsChecked == true)
             {
                 AIM_color = "white";
-                filterChange(0);
+                //filterChange(0);
                 CMD = "M0";
                 savingMode = "";
                 SendCMD();
@@ -1085,7 +1085,7 @@ namespace SimplestSpinWPF
             }
             if (mode == 6)
             {
-                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = true; GLED = false;
+                R_G = false; R2G = false; GreenFlu = false; RedFlu = false; Oxy = false; RLED = true; BOTH = false; ICG = false; Sequent = false; GLED = false;
             }
             if (mode == 7)
             {
