@@ -37,6 +37,7 @@ using Steema.TeeChart;
 using System.Windows.Media.Animation;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Window = System.Windows.Window;
+using Steema.TeeChart.Editors.Series;
 
 
 namespace SimplestSpinWPF
@@ -126,6 +127,9 @@ namespace SimplestSpinWPF
         int i = 0;
         int additionalCoef = 4;
         long LastImageSum = 0;
+        long LastImageSumViol = 0;
+        long LastImageSumRed = 0;
+        long LastImageSumGreen = 0;
         public BitmapSource convertedImage = null;
         public BitmapSource PrevConvertedImage = null;
         public BitmapSource redImage = null;
@@ -231,18 +235,33 @@ namespace SimplestSpinWPF
         void InitPlot()
         {
             WinFormsHost.Child = chart;
-            Steema.TeeChart.Styles.Line lineSeries = new Steema.TeeChart.Styles.Line();
-            lineSeries.Title = "Central cursor";
-            lineSeries.FillSampleValues(); // Optional: Generate sample data for the series
-            chart.Series.Add(lineSeries);
-            chart.Header.Visible = false;
+            Steema.TeeChart.Styles.Line lineSeriesRed = new Steema.TeeChart.Styles.Line();
+            Steema.TeeChart.Styles.Line lineSeriesViol = new Steema.TeeChart.Styles.Line();
+            Steema.TeeChart.Styles.Line lineSeriesGreen = new Steema.TeeChart.Styles.Line();
+            lineSeriesRed.Title = "FIR";
+            lineSeriesRed.Color = Color.Red;
+            //lineSeriesRed.FillSampleValues(); // Optional: Generate sample data for the series
+            chart.Series.Add(lineSeriesRed);
+            lineSeriesViol.Title = "FIV";
+            lineSeriesViol.Color = Color.Blue;
+            //lineSeriesViol.FillSampleValues(); // Optional: Generate sample data for the series
+            chart.Series.Add(lineSeriesViol);
+            lineSeriesGreen.Title = "FIG";
+            lineSeriesGreen.Color = Color.Green;
+            //lineSeriesGreen.FillSampleValues(); // Optional: Generate sample data for the series
+            chart.Series.Add(lineSeriesGreen);
+            chart.Header.Visible = true;
             chart.Axes.Bottom.Title.Text = "Millisecond";
             chart.Axes.Left.Title.Text = "A.U.";
-            chart.Legend.Visible = false;
+            chart.Axes.Bottom.Title.Visible = true;
+            chart.Axes.Left.Title.Visible = true;
+            chart.Legend.Visible = true;
             chart.Panel.Transparency = 100;
             chart.Aspect.Chart3DPercent = 0;
             chart.Aspect.Width3D = 0; chart.Aspect.View3D = false;
-            lineSeries.LinePen.Width = 3;
+            lineSeriesRed.LinePen.Width = 3;
+            lineSeriesViol.LinePen.Width = 3;
+            lineSeriesGreen.LinePen.Width = 3;
             chart.Axes.Bottom.AxisPen.Color = Color.White;
             chart.Axes.Left.AxisPen.Color = Color.White;
         }
@@ -597,6 +616,7 @@ namespace SimplestSpinWPF
                         if (framesCounter == 6)
                         {
                             FIV_MAX = FIV;
+                            LastImageSumViol = LastImageSum;
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                         }
                         if (framesCounter == 20)
@@ -606,6 +626,7 @@ namespace SimplestSpinWPF
                         if (framesCounter == 24)
                         {
                             FIR_MAX = FIR;
+                            LastImageSumRed = LastImageSum;
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                             //CMD = "M0";
                             //SendCMD();
@@ -617,6 +638,7 @@ namespace SimplestSpinWPF
                         if (framesCounter == 30)
                         {
                             FIG_MAX = FIG;
+                            LastImageSumGreen = LastImageSum;
                             this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                             //CMD = "M0";
                             //SendCMD();
@@ -664,6 +686,8 @@ namespace SimplestSpinWPF
                     }
                     if (framesCounter == nFramesBeforeSaving + 6)
                     {
+                        LastImageSumViol = LastImageSum;
+
                         this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                     }
                     if (framesCounter == nFramesBeforeSaving + 20)
@@ -672,6 +696,7 @@ namespace SimplestSpinWPF
                     }
                     if (framesCounter == (nFramesBeforeSaving + 24))
                     {
+                        LastImageSumRed = LastImageSum;
                         this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                     }
                     if (framesCounter == nFramesBeforeSaving + 28)
@@ -680,6 +705,7 @@ namespace SimplestSpinWPF
                     }
                     if (framesCounter == (nFramesBeforeSaving + 32))
                     {
+                        LastImageSumGreen = LastImageSum;
                         this.SavingButton.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));
                     }
                     if (framesCounter == (nFramesBeforeSaving + 36))
@@ -1307,7 +1333,7 @@ namespace SimplestSpinWPF
                             dataRed = 1;
                         }
 
-                        if (dataRed < dataIR)
+                        if (dataRed <= dataIR)
                         {
                             dif = DC[(dataIR << 8) + dataRed];
                         }
@@ -1517,13 +1543,40 @@ namespace SimplestSpinWPF
 
             FIcounter += 1;
 
-            GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
-            if (TailKiller == null)
+            if(RedFlu)
             {
-                TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
-                TailKiller.Start();
-                try { chart.Series[0].Clear(); } catch { }
+                GraphPointsViol.Add(new GraphPointViol { FIV_Real = FIV_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+                if (TailKiller == null)
+                {
+                    TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTailViol(); Thread.Sleep(1000); } });
+                    TailKiller.Start();
+                    try { chart.Series[1].Clear(); } catch { }
+                }
             }
+
+            if(RLED || ICG)
+            {
+                GraphPointsRed.Add(new GraphPointRed { FIR_Real = FIR_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+                if (TailKiller == null)
+                {
+                    TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTailRed(); Thread.Sleep(1000); } });
+                    TailKiller.Start();
+                    try { chart.Series[0].Clear(); } catch { }
+                }
+            }
+
+            if(GLED)
+            {
+                GraphPointsGreen.Add(new GraphPointGreen { FIG_Real = FIG_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+                if (TailKiller == null)
+                {
+                    TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTailGreen(); Thread.Sleep(1000); } });
+                    TailKiller.Start();
+                    try { chart.Series[2].Clear(); } catch { }
+                }
+            }
+
+            
             //if (TailKiller.ThreadState != System.Threading.ThreadState.Running)
             //    try
             //    {
@@ -1582,33 +1635,92 @@ namespace SimplestSpinWPF
             return wb;
         }
 
-        public void CutGraphPointsTail()
+        public void CutGraphPointsTailRed()
         {
-            GraphPoint ppp = GraphPoints[GraphPoints.Count - 1];
-            if (double.IsNaN(ppp.FI_Real) || double.IsInfinity(ppp.FI_Real) || Math.Abs(ppp.FI_Real) > 10e20 || Math.Abs(ppp.FI_Real) < 10e-20)
-                ppp.FI_Real = 0;
+            GraphPointRed ppp = GraphPointsRed[GraphPointsRed.Count - 1];
+            if (double.IsNaN(ppp.FIR_Real) || double.IsInfinity(ppp.FIR_Real) || Math.Abs(ppp.FIR_Real) > 10e20 || Math.Abs(ppp.FIR_Real) < 10e-20)
+                ppp.FIR_Real = 0;
             double thePast = (DateTime.Now - ProgrammStarted).TotalMilliseconds - 600000;
-            GraphPoints.RemoveAll((k) => { return k.millisecond < thePast; });
+            GraphPointsRed.RemoveAll((k) => { return k.millisecond < thePast; });
             if ((DateTime.Now - DebugGap).TotalMilliseconds > 3000)
             {
                 DebugGap = DateTime.Now;
-                if (GraphPoints.Count > 1)
-                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.FI_Real));
+                if (GraphPointsRed.Count > 1)
+                {
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format(""));
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("RED{0}, {1:00.0}", ppp.millisecond, ppp.FIR_Real));
+                }
+            }
+
+
+            //Update chart
+            chart.Invoke(new Action(() => chart.Series[0].Add(ppp.millisecond, ppp.FIR_Real)));
+        }
+
+        public void CutGraphPointsTailViol()
+        {
+            GraphPointViol qqq = GraphPointsViol[GraphPointsViol.Count - 1];
+            if (double.IsNaN(qqq.FIV_Real) || double.IsInfinity(qqq.FIV_Real) || Math.Abs(qqq.FIV_Real) > 10e20 || Math.Abs(qqq.FIV_Real) < 10e-20)
+                qqq.FIV_Real = 0;
+            double thePast = (DateTime.Now - ProgrammStarted).TotalMilliseconds - 600000;
+            GraphPointsViol.RemoveAll((k) => { return k.millisecond < thePast; });
+            if ((DateTime.Now - DebugGap).TotalMilliseconds > 3000)
+            {
+                DebugGap = DateTime.Now;
+                if (GraphPointsViol.Count > 1)
+                {
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format(""));
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("Viol{0}, {1:00.0}", qqq.millisecond, qqq.FIV_Real));
+                }
+            }
+            chart.Invoke(new Action(() => chart.Series[1].Add(qqq.millisecond, qqq.FIV_Real)));
+        }
+
+        public void CutGraphPointsTailGreen()
+        {
+            GraphPointGreen rrr = GraphPointsGreen[GraphPointsGreen.Count - 1];
+            if (double.IsNaN(rrr.FIG_Real) || double.IsInfinity(rrr.FIG_Real) || Math.Abs(rrr.FIG_Real) > 10e20 || Math.Abs(rrr.FIG_Real) < 10e-20)
+                rrr.FIG_Real = 0;
+            double thePast = (DateTime.Now - ProgrammStarted).TotalMilliseconds - 600000;
+            GraphPointsGreen.RemoveAll((k) => { return k.millisecond < thePast; });
+            if ((DateTime.Now - DebugGap).TotalMilliseconds > 3000)
+            {
+                DebugGap = DateTime.Now;
+                if (GraphPointsGreen.Count > 1)
+                {
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format(""));
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("Green{0}, {1:00.0}", rrr.millisecond, rrr.FIG_Real));
+                }      
             }
 
             //Update chart
-            chart.Invoke(new Action(() => chart.Series[0].Add(ppp.millisecond, ppp.FI_Real)));
+            chart.Invoke(new Action(() => chart.Series[2].Add(rrr.millisecond, rrr.FIG_Real)));
         }
 
 
         System.Threading.Thread TailKiller;
         DateTime DebugGap = DateTime.Now;
-        public class GraphPoint
+        public class GraphPointRed
         {
             public double millisecond;
-            public double FI_Real;
+            public double FIR_Real;
+            //public double LlastImageSumRed;
         }
-        public List<GraphPoint> GraphPoints = new List<GraphPoint>();
+        public class GraphPointViol
+        {
+            public double millisecond;
+            public double FIV_Real;
+            //public double LastImageSumViol;
+        }
+        public class GraphPointGreen
+        {
+            public double millisecond;
+            public double FIG_Real;
+            //public double LastImageSumGreen;
+        }
+        public List<GraphPointRed> GraphPointsRed = new List<GraphPointRed>();
+        public List<GraphPointViol> GraphPointsViol = new List<GraphPointViol>();
+        public List<GraphPointGreen> GraphPointsGreen = new List<GraphPointGreen>();
         DateTime ProgrammStarted = DateTime.Now;
 
         private System.Drawing.Bitmap BitmapFromWriteableBitmap(WriteableBitmap writeBmp)
