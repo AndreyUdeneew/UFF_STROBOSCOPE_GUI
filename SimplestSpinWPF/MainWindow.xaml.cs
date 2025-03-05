@@ -153,7 +153,7 @@ namespace SimplestSpinWPF
 
         double FI_norma = 1;
         double FI = 0;
-        double FI_Real = 0;
+        double deltaSum = 0;
         string FI_string = "";
 
         double FIR_MAX = 0;
@@ -1253,6 +1253,7 @@ namespace SimplestSpinWPF
             FIcounter += 1;
             fixed (byte* DC = DivideCache, HSVC = HSVToRGBCache)
             {
+                deltaSum = 0;
                 for (int b = 0, g = 1, r = 2, i = 0; b < L; b += 3, r += 3, g += 3, i++)
                 {
                     if (GreenFlu)
@@ -1260,7 +1261,7 @@ namespace SimplestSpinWPF
                         dif = (bb1[g] - bb2[g]);
                         if (dif < 0)
                             dif = -dif;
-
+                        //deltaSum += dif;
                     }
 
                     if (RedFlu)
@@ -1268,6 +1269,7 @@ namespace SimplestSpinWPF
                         dif = (bb1[r] - bb2[r]);
                         if (dif < 0)
                             dif = -dif;
+                        //deltaSum += dif;
                     }
 
                     if (R2G)
@@ -1288,6 +1290,7 @@ namespace SimplestSpinWPF
                         dif = DC[(difRed << 8) + difGreen];
                         if (dif < 0)
                             dif = -dif;
+                        //deltaSum += dif;
                     }
 
                     if (Oxy)
@@ -1332,6 +1335,7 @@ namespace SimplestSpinWPF
                         dif = (difRed - difGreen);
                         if (dif < 0)
                             dif = 0;
+                        //deltaSum += dif;
                     }
 
                     if (RLED)
@@ -1340,6 +1344,7 @@ namespace SimplestSpinWPF
                         //dif = bb1[r] + bb1[r] + bb1[b] - bb2[r] - bb2[g] - bb2[b];
                         if (dif < 0)
                             dif = -dif;
+                        //deltaSum += dif;
                     }
 
                     if (GLED)
@@ -1348,6 +1353,7 @@ namespace SimplestSpinWPF
                         //dif = bb1[r] + bb1[r] + bb1[b] - bb2[r] - bb2[g] - bb2[b];
                         if (dif < 0)
                             dif = -dif;
+                        //deltaSum += dif;
                     }
 
                     if (BOTH)
@@ -1355,6 +1361,7 @@ namespace SimplestSpinWPF
                         dif = bb1[r] - bb2[r];
                         if (dif < 0)
                             dif = -dif;
+                        //deltaSum += dif;
 
                     }
 
@@ -1427,6 +1434,7 @@ namespace SimplestSpinWPF
                     if (Grayed)
                     { bb[b] = res; bb[r] = res; }
                 }
+                deltaSum += dif;
             }
             //firstCursorPixel = 0;
             for (int cursorString = 0; cursorString < hCursor; cursorString += 1)
@@ -1477,7 +1485,7 @@ namespace SimplestSpinWPF
                 {
                     FIV_Real = SummFluor / SummWhite;
                     FIV = FIV_Real / FIV_norma;
-                    FI_Real = FIV;
+                    //deltaSum = FIV;
                     if (FIV > FIV_MAX)
                     {
                         FIV_MAX = FIV;
@@ -1487,7 +1495,7 @@ namespace SimplestSpinWPF
                 {
                     FIR_Real = SummFluor / SummWhite;
                     FIR = FIR_Real / FIR_norma;
-                    FI_Real = FIR;
+                    //deltaSum = FIR;
                     if (FIR > FIR_MAX)
                     {
                         FIR_MAX = FIR;
@@ -1498,7 +1506,7 @@ namespace SimplestSpinWPF
                 {
                     FIG_Real = SummFluor / SummWhite;
                     FIG = FIG_Real / FIR_norma;
-                    FI_Real = FIG;
+                    //deltaSum = FIG;
                     if (FIG > FIG_MAX)
                     {
                         FIG_MAX = FIG;
@@ -1523,7 +1531,7 @@ namespace SimplestSpinWPF
 
             FIcounter += 1;
 
-            GraphPoints.Add(new GraphPoint { FI_Real = FI_Real, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+            GraphPoints.Add(new GraphPoint { deltaSum = deltaSum, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
             if (TailKiller == null)
             {
                 TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
@@ -1591,19 +1599,19 @@ namespace SimplestSpinWPF
         public void CutGraphPointsTail()
         {
             GraphPoint ppp = GraphPoints[GraphPoints.Count - 1];
-            if (double.IsNaN(ppp.FI_Real) || double.IsInfinity(ppp.FI_Real) || Math.Abs(ppp.FI_Real) > 10e20 || Math.Abs(ppp.FI_Real) < 10e-20)
-                ppp.FI_Real = 0;
+            if (double.IsNaN(ppp.deltaSum) || double.IsInfinity(ppp.deltaSum) || Math.Abs(ppp.deltaSum) > 10e20 || Math.Abs(ppp.deltaSum) < 10e-20)
+                ppp.deltaSum = 0;
             double thePast = (DateTime.Now - ProgrammStarted).TotalMilliseconds - 600000;
             GraphPoints.RemoveAll((k) => { return k.millisecond < thePast; });
             if ((DateTime.Now - DebugGap).TotalMilliseconds > 3000)
             {
                 DebugGap = DateTime.Now;
                 if (GraphPoints.Count > 1)
-                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.FI_Real));
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.deltaSum));
             }
 
             //Update chart
-            chart.Invoke(new Action(() => chart.Series[0].Add(ppp.millisecond, ppp.FI_Real)));
+            chart.Invoke(new Action(() => chart.Series[0].Add(ppp.millisecond, ppp.deltaSum)));
         }
 
 
@@ -1612,7 +1620,7 @@ namespace SimplestSpinWPF
         public class GraphPoint
         {
             public double millisecond;
-            public double FI_Real;
+            public double deltaSum;
         }
         public List<GraphPoint> GraphPoints = new List<GraphPoint>();
         DateTime ProgrammStarted = DateTime.Now;
@@ -2031,7 +2039,7 @@ namespace SimplestSpinWPF
 
         private void ButtonNorma_Click_1(object sender, RoutedEventArgs e)
         {
-            FI_norma = FI_Real;
+            FI_norma = deltaSum;
         }
 
         void HsvToRgb(double h, double S, double V, out int r, out int g, out int b)
