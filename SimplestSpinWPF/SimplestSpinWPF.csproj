@@ -87,7 +87,7 @@
       <HintPath>..\packages\EmguCV.3.1.0.1\lib\net30\Emgu.CV.World.dll</HintPath>
     </Reference>
     <Reference Include="GxIAPINET">
-      <HintPath>..\..\..\..\..\Program Files\Daheng Imaging\GalaxySDK\Samples\CSharp SDK\x64\DoNET\.NET4.0\GxIAPINET.dll</HintPath>
+      <HintPath>C:\Program Files\Daheng Imaging\GalaxySDK\APIDll\Win64\.NET4.0\GxIAPINET.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>
@@ -96,10 +96,10 @@
       <HintPath>..\packages\OpenTK.GLControl.1.1.2225.0\lib\net20\OpenTK.GLControl.dll</HintPath>
     </Reference>
     <Reference Include="SpinnakerNETGUI_v140">
-      <HintPath>..\..\..\..\..\Program Files\Point Grey Research\Spinnaker\bin64\vs2015\SpinnakerNETGUI_v140.dll</HintPath>
+      <HintPath>C:\Program Files\Point Grey Research\Spinnaker\bin64\vs2015\SpinnakerNETGUI_v140.dll</HintPath>
     </Reference>
     <Reference Include="SpinnakerNET_v140">
-      <HintPath>..\..\..\..\..\Program Files\Point Grey Research\Spinnaker\bin64\vs2015\SpinnakerNET_v140.dll</HintPath>
+      <HintPath>C:\Program Files\Point Grey Research\Spinnaker\bin64\vs2015\SpinnakerNET_v140.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -115,10 +115,10 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="TeeChart.Lite">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steema Software\TeeChart.Lite v2 for .NET\TeeChart.Lite.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steema Software\TeeChart.Lite v2 for .NET\TeeChart.Lite.dll</HintPath>
     </Reference>
     <Reference Include="TeeChart.Lite.Languages">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Steema Software\TeeChart.Lite v2 for .NET\TeeChart.Lite.Languages.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Steema Software\TeeChart.Lite v2 for .NET\TeeChart.Lite.Languages.dll</HintPath>
     </Reference>
     <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
