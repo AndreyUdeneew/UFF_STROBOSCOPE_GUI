@@ -98,7 +98,7 @@
         <TextBox x:Name="BleachingTextBox" Grid.Column="2" HorizontalAlignment="Left" Margin="37,285,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="102" TextChanged="BleachingTextBox_TextChanged"/>
         <Label Grid.Column="4" Content="COM PORT" Foreground="Gray" HorizontalAlignment="Left" Height="25" Margin="8,632,0,0" VerticalAlignment="Top" Width="72"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonGreenLED"  Content="G_LED" HorizontalAlignment="Center" Margin="0,502,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonGreenLED_Checked"/>
-        <CheckBox x:Name="CheckBoxTeplovizor" Content="Teplovizor" Grid.Column="2" HorizontalAlignment="Left" Margin="37,45,0,0" VerticalAlignment="Top" Foreground="Gray"/>
+        <CheckBox x:Name="CheckBoxTeplovizor" Content="Teplovizor" Grid.Column="2" HorizontalAlignment="Left" Margin="37,45,0,0" VerticalAlignment="Top" Foreground="Gray" Checked="CheckBoxTeplovizor_Checked" Unchecked="CheckBoxTeplovizor_Unchecked"/>
         <Button Background="DarkGray" x:Name="buttonSetFocus" Content="Set Focus" Grid.Column="2" HorizontalAlignment="Left" Margin="37,70,0,0" VerticalAlignment="Top" Width="111" Click="buttonSetFocus_Click" Height="20"/>
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
     </Grid>

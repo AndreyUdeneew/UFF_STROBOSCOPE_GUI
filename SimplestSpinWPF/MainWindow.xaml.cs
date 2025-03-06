@@ -764,6 +764,10 @@ namespace SimplestSpinWPF
                         p.Write("AFON\n");
                     if (CMD == "AFOFF")
                         p.Write("AFOFF\n");
+                    if (CMD == "TEPLON")
+                        p.Write("TEPLON\n");
+                    if (CMD == "TEPLOFF")
+                        p.Write("TEPLOFF\n");
                     //if (CMD == "FC0")
                     //    p.Write("FC0\n");
                     //if (CMD == "FC1")
@@ -2364,6 +2368,18 @@ namespace SimplestSpinWPF
         private void CheckBoxAutofocus_Unchecked(object sender, RoutedEventArgs e)
         {
             CMD = "AFOFF";
+            SendCMD();
+        }
+
+        private void CheckBoxTeplovizor_Checked(object sender, RoutedEventArgs e)
+        {
+            CMD = "TEPLON";
+            SendCMD();
+        }
+
+        private void CheckBoxTeplovizor_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CMD = "TEPLOFF";
             SendCMD();
         }
 
