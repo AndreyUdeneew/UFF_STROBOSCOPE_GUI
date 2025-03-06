@@ -179,6 +179,7 @@ namespace SimplestSpinWPF
 
         string fileName4Saving = "";
         string fileNameDecreased = "";
+        string temperature = "";
 
         double bleaching_red = 0;
         double bleaching_viol = 0;
@@ -1585,6 +1586,12 @@ namespace SimplestSpinWPF
                 bleaching_viol_Label.Content = bleaching_viol_string;
                 bleaching_red_Label.Content = bleaching_red_string;
                 bleaching_green_Label.Content = bleaching_green_string;
+                if(p.IsOpen)
+                {
+                    temperature = p.ReadExisting();
+                    Pyrometer_Label.Content = temperature;
+                }
+                
                 FIcounter = 0;
                 //FI = 0;
             }
