@@ -70,11 +70,11 @@
         <CheckBox x:Name="CheckBoxOxyAlter" Content="OxyAlter" Grid.Column="4" HorizontalAlignment="Left" Margin="10,105,0,0" VerticalAlignment="Top" Foreground="Gray"/>
         <ComboBox x:Name="ComboboxPorts" Grid.Column="4" HorizontalAlignment="Center" Margin="0,657,0,0" VerticalAlignment="Top" Width="62" DropDownOpened="ComboboxPorts_DropDownOpened"/>
         <!--<Button x:Name="ChangeMode" Content="Mode" Grid.Column="4" HorizontalAlignment="Center" Height="20" Margin="0,606,0,0" VerticalAlignment="Top" Width="62" Click="ChangeMode_Click" Background="DarkGray" RenderTransformOrigin="0.507,6.186"/>-->
-        <CheckBox x:Name="CheckBoxAutofocus" Content="Autofocus" Grid.Column="2" HorizontalAlignment="Left" Margin="37,23,0,0" VerticalAlignment="Top" Foreground="Gray"/>
-        <Button Background="DarkGray" x:Name="buttonZoomPlus" Content="Zoom+" Grid.Column="2" HorizontalAlignment="Left" Margin="64,103,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
-        <Button Background="DarkGray" x:Name="buttonZoomMinus" Content="Zoom-" Grid.Column="2" HorizontalAlignment="Left" Margin="64,190,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
-        <Button Background="DarkGray" x:Name="buttonFocusPlus" Content="Focus+" Grid.Column="2" HorizontalAlignment="Left" Margin="102,148,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
-        <Button Background="DarkGray" x:Name="buttonFocusMinus" Content="Focus-" Grid.Column="2" HorizontalAlignment="Left" Margin="20,148,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>
+        <CheckBox x:Name="CheckBoxAutofocus" Content="Autofocus" Grid.Column="2" HorizontalAlignment="Left" Margin="37,23,0,0" VerticalAlignment="Top" Foreground="Gray" Checked="CheckBoxAutofocus_Checked" Unchecked="CheckBoxAutofocus_Unchecked"/>
+        <!--<Button Background="DarkGray" x:Name="buttonZoomPlus" Content="Zoom+" Grid.Column="2" HorizontalAlignment="Left" Margin="64,103,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>-->
+        <!--<Button Background="DarkGray" x:Name="buttonZoomMinus" Content="Zoom-" Grid.Column="2" HorizontalAlignment="Left" Margin="64,190,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>-->
+        <!--<Button Background="DarkGray" x:Name="buttonFocusPlus" Content="Focus+" Grid.Column="2" HorizontalAlignment="Left" Margin="102,148,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>-->
+        <!--<Button Background="DarkGray" x:Name="buttonFocusMinus" Content="Focus-" Grid.Column="2" HorizontalAlignment="Left" Margin="20,148,0,0" VerticalAlignment="Top" Width="54" Click="button_Click" Height="20"/>-->
         <Grid x:Name="GraphGrid"  Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="208" Margin="0,680,0,0" VerticalAlignment="Bottom">
             <Grid.RowDefinitions>
                 <RowDefinition/>
@@ -98,6 +98,8 @@
         <TextBox x:Name="BleachingTextBox" Grid.Column="2" HorizontalAlignment="Left" Margin="37,285,0,0" TextWrapping="Wrap" Text="60" VerticalAlignment="Top" Width="102" TextChanged="BleachingTextBox_TextChanged"/>
         <Label Grid.Column="4" Content="COM PORT" Foreground="Gray" HorizontalAlignment="Left" Height="25" Margin="8,632,0,0" VerticalAlignment="Top" Width="72"/>
         <RadioButton GroupName="Mode" Grid.Column="4" Foreground="Gray" x:Name="radioButtonGreenLED"  Content="G_LED" HorizontalAlignment="Center" Margin="0,502,0,0" VerticalAlignment="Top" Background="#FFBFBFBF" Checked="RadioButtonGreenLED_Checked"/>
+        <CheckBox x:Name="CheckBoxTeplovizor" Content="Teplovizor" Grid.Column="2" HorizontalAlignment="Left" Margin="37,45,0,0" VerticalAlignment="Top" Foreground="Gray"/>
+        <Button Background="DarkGray" x:Name="buttonSetFocus" Content="Set Focus" Grid.Column="2" HorizontalAlignment="Left" Margin="37,70,0,0" VerticalAlignment="Top" Width="111" Click="buttonSetFocus_Click" Height="20"/>
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
     </Grid>
 

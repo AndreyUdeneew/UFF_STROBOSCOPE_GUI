@@ -37,6 +37,8 @@ using Steema.TeeChart;
 using System.Windows.Media.Animation;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Window = System.Windows.Window;
+using CefSharp.DevTools.Network;
+using CefSharp;
 
 
 namespace SimplestSpinWPF
@@ -213,6 +215,7 @@ namespace SimplestSpinWPF
         Stopwatch d = Stopwatch.StartNew();
 
         bool SeqEnabled = false;
+        //bool OxyAlter = (bool)CheckBoxAutofocus.IsChecked;
         string isSerial = "";
 
         public long PrevImageSum = 0;
@@ -755,6 +758,12 @@ namespace SimplestSpinWPF
                         p.Write("T_ON\n");
                     if (CMD == "T_OFF")
                         p.Write("T_OFF\n");
+                    if (CMD == "AF")
+                        p.Write("AF\n");
+                    if (CMD == "AFON")
+                        p.Write("AFON\n");
+                    if (CMD == "AFOFF")
+                        p.Write("AFOFF\n");
                     //if (CMD == "FC0")
                     //    p.Write("FC0\n");
                     //if (CMD == "FC1")
@@ -1761,6 +1770,8 @@ namespace SimplestSpinWPF
             e.Cancel = false;
         }
 
+
+
         private void button3_Click(object sender, RoutedEventArgs e)
         {
             p.Close();
@@ -2338,10 +2349,127 @@ namespace SimplestSpinWPF
             desiredBleaching = Convert.ToInt32(BleachingTextBox.Text);
         }
 
+        private void buttonSetFocus_Click(object sender, RoutedEventArgs e)
+        {
+            CMD = "AF";
+            SendCMD();
+        }
+
+        private void CheckBoxAutofocus_Checked(object sender, RoutedEventArgs e)
+        {
+            CMD = "AFON";
+            SendCMD();
+        }
+
+        private void CheckBoxAutofocus_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CMD = "AFOFF";
+            SendCMD();
+        }
+
+        //private void button_Click(object sender, RoutedEventArgs e)
+        //{
+
+        //}
+
+        private void CheckBoxAutofocus_Checked_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+
         //private void RadioButtonGreen_Checked(object sender, RoutedEventArgs e)
         //{
 
         //}
+        //        if (ReadSensorData)
+        //                    try
+        //                    {
+        //                        var ss = response.Split(new[] { '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+        //                        if (ss.Length > ThermoHeight* ThermoWidth)
+        //                        {
+        //                            int[,] data = new int[ThermoHeight, ThermoWidth];
+        //                            for (int i = 1, x = 0, y = 0; i <= data.Length; i++, x++)
+        //                            {
+        //                                if (x == ThermoWidth)
+        //                                {
+        //                                    y++; x = 0;
+        //                                }
+        //    data[y, x] = int.Parse(ss[i]);
+        //}
+
+        ////flip left-right
+        //int[,] data1 = new int[ThermoHeight, ThermoWidth];
+        //if (RotatePictures)
+        //    for (int y = 0, y2 = ThermoHeight - 1; y < ThermoHeight; y++, y2--)
+        //        for (int x = 0, x2 = ThermoWidth - 1; x < ThermoWidth; x++, x2--)
+        //            data1[y, x] = data[y2, x];
+        //else
+        //    for (int y = 0; y < ThermoHeight; y++)
+        //        for (int x = 0, x2 = ThermoWidth - 1; x < ThermoWidth; x++, x2--)
+        //            data1[y, x] = data[y, x2];
+        //Dispatcher.Invoke(() => DisplayHeatMap(data1));
+        //                        }
+        //                        string temp = ss[0];
+        //                    }
+        //                    catch (Exception e)
+        //                    {
+        //                        Debug.WriteLine($"Error updating dataGrid: {e.Message}");
+        //                    }
+
+
+        //void DisplayHeatMap(int[,] heatMapData)
+        //{
+
+        //    const int heatMapWidth = 32;
+        //    const int heatMapHeight = 24;
+        //    const int outputWidth = 320;
+        //    const int outputHeight = 240;
+        //    //int Max = heatMapData.Cast<int>().Max(), Min = heatMapData.Cast<int>().Min();
+        //    //int Range = Max - Min + 1;            
+        //    int Max = 50, Min = 20;
+        //    int Range = Max - Min + 1;
+
+        //    // Создаем WriteableBitmap
+        //    WriteableBitmap writeableBitmap = new WriteableBitmap(outputWidth, outputHeight, 96, 96, PixelFormats.Bgra32, null);
+        //    byte[] pixels = new byte[outputWidth * outputHeight * 4];
+
+        //    for (int y = 0, i = 0; y < outputHeight; y++)
+        //    {
+        //        for (int x = 0; x < outputWidth; x++)
+        //        {
+        //            // Нормализация координат
+        //            int heatMapX = x * heatMapWidth / outputWidth;
+        //            int heatMapY = y * heatMapHeight / outputHeight;
+
+        //            // Получаем значение из тепловой карты
+        //            int heatValue = (int)((heatMapData[heatMapY, heatMapX] - Min) * 239.0 / Range);
+        //            heatValue = heatValue < 0 ? 0 : heatValue;
+        //            heatValue = heatValue > 239 ? 239 : heatValue;
+        //            heatValue += 120;
+        //            var cc = Rainbow[(int)heatValue];
+        //            //cc = Rainbow[x + 40];
+
+        //            // Преобразуем значение в цвет (градус от черного до красного)
+        //            // Например, можно взять градиент от черного (0, 0, 0) до красного (heatValue, 0, 0) с учетом alpha-канала
+        //            //pixels[(x + y * outputWidth) * 4 + 0] = cc.b; // Blue
+        //            //pixels[(x + y * outputWidth) * 4 + 1] = cc.g;     // Green
+        //            //pixels[(x + y * outputWidth) * 4 + 2] = cc.r;       // Red
+        //            //pixels[(x + y * outputWidth) * 4 + 3] = 255;     // Alpha
+
+        //            pixels[i++] = cc.b; // Blue
+        //            pixels[i++] = cc.g;     // Green
+        //            pixels[i++] = cc.r;       // Red
+        //            pixels[i++] = 255;     // Alpha
+        //        }
+        //    }
+
+        //    // Копируем пиксели в WriteableBitmap
+        //    writeableBitmap.WritePixels(new Int32Rect(0, 0, outputWidth, outputHeight), pixels, outputWidth * 4, 0);
+        //    HeatMap.Source = writeableBitmap; // Устанавливаем изображение в PictureBox
+        //}
+
+
 
         public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)
         {
