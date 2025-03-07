@@ -1818,7 +1818,7 @@ namespace SimplestSpinWPF
                 BitmapEncoder encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create((BitmapSource)background));
                 DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                string Filename = @"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                     d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                     !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("White" + "_Coef" + ampCur)
                     );
@@ -1837,7 +1837,7 @@ namespace SimplestSpinWPF
                 BitmapEncoder encoder = new PngBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create((BitmapSource)UV));
                 DateTime d = DateTime.Now;
-                string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                string Filename = @"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                    d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                    !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("FLUOR" + "_Coef" + ampCur)
                    );
@@ -1861,9 +1861,10 @@ namespace SimplestSpinWPF
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
                     gr.DrawString(FIV_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    gr.DrawString(temperature, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 70);
                     BitmapFrame frame = BitmapFrame.Create(frameSource);
                     DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    string Filename = @"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                         !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "Green" + "_Coef" + ampCur + "_FIV_" + FIV_string)
                         );
@@ -1881,9 +1882,10 @@ namespace SimplestSpinWPF
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
                     gr.DrawString(FIV_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    gr.DrawString(temperature, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 70);
                     BitmapFrame frame = BitmapFrame.Create(frameSource);
                     DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    string Filename = @"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                         !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "Fluo_" + "Red" + "_Coef" + ampCur + "_FIV_" + FIV_string)
                         );
@@ -1902,8 +1904,9 @@ namespace SimplestSpinWPF
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
                     gr.DrawString(FIV_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    gr.DrawString(temperature, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 70);
                     DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    string Filename = @"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                         !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R2G" + "_Coef" + ampCur * additionalCoef + "_FIV_" + FIV_string)
                         );
@@ -1922,8 +1925,9 @@ namespace SimplestSpinWPF
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
                     gr.DrawString(FIV_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
+                    gr.DrawString(temperature, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 70);
                     DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    string Filename =@"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                         !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + ampCur * 1 + "_FIV_" + FIV_string)
                         );
@@ -1944,9 +1948,10 @@ namespace SimplestSpinWPF
                     Bitmap bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
                     gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Red, 0, 0);
+                    gr.DrawString(temperature, new Font("Tahoma", fontSize), System.Drawing.Brushes.Red, 0, 70);
                     Debug.WriteLine(FI_string);
                     DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    string Filename = @"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                         !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "RLED" + "_Coef" + ampCur * 1 + "_FIR_" + FIR_string)
                         );
@@ -1970,9 +1975,10 @@ namespace SimplestSpinWPF
                     Bitmap bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
                     gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Green, 0, 0);
+                    gr.DrawString(temperature, new Font("Tahoma", fontSize), System.Drawing.Brushes.Green, 0, 70);
                     Debug.WriteLine(FI_string);
                     DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    string Filename = @"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                         !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : (isSerial + "GLED" + "_Coef" + ampCur * 1 + "_FIG_" + FIG_string)
                         );
@@ -1997,7 +2003,7 @@ namespace SimplestSpinWPF
                     Graphics gr = Graphics.FromImage(bmp);
                     gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
                     DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    string Filename = @"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                         !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("BOTH" + "_Coef" + ampCur * 1 + "_FIR_" + FIR_string)
                         );
@@ -2020,8 +2026,9 @@ namespace SimplestSpinWPF
                     bmp = BitmapFromWriteableBitmap(frameSource);
                     Graphics gr = Graphics.FromImage(bmp);
                     gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
+                    gr.DrawString(temperature, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 70);
                     DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    string Filename = @"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                         !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("IR" + "_Coef" + ampCur * 1 + "_FIR_" + FIR_string)
                         );
@@ -2044,7 +2051,7 @@ namespace SimplestSpinWPF
                     Graphics gr = Graphics.FromImage(bmp);
                     gr.DrawString(FIR_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.White, 0, 0);
                     DateTime d = DateTime.Now;
-                    string Filename = @"C:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    string Filename = @"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                         !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Oxy_" + "_Coef" + ampCur * 1 + "_FIR_" + FIR_string)
                         );
