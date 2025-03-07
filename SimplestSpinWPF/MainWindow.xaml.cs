@@ -55,22 +55,35 @@ namespace SimplestSpinWPF
         static bool InitDAO = true;
         int fontSize = 50;
 
+        private bool _isReading;
+        private WriteableBitmap _heatmapBitmap;
+        private const int Width = 32; // MLX90640 sensor width
+        private const int Height = 24; // MLX90640 sensor height
+
 
         IManagedCamera SpinCamColor = null;
         //PropertyGridControl gridControl = new PropertyGridControl();
         byte[] DivideCache = new byte[256 * 256];
         byte[] HSVToRGBCache = new byte[256 * 4];
         int FLiRCamCount = 0, DAOCamCount = 0;
+        (byte r, byte g, byte b)[] Rainbow = new (byte r, byte g, byte b)[360];
 
         Thread RefreshThread;
         //Thread ModeSelectThread;
         public MainWindow()
         {
             InitializeComponent();
+            _isReading = false;
+
+            // Initialize the WriteableBitmap for the heatmap
+            _heatmapBitmap = new WriteableBitmap(Width, Height, 96, 96, PixelFormats.Bgr32, null);
+            HeatmapImage.Source = _heatmapBitmap;
 
             //RadioButton rb = new RadioButton { IsChecked = true, GroupName = "Languages", Content = "JavaScript" };
             //rb.Checked += RadioButton_Checked;
             //stackPanel.Children.Add(rb);
+
+
 
             for (int i = 0; i < 256; i++)
                 for (int j = 0; j < 256; j++)
@@ -120,6 +133,7 @@ namespace SimplestSpinWPF
             //ModeSelectThread.Start();
             GraphGrid.Visibility = System.Windows.Visibility.Hidden;
             InitPlot();
+        
         }
 
         const int PortSpeed = 115200;
@@ -1599,11 +1613,11 @@ namespace SimplestSpinWPF
                 bleaching_viol_Label.Content = bleaching_viol_string;
                 bleaching_red_Label.Content = bleaching_red_string;
                 bleaching_green_Label.Content = bleaching_green_string;
-                if(p.IsOpen)
-                {
-                    temperature = p.ReadExisting();
-                    Pyrometer_Label.Content = temperature;
-                }
+                //if(p.IsOpen)
+                //{
+                //    temperature = p.ReadExisting();
+                //    Pyrometer_Label.Content = temperature;
+                //}
                 
                 FIcounter = 0;
                 //FI = 0;
@@ -2071,6 +2085,31 @@ namespace SimplestSpinWPF
             FI_norma = deltaSum;
         }
 
+        static (byte r, byte g, byte b) HSVToRGB_teplovizor(int h, double s, double v)
+        {
+            byte r = 0, g = 0, b = 0;
+
+            // Преобразование HSV в RGB
+            byte i = (byte)((h / 60) % 6);
+            double f = (h / 60.0) - Math.Floor(h / 60.0);
+            byte p = (byte)(v * 255 * (1 - s));
+            byte q = (byte)(v * 255 * (1 - f * s));
+            byte t = (byte)(v * 255 * (1 - (1 - f) * s));
+            byte val = (byte)(v * 255);
+
+            switch (i)
+            {
+                case 0: r = val; g = t; b = p; break;
+                case 1: r = q; g = val; b = p; break;
+                case 2: r = p; g = val; b = t; break;
+                case 3: r = p; g = q; b = val; break;
+                case 4: r = t; g = p; b = val; break;
+                case 5: r = val; g = p; b = q; break;
+            }
+
+            return (r, g, b);
+        }
+
         void HsvToRgb(double h, double S, double V, out int r, out int g, out int b)
         {
             double H = h;
@@ -2380,10 +2419,121 @@ namespace SimplestSpinWPF
 
         private void CheckBoxTeplovizor_Checked(object sender, RoutedEventArgs e)
         {
-            CMD = "TEPLON";
-            SendCMD();
+            if (!_isReading)
+            {
+                try
+                {
+                    CMD = "TEPLON";
+                    SendCMD();
+                    p.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);                   
+                    _isReading = true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error opening serial port: " + ex.Message);
+                }
+            }
+            else
+            {
+                p.Close();
+                _isReading = false;
+            }
+        }
+        //}
+
+        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        {
+            string indata = p.ReadExisting();
+            Dispatcher.BeginInvoke(new Action(() => DataTextBox.AppendText(indata)));
+
+            // Parse the data and update the heatmap
+            if (TryParseThermalData(indata, out float[] thermalData))
+            {
+                UpdateHeatmap(thermalData);
+            }
         }
 
+        private void UpdateHeatmap(float[] thermalData)
+        {
+            // Lock the bitmap for writing
+            _heatmapBitmap.Lock();
+
+            // Define a color gradient for the heatmap
+            var minTemp = thermalData.Min();
+            var maxTemp = thermalData.Max();
+
+            for (int y = 0; y < Height; y++)
+            {
+                for (int x = 0; x < Width; x++)
+                {
+                    float temperature = thermalData[y * Width + x];
+                    byte intensity = (byte)(255 * (temperature - minTemp) / (maxTemp - minTemp));
+                    byte[] color = GetHeatmapColor(intensity);
+
+                    // Calculate the pixel offset
+                    int offset = (y * _heatmapBitmap.BackBufferStride) + (x * 4);
+
+                    // Write the pixel data
+                    unsafe
+                    {
+                        byte* buffer = (byte*)_heatmapBitmap.BackBuffer;
+                        buffer[offset] = color[0]; // Blue
+                        buffer[offset + 1] = color[1]; // Green
+                        buffer[offset + 2] = color[2]; // Red
+                        buffer[offset + 3] = 255; // Alpha
+                    }
+                }
+            }
+
+            // Notify the bitmap of the changes
+            _heatmapBitmap.AddDirtyRect(new Int32Rect(0, 0, Width, Height));
+            _heatmapBitmap.Unlock();
+        }
+
+        private byte[] GetHeatmapColor(byte intensity)
+        {
+            // Simple gradient from blue (cold) to red (hot)
+            return new byte[]
+            {
+                (byte)(255 - intensity), // Blue
+                0,                       // Green
+                intensity,               // Red
+            };
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            if (p != null && p.IsOpen)
+            {
+                p.Close();
+            }
+            base.OnClosed(e);
+        }
+
+        private bool TryParseThermalData(string data, out float[] thermalData)
+        {
+            thermalData = new float[Width * Height];
+            string[] values = data.Split(',');
+
+            if (values.Length != Width * Height)
+            {
+                return false; // Invalid data
+            }
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (float.TryParse(values[i], out float temperature))
+                {
+                    thermalData[i] = temperature;
+                }
+                else
+                {
+                    return false; // Invalid temperature value
+                }
+            }
+
+            return true;
+        }
         private void CheckBoxTeplovizor_Unchecked(object sender, RoutedEventArgs e)
         {
             CMD = "TEPLOFF";
@@ -2405,6 +2555,12 @@ namespace SimplestSpinWPF
         //{
 
         //}
+
+
+        //for (int i = 0; i< 360; i++)
+        //        Rainbow[i] = HSVToRGB_teplovizor(360 -  i, 1, 1);
+
+
         //        if (ReadSensorData)
         //                    try
         //                    {
