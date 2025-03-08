@@ -786,7 +786,7 @@ namespace SimplestSpinWPF
                     //    p.Write("FC0\n");
                     //if (CMD == "FC1")
                     //    p.Write("FC1\n");
-                    Debug.WriteLine(CMD);
+                    //Debug.WriteLine(CMD);
                     CMD = "";
                 }
             return 0;
@@ -1618,6 +1618,19 @@ namespace SimplestSpinWPF
                 //    temperature = p.ReadExisting();
                 //    Pyrometer_Label.Content = temperature;
                 //}
+                if(p.IsOpen)
+                {
+                    String indata = "";
+                    indata = p.ReadExisting();
+                    //Debug.WriteLine(indata);
+                    //Dispatcher.BeginInvoke(new Action(() => DataTextBox.AppendText(indata)));
+                    // Parse the data and update the heatmap
+                    if (TryParseThermalData(indata, out float[] thermalData))
+                    {
+                        
+                        UpdateHeatmap(thermalData);
+                    }
+                }
                 
                 FIcounter = 0;
                 //FI = 0;
@@ -2243,7 +2256,7 @@ namespace SimplestSpinWPF
             catch
             {
                 System.Windows.MessageBox.Show("Failed to open port. Sorry (");
-                KeepReading();
+                //KeepReading();
                 return;
             }
             if (p.IsOpen)
@@ -2292,30 +2305,30 @@ namespace SimplestSpinWPF
 
         }
 
-        void KeepReading()
-        {
-            for (; ; )
-            {
-                if (p != null)
-                    if (p.IsOpen)
-                    {
-                        if (p.BytesToRead > 0)
-                        {
-                            string tt = p.ReadExisting();
-                            //textBox2.Invoke(new Action(() =>
-                            //{
-                            //    CommaCount += tt.Count((x) => x == ',');
-                            //    Buf += tt;
-                            //    textBox2.Text = tt;
-                            //    toolStripStatusLabel2.Text = "Reads = " + (++ReadsCount).ToString();
-                            //}));
-                        }
-                        Thread.Sleep(5);
-                    }
-                    else break;
-                else break;
-            }
-        }
+        //void KeepReading()
+        //{
+        //    for (; ; )
+        //    {
+        //        if (p != null)
+        //            if (p.IsOpen)
+        //            {
+        //                if (p.BytesToRead > 0)
+        //                {
+        //                    string tt = p.ReadExisting();
+        //                    //textBox2.Invoke(new Action(() =>
+        //                    //{
+        //                    //    CommaCount += tt.Count((x) => x == ',');
+        //                    //    Buf += tt;
+        //                    //    textBox2.Text = tt;
+        //                    //    toolStripStatusLabel2.Text = "Reads = " + (++ReadsCount).ToString();
+        //                    //}));
+        //                }
+        //                Thread.Sleep(5);
+        //            }
+        //            else break;
+        //        else break;
+        //    }
+        //}
 
         private void ShowGraphButton_Click(object sender, RoutedEventArgs e)
         {
@@ -2407,25 +2420,37 @@ namespace SimplestSpinWPF
 
         private void CheckBoxAutofocus_Checked(object sender, RoutedEventArgs e)
         {
+            //Debug.WriteLine("still alive");
             CMD = "AFON";
             SendCMD();
         }
 
         private void CheckBoxAutofocus_Unchecked(object sender, RoutedEventArgs e)
         {
+            
             CMD = "AFOFF";
             SendCMD();
         }
 
         private void CheckBoxTeplovizor_Checked(object sender, RoutedEventArgs e)
         {
-            if (!_isReading)
+            if(p.IsOpen)
+            {
+                CMD = "TEPLON";
+                SendCMD();
+            }
+
+            //Debug.WriteLine("still alive");
+            if (_isReading)
             {
                 try
                 {
-                    CMD = "TEPLON";
-                    SendCMD();
-                    p.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);                   
+
+                    p.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
+
+
+                   
+
                     _isReading = true;
                 }
                 catch (Exception ex)
@@ -2435,17 +2460,54 @@ namespace SimplestSpinWPF
             }
             else
             {
-                p.Close();
+                //p.Close();
                 _isReading = false;
             }
         }
         //}
 
+        private bool TryParseThermalData(string data, out float[] thermalData)
+        {
+            //Debug.WriteLine("trying to parse");
+
+            thermalData = new float[Width * Height];
+            string[] values = data.Split(',');
+            foreach (var word in values)
+            {
+                System.Console.WriteLine($"<{word}>");
+            }
+            if (values.Length != (Width * Height + 1))
+            {
+                return false; // Invalid data
+            }
+
+            for (int i = 0; i < (values.Length + 1); i++)
+            {
+                if (float.TryParse(values[i], out float temperature))
+                {
+                    thermalData[i] = temperature;
+                    Debug.WriteLine(values[i]);
+                    Debug.WriteLine("stil alive");
+                }
+                
+                else
+                {
+                    Debug.WriteLine("false data");
+                    return false; // Invalid temperature value
+                    
+                }
+            }
+
+            return true;
+            
+        }
+
         private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
         {
-            string indata = p.ReadExisting();
-            Dispatcher.BeginInvoke(new Action(() => DataTextBox.AppendText(indata)));
-
+            string indata = "";
+            indata = p.ReadExisting();
+            Debug.WriteLine(indata);
+            //Dispatcher.BeginInvoke(new Action(() => DataTextBox.AppendText(indata)));
             // Parse the data and update the heatmap
             if (TryParseThermalData(indata, out float[] thermalData))
             {
@@ -2510,30 +2572,7 @@ namespace SimplestSpinWPF
             base.OnClosed(e);
         }
 
-        private bool TryParseThermalData(string data, out float[] thermalData)
-        {
-            thermalData = new float[Width * Height];
-            string[] values = data.Split(',');
 
-            if (values.Length != Width * Height)
-            {
-                return false; // Invalid data
-            }
-
-            for (int i = 0; i < values.Length; i++)
-            {
-                if (float.TryParse(values[i], out float temperature))
-                {
-                    thermalData[i] = temperature;
-                }
-                else
-                {
-                    return false; // Invalid temperature value
-                }
-            }
-
-            return true;
-        }
         private void CheckBoxTeplovizor_Unchecked(object sender, RoutedEventArgs e)
         {
             CMD = "TEPLOFF";

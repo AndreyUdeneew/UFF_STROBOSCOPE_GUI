@@ -102,7 +102,7 @@
         <Button Background="DarkGray" x:Name="buttonSetFocus" Content="Set Focus" Grid.Column="2" HorizontalAlignment="Left" Margin="37,70,0,0" VerticalAlignment="Top" Width="111" Click="buttonSetFocus_Click" Height="20"/>
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
         <TextBox x:Name="DataTextBox" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="150" Margin="10" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
-        <Image x:Name="HeatmapImage" VerticalAlignment="Bottom" Margin="0,0,19,307" Height="195" Grid.Column="2"/>
+        <Image x:Name="HeatmapImage" VerticalAlignment="Bottom" Margin="19,0,349,471" Height="195" Grid.Column="3"/>
     </Grid>
 
 </Window>
