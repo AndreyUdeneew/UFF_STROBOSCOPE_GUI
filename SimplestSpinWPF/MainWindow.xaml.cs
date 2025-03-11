@@ -61,6 +61,8 @@ namespace SimplestSpinWPF
         private const int ThermoHeight = 24; // MLX90640 sensor height
         (byte r, byte g, byte b)[] Rainbow = new (byte r, byte g, byte b)[360];
 
+
+
         IManagedCamera SpinCamColor = null;
         //PropertyGridControl gridControl = new PropertyGridControl();
         byte[] DivideCache = new byte[256 * 256];
@@ -156,6 +158,8 @@ namespace SimplestSpinWPF
         string savingMode = "";
         int nFramesBeforeSaving = 100;
         int checkNpixelsInCursor = 0;
+        int tSum = 0;
+        double tSred = 0;
 
         string _portName = "";
         volatile string CMD = "";
@@ -778,6 +782,8 @@ namespace SimplestSpinWPF
                         p.Write("TEPLON\n");
                     if (CMD == "TEPLOFF")
                         p.Write("TEPLOFF\n");
+                    if (CMD == "TSHOT")
+                        p.Write("TSHOT\n");
                     //if (CMD == "FC0")
                     //    p.Write("FC0\n");
                     //if (CMD == "FC1")
@@ -1609,49 +1615,7 @@ namespace SimplestSpinWPF
                 bleaching_viol_Label.Content = bleaching_viol_string;
                 bleaching_red_Label.Content = bleaching_red_string;
                 bleaching_green_Label.Content = bleaching_green_string;
-                if (p.IsOpen)
-                {
-                    //temperature = p.ReadExisting();
-                    //Pyrometer_Label.Content = temperature;
-                    response = p.ReadExisting();
-                    //Debug.WriteLine(response);
-                    try
-                    {
-                        var ss = response.Split(new[] { '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-                       
-                        if (ss.Length > ThermoHeight * ThermoWidth)
-                        {
-                            int[,] data = new int[ThermoHeight, ThermoWidth];
-                            for (int i = 1, x = 0, y = 0; i <= data.Length; i++, x++)
-                            {
-                                if (x == ThermoWidth)
-                                {
-                                    y++; x = 0;
-                                }
-                                data[y, x] = int.Parse(ss[i]);
-                                //Debug.WriteLine(ss[i]);
-                            }
 
-                            //flip left-right
-                            int[,] data1 = new int[ThermoHeight, ThermoWidth];
-                            //if (RotatePictures)
-                            //    for (int y = 0, y2 = ThermoHeight - 1; y < ThermoHeight; y++, y2--)
-                            //        for (int x = 0, x2 = ThermoWidth - 1; x < ThermoWidth; x++, x2--)
-                            //            data1[y, x] = data[y2, x];
-                            //else
-                            for (int y = 0; y < ThermoHeight; y++)
-                                for (int x = 0, x2 = ThermoWidth - 1; x < ThermoWidth; x++, x2--)
-                                    data1[y, x] = data[y, x2];
-                            //Dispatcher.Invoke(() => DisplayHeatMap(data1));
-                            DisplayHeatMap(data1);
-                        }
-                        //string temp = ss[0];
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.WriteLine($"Error updating dataGrid: {e.Message}");
-                    }
-                }
 
                 FIcounter = 0;
                 //FI = 0;
@@ -1662,6 +1626,39 @@ namespace SimplestSpinWPF
 
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
+        }
+
+        static (byte r, byte g, byte b) HSVToRGB(int h, double s, double v)
+        {
+            byte r = 0, g = 0, b = 0;
+
+            // Преобразование HSV в RGB
+            byte i = (byte)((h / 60) % 6);
+            double f = (h / 60.0) - Math.Floor(h / 60.0);
+            byte p = (byte)(v * 255 * (1 - s));
+            byte q = (byte)(v * 255 * (1 - f * s));
+            byte t = (byte)(v * 255 * (1 - (1 - f) * s));
+            byte val = (byte)(v * 255);
+
+            switch (i)
+            {
+                case 0: r = val; g = t; b = p; break;
+                case 1: r = q; g = val; b = p; break;
+                case 2: r = p; g = val; b = t; break;
+                case 3: r = p; g = q; b = val; break;
+                case 4: r = t; g = p; b = val; break;
+                case 5: r = val; g = p; b = q; break;
+            }
+
+            return (r, g, b);
+        }
+
+        public void FillRainbow(int h)
+        {
+            //Debug.WriteLine("Filling the rainbow");
+            for (int i = 0; i < 360; i++)
+                Rainbow[i] = HSVToRGB(360 - i, 1, 1);
+
         }
 
         public void CutGraphPointsTail()
@@ -2414,6 +2411,68 @@ namespace SimplestSpinWPF
             SendCMD();
         }
 
+        private void buttonTeplovizor_Click(object sender, RoutedEventArgs e)
+        {
+            CMD = "TSHOT";
+            SendCMD();
+
+                //temperature = p.ReadExisting();
+                //Pyrometer_Label.Content = temperature;
+                //response = p.ReadLine();
+                
+                response = p.ReadExisting();
+            Debug.WriteLine(response);
+            try
+                {
+                    var ss = response.Split(new[] { '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                    Debug.WriteLine(ss.Length);
+
+                if (ss.Length > ThermoHeight * ThermoWidth)
+                {
+                    int[,] data = new int[ThermoHeight, ThermoWidth];
+                        for (int i = 1, x = 0, y = 0; i <= data.Length; i++, x++)
+                        {
+                            if (x == ThermoWidth)
+                            {
+                                y++; x = 0;
+                            }
+                            data[y, x] = int.Parse(ss[i]);
+                        tSum += data[y, x];
+                            //Debug.WriteLine(data[y, x]);
+                            //Debug.WriteLine(ss[i]);
+                        }
+                    tSred = tSum / 768;
+                    temperature = tSred.ToString();
+                    Pyrometer_Label.Content = temperature;
+                    tSum = 0;
+
+                    //flip left-right
+                    //int[,] data1 = new int[ThermoHeight, ThermoWidth];
+                    ////if (RotatePictures)
+                    ////    for (int y = 0, y2 = ThermoHeight - 1; y < ThermoHeight; y++, y2--)
+                    ////        for (int x = 0, x2 = ThermoWidth - 1; x < ThermoWidth; x++, x2--)
+                    ////            data1[y, x] = data[y2, x];
+                    ////else
+                    //for (int y = 0; y < ThermoHeight; y++)
+                    //    for (int x = 0, x2 = ThermoWidth - 1; x < ThermoWidth; x++, x2--)
+                    //    {
+                    //        data1[y, x] = data[y, x2];
+                    //        //Debug.WriteLine(data1[y, x]);
+                    //    }
+
+
+                    //Dispatcher.Invoke(() => DisplayHeatMap(data1));
+                    DisplayHeatMap(data);
+                }
+                //string temp = ss[0];
+            }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error updating dataGrid: {ex.Message}");
+                }
+            
+        }
+
         private void CheckBoxAutofocus_Checked(object sender, RoutedEventArgs e)
         {
             CMD = "AFON";
@@ -2491,7 +2550,7 @@ namespace SimplestSpinWPF
 
         void DisplayHeatMap(int[,] heatMapData)
         {
-            //Debug.WriteLine("entered DisplayHeatmap");
+            Debug.WriteLine("entered DisplayHeatmap");
             const int heatMapWidth = 32;
             const int heatMapHeight = 24;
             const int outputWidth = 320;
@@ -2504,6 +2563,7 @@ namespace SimplestSpinWPF
             // Создаем WriteableBitmap
             WriteableBitmap writeableBitmap = new WriteableBitmap(outputWidth, outputHeight, 96, 96, PixelFormats.Bgra32, null);
             byte[] pixels = new byte[outputWidth * outputHeight * 4];
+            //Debug.WriteLine(pixels.Length);
 
             for (int y = 0, i = 0; y < outputHeight; y++)
             {
@@ -2515,10 +2575,13 @@ namespace SimplestSpinWPF
 
                     // Получаем значение из тепловой карты
                     int heatValue = (int)((heatMapData[heatMapY, heatMapX] - Min) * 239.0 / Range);
+                    //Debug.WriteLine(heatValue);
                     heatValue = heatValue < 0 ? 0 : heatValue;
                     heatValue = heatValue > 239 ? 239 : heatValue;
                     heatValue += 120;
+                    FillRainbow(heatValue);
                     var cc = Rainbow[(int)heatValue];
+                    //Debug.WriFillRainbowteLine(cc);
                     //cc = Rainbow[x + 40];
 
                     // Преобразуем значение в цвет (градус от черного до красного)
@@ -2540,6 +2603,31 @@ namespace SimplestSpinWPF
             HeatmapImage.Source = writeableBitmap; // Устанавливаем изображение в PictureBox
         }
 
+
+        static (byte r, byte g, byte b) HSVToRGB_teplovizor(int h, double s, double v)
+        {
+            byte r = 0, g = 0, b = 0;
+
+            // Преобразование HSV в RGB
+            byte i = (byte)((h / 60) % 6);
+            double f = (h / 60.0) - Math.Floor(h / 60.0);
+            byte p = (byte)(v * 255 * (1 - s));
+            byte q = (byte)(v * 255 * (1 - f * s));
+            byte t = (byte)(v * 255 * (1 - (1 - f) * s));
+            byte val = (byte)(v * 255);
+
+            switch (i)
+            {
+                case 0: r = val; g = t; b = p; break;
+                case 1: r = q; g = val; b = p; break;
+                case 2: r = p; g = val; b = t; break;
+                case 3: r = p; g = q; b = val; break;
+                case 4: r = t; g = p; b = val; break;
+                case 5: r = val; g = p; b = q; break;
+            }
+
+            return (r, g, b);
+        }
 
 
         public static void WriteTextToImage(string inputFile, string outputFile, FormattedText text, System.Windows.Point position)

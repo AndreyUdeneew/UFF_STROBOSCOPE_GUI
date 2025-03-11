@@ -101,7 +101,8 @@
         <CheckBox x:Name="CheckBoxTeplovizor" Content="Teplovizor" Grid.Column="2" HorizontalAlignment="Left" Margin="37,45,0,0" VerticalAlignment="Top" Foreground="Gray" Checked="CheckBoxTeplovizor_Checked" Unchecked="CheckBoxTeplovizor_Unchecked"/>
         <Button Background="DarkGray" x:Name="buttonSetFocus" Content="Set Focus" Grid.Column="2" HorizontalAlignment="Left" Margin="37,70,0,0" VerticalAlignment="Top" Width="111" Click="buttonSetFocus_Click" Height="20"/>
         <!--<CheckBox x:Name="IndexCheckbox" Content="Index" Grid.Column="4" HorizontalAlignment="Left" Margin="10,112,0,0" VerticalAlignment="Top" Foreground="Gray"/>-->
-        <Image x:Name="HeatmapImage" VerticalAlignment="Bottom" Margin="0,0,19,307" Height="195" Grid.Column="2"/>
+        <Image x:Name="HeatmapImage" VerticalAlignment="Top" Height="195" Grid.Column="2" Margin="0,338,0,0"/>
+        <Button Background="DarkGray" x:Name="buttonTeplovizor" Content="Thermal Frame" Grid.Column="2" HorizontalAlignment="Left" Margin="37,98,0,0" VerticalAlignment="Top" Width="111" Click="buttonTeplovizor_Click" Height="20"/>
     </Grid>
 
 </Window>
