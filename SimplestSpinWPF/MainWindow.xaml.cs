@@ -57,16 +57,15 @@ namespace SimplestSpinWPF
 
         private bool _isReading;
         private WriteableBitmap _heatmapBitmap;
-        private const int Width = 32; // MLX90640 sensor width
-        private const int Height = 24; // MLX90640 sensor height
-
+        private const int ThermoWidth = 32; // MLX90640 sensor width
+        private const int ThermoHeight = 24; // MLX90640 sensor height
+        (byte r, byte g, byte b)[] Rainbow = new (byte r, byte g, byte b)[360];
 
         IManagedCamera SpinCamColor = null;
         //PropertyGridControl gridControl = new PropertyGridControl();
         byte[] DivideCache = new byte[256 * 256];
         byte[] HSVToRGBCache = new byte[256 * 4];
         int FLiRCamCount = 0, DAOCamCount = 0;
-        (byte r, byte g, byte b)[] Rainbow = new (byte r, byte g, byte b)[360];
 
         Thread RefreshThread;
         //Thread ModeSelectThread;
@@ -76,14 +75,11 @@ namespace SimplestSpinWPF
             _isReading = false;
 
             // Initialize the WriteableBitmap for the heatmap
-            _heatmapBitmap = new WriteableBitmap(Width, Height, 96, 96, PixelFormats.Bgr32, null);
+            _heatmapBitmap = new WriteableBitmap(ThermoWidth, ThermoHeight, 96, 96, PixelFormats.Bgr32, null);
             HeatmapImage.Source = _heatmapBitmap;
-
             //RadioButton rb = new RadioButton { IsChecked = true, GroupName = "Languages", Content = "JavaScript" };
             //rb.Checked += RadioButton_Checked;
             //stackPanel.Children.Add(rb);
-
-
 
             for (int i = 0; i < 256; i++)
                 for (int j = 0; j < 256; j++)
@@ -133,7 +129,6 @@ namespace SimplestSpinWPF
             //ModeSelectThread.Start();
             GraphGrid.Visibility = System.Windows.Visibility.Hidden;
             InitPlot();
-        
         }
 
         const int PortSpeed = 115200;
@@ -225,6 +220,7 @@ namespace SimplestSpinWPF
         int desiredBleaching = 0;
         int bleachingMeas = 0;
         int startFrames = 0;
+        string response = "";
 
         Stopwatch d = Stopwatch.StartNew();
 
@@ -786,7 +782,7 @@ namespace SimplestSpinWPF
                     //    p.Write("FC0\n");
                     //if (CMD == "FC1")
                     //    p.Write("FC1\n");
-                    //Debug.WriteLine(CMD);
+                    Debug.WriteLine(CMD);
                     CMD = "";
                 }
             return 0;
@@ -1613,25 +1609,50 @@ namespace SimplestSpinWPF
                 bleaching_viol_Label.Content = bleaching_viol_string;
                 bleaching_red_Label.Content = bleaching_red_string;
                 bleaching_green_Label.Content = bleaching_green_string;
-                //if(p.IsOpen)
-                //{
-                //    temperature = p.ReadExisting();
-                //    Pyrometer_Label.Content = temperature;
-                //}
-                if(p.IsOpen)
+                if (p.IsOpen)
                 {
-                    String indata = "";
-                    indata = p.ReadExisting();
-                    //Debug.WriteLine(indata);
-                    //Dispatcher.BeginInvoke(new Action(() => DataTextBox.AppendText(indata)));
-                    // Parse the data and update the heatmap
-                    if (TryParseThermalData(indata, out float[] thermalData))
+                    //temperature = p.ReadExisting();
+                    //Pyrometer_Label.Content = temperature;
+                    response = p.ReadExisting();
+                    //Debug.WriteLine(response);
+                    try
                     {
-                        
-                        UpdateHeatmap(thermalData);
+                        var ss = response.Split(new[] { '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                       
+                        if (ss.Length > ThermoHeight * ThermoWidth)
+                        {
+                            int[,] data = new int[ThermoHeight, ThermoWidth];
+                            for (int i = 1, x = 0, y = 0; i <= data.Length; i++, x++)
+                            {
+                                if (x == ThermoWidth)
+                                {
+                                    y++; x = 0;
+                                }
+                                data[y, x] = int.Parse(ss[i]);
+                                //Debug.WriteLine(ss[i]);
+                            }
+
+                            //flip left-right
+                            int[,] data1 = new int[ThermoHeight, ThermoWidth];
+                            //if (RotatePictures)
+                            //    for (int y = 0, y2 = ThermoHeight - 1; y < ThermoHeight; y++, y2--)
+                            //        for (int x = 0, x2 = ThermoWidth - 1; x < ThermoWidth; x++, x2--)
+                            //            data1[y, x] = data[y2, x];
+                            //else
+                            for (int y = 0; y < ThermoHeight; y++)
+                                for (int x = 0, x2 = ThermoWidth - 1; x < ThermoWidth; x++, x2--)
+                                    data1[y, x] = data[y, x2];
+                            //Dispatcher.Invoke(() => DisplayHeatMap(data1));
+                            DisplayHeatMap(data1);
+                        }
+                        //string temp = ss[0];
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine($"Error updating dataGrid: {e.Message}");
                     }
                 }
-                
+
                 FIcounter = 0;
                 //FI = 0;
             }
@@ -1954,7 +1975,7 @@ namespace SimplestSpinWPF
                     gr.DrawString(FIV_string, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 0);
                     gr.DrawString(temperature, new Font("Tahoma", fontSize), System.Drawing.Brushes.Blue, 0, 70);
                     DateTime d = DateTime.Now;
-                    string Filename =@"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
+                    string Filename = @"D:\MEDIA\" + String.Format("{0}_{1}_{2}_{3}_{4}_{5}_{6}_{7}.PNG",
                         d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second, d.Millisecond,
                         !(bool)DrawDiffCheckBox.IsChecked ? "Preview" : ("Fluo_" + "R-G" + "_Coef" + ampCur * 1 + "_FIV_" + FIV_string)
                         );
@@ -2098,31 +2119,6 @@ namespace SimplestSpinWPF
             FI_norma = deltaSum;
         }
 
-        static (byte r, byte g, byte b) HSVToRGB_teplovizor(int h, double s, double v)
-        {
-            byte r = 0, g = 0, b = 0;
-
-            // Преобразование HSV в RGB
-            byte i = (byte)((h / 60) % 6);
-            double f = (h / 60.0) - Math.Floor(h / 60.0);
-            byte p = (byte)(v * 255 * (1 - s));
-            byte q = (byte)(v * 255 * (1 - f * s));
-            byte t = (byte)(v * 255 * (1 - (1 - f) * s));
-            byte val = (byte)(v * 255);
-
-            switch (i)
-            {
-                case 0: r = val; g = t; b = p; break;
-                case 1: r = q; g = val; b = p; break;
-                case 2: r = p; g = val; b = t; break;
-                case 3: r = p; g = q; b = val; break;
-                case 4: r = t; g = p; b = val; break;
-                case 5: r = val; g = p; b = q; break;
-            }
-
-            return (r, g, b);
-        }
-
         void HsvToRgb(double h, double S, double V, out int r, out int g, out int b)
         {
             double H = h;
@@ -2256,7 +2252,7 @@ namespace SimplestSpinWPF
             catch
             {
                 System.Windows.MessageBox.Show("Failed to open port. Sorry (");
-                //KeepReading();
+                KeepReading();
                 return;
             }
             if (p.IsOpen)
@@ -2305,30 +2301,30 @@ namespace SimplestSpinWPF
 
         }
 
-        //void KeepReading()
-        //{
-        //    for (; ; )
-        //    {
-        //        if (p != null)
-        //            if (p.IsOpen)
-        //            {
-        //                if (p.BytesToRead > 0)
-        //                {
-        //                    string tt = p.ReadExisting();
-        //                    //textBox2.Invoke(new Action(() =>
-        //                    //{
-        //                    //    CommaCount += tt.Count((x) => x == ',');
-        //                    //    Buf += tt;
-        //                    //    textBox2.Text = tt;
-        //                    //    toolStripStatusLabel2.Text = "Reads = " + (++ReadsCount).ToString();
-        //                    //}));
-        //                }
-        //                Thread.Sleep(5);
-        //            }
-        //            else break;
-        //        else break;
-        //    }
-        //}
+        void KeepReading()
+        {
+            for (; ; )
+            {
+                if (p != null)
+                    if (p.IsOpen)
+                    {
+                        if (p.BytesToRead > 0)
+                        {
+                            string tt = p.ReadExisting();
+                            //textBox2.Invoke(new Action(() =>
+                            //{
+                            //    CommaCount += tt.Count((x) => x == ',');
+                            //    Buf += tt;
+                            //    textBox2.Text = tt;
+                            //    toolStripStatusLabel2.Text = "Reads = " + (++ReadsCount).ToString();
+                            //}));
+                        }
+                        Thread.Sleep(5);
+                    }
+                    else break;
+                else break;
+            }
+        }
 
         private void ShowGraphButton_Click(object sender, RoutedEventArgs e)
         {
@@ -2420,158 +2416,21 @@ namespace SimplestSpinWPF
 
         private void CheckBoxAutofocus_Checked(object sender, RoutedEventArgs e)
         {
-            //Debug.WriteLine("still alive");
             CMD = "AFON";
             SendCMD();
         }
 
         private void CheckBoxAutofocus_Unchecked(object sender, RoutedEventArgs e)
         {
-            
             CMD = "AFOFF";
             SendCMD();
         }
 
         private void CheckBoxTeplovizor_Checked(object sender, RoutedEventArgs e)
         {
-            if(p.IsOpen)
-            {
-                CMD = "TEPLON";
-                SendCMD();
-            }
-
-            //Debug.WriteLine("still alive");
-            if (_isReading)
-            {
-                try
-                {
-
-                    p.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
-
-
-                   
-
-                    _isReading = true;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error opening serial port: " + ex.Message);
-                }
-            }
-            else
-            {
-                //p.Close();
-                _isReading = false;
-            }
+            CMD = "TEPLON";
+            SendCMD();
         }
-        //}
-
-        private bool TryParseThermalData(string data, out float[] thermalData)
-        {
-            //Debug.WriteLine("trying to parse");
-
-            thermalData = new float[Width * Height];
-            string[] values = data.Split(',');
-            foreach (var word in values)
-            {
-                System.Console.WriteLine($"<{word}>");
-            }
-            if (values.Length != (Width * Height + 1))
-            {
-                return false; // Invalid data
-            }
-
-            for (int i = 0; i < (values.Length + 1); i++)
-            {
-                if (float.TryParse(values[i], out float temperature))
-                {
-                    thermalData[i] = temperature;
-                    Debug.WriteLine(values[i]);
-                    Debug.WriteLine("stil alive");
-                }
-                
-                else
-                {
-                    Debug.WriteLine("false data");
-                    return false; // Invalid temperature value
-                    
-                }
-            }
-
-            return true;
-            
-        }
-
-        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
-        {
-            string indata = "";
-            indata = p.ReadExisting();
-            Debug.WriteLine(indata);
-            //Dispatcher.BeginInvoke(new Action(() => DataTextBox.AppendText(indata)));
-            // Parse the data and update the heatmap
-            if (TryParseThermalData(indata, out float[] thermalData))
-            {
-                UpdateHeatmap(thermalData);
-            }
-        }
-
-        private void UpdateHeatmap(float[] thermalData)
-        {
-            // Lock the bitmap for writing
-            _heatmapBitmap.Lock();
-
-            // Define a color gradient for the heatmap
-            var minTemp = thermalData.Min();
-            var maxTemp = thermalData.Max();
-
-            for (int y = 0; y < Height; y++)
-            {
-                for (int x = 0; x < Width; x++)
-                {
-                    float temperature = thermalData[y * Width + x];
-                    byte intensity = (byte)(255 * (temperature - minTemp) / (maxTemp - minTemp));
-                    byte[] color = GetHeatmapColor(intensity);
-
-                    // Calculate the pixel offset
-                    int offset = (y * _heatmapBitmap.BackBufferStride) + (x * 4);
-
-                    // Write the pixel data
-                    unsafe
-                    {
-                        byte* buffer = (byte*)_heatmapBitmap.BackBuffer;
-                        buffer[offset] = color[0]; // Blue
-                        buffer[offset + 1] = color[1]; // Green
-                        buffer[offset + 2] = color[2]; // Red
-                        buffer[offset + 3] = 255; // Alpha
-                    }
-                }
-            }
-
-            // Notify the bitmap of the changes
-            _heatmapBitmap.AddDirtyRect(new Int32Rect(0, 0, Width, Height));
-            _heatmapBitmap.Unlock();
-        }
-
-        private byte[] GetHeatmapColor(byte intensity)
-        {
-            // Simple gradient from blue (cold) to red (hot)
-            return new byte[]
-            {
-                (byte)(255 - intensity), // Blue
-                0,                       // Green
-                intensity,               // Red
-            };
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            if (p != null && p.IsOpen)
-            {
-                p.Close();
-            }
-            base.OnClosed(e);
-        }
-
 
         private void CheckBoxTeplovizor_Unchecked(object sender, RoutedEventArgs e)
         {
@@ -2594,12 +2453,6 @@ namespace SimplestSpinWPF
         //{
 
         //}
-
-
-        //for (int i = 0; i< 360; i++)
-        //        Rainbow[i] = HSVToRGB_teplovizor(360 -  i, 1, 1);
-
-
         //        if (ReadSensorData)
         //                    try
         //                    {
@@ -2636,56 +2489,56 @@ namespace SimplestSpinWPF
         //                    }
 
 
-        //void DisplayHeatMap(int[,] heatMapData)
-        //{
+        void DisplayHeatMap(int[,] heatMapData)
+        {
+            //Debug.WriteLine("entered DisplayHeatmap");
+            const int heatMapWidth = 32;
+            const int heatMapHeight = 24;
+            const int outputWidth = 320;
+            const int outputHeight = 240;
+            //int Max = heatMapData.Cast<int>().Max(), Min = heatMapData.Cast<int>().Min();
+            //int Range = Max - Min + 1;            
+            int Max = 50, Min = 20;
+            int Range = Max - Min + 1;
 
-        //    const int heatMapWidth = 32;
-        //    const int heatMapHeight = 24;
-        //    const int outputWidth = 320;
-        //    const int outputHeight = 240;
-        //    //int Max = heatMapData.Cast<int>().Max(), Min = heatMapData.Cast<int>().Min();
-        //    //int Range = Max - Min + 1;            
-        //    int Max = 50, Min = 20;
-        //    int Range = Max - Min + 1;
+            // Создаем WriteableBitmap
+            WriteableBitmap writeableBitmap = new WriteableBitmap(outputWidth, outputHeight, 96, 96, PixelFormats.Bgra32, null);
+            byte[] pixels = new byte[outputWidth * outputHeight * 4];
 
-        //    // Создаем WriteableBitmap
-        //    WriteableBitmap writeableBitmap = new WriteableBitmap(outputWidth, outputHeight, 96, 96, PixelFormats.Bgra32, null);
-        //    byte[] pixels = new byte[outputWidth * outputHeight * 4];
+            for (int y = 0, i = 0; y < outputHeight; y++)
+            {
+                for (int x = 0; x < outputWidth; x++)
+                {
+                    // Нормализация координат
+                    int heatMapX = x * heatMapWidth / outputWidth;
+                    int heatMapY = y * heatMapHeight / outputHeight;
 
-        //    for (int y = 0, i = 0; y < outputHeight; y++)
-        //    {
-        //        for (int x = 0; x < outputWidth; x++)
-        //        {
-        //            // Нормализация координат
-        //            int heatMapX = x * heatMapWidth / outputWidth;
-        //            int heatMapY = y * heatMapHeight / outputHeight;
+                    // Получаем значение из тепловой карты
+                    int heatValue = (int)((heatMapData[heatMapY, heatMapX] - Min) * 239.0 / Range);
+                    heatValue = heatValue < 0 ? 0 : heatValue;
+                    heatValue = heatValue > 239 ? 239 : heatValue;
+                    heatValue += 120;
+                    var cc = Rainbow[(int)heatValue];
+                    //cc = Rainbow[x + 40];
 
-        //            // Получаем значение из тепловой карты
-        //            int heatValue = (int)((heatMapData[heatMapY, heatMapX] - Min) * 239.0 / Range);
-        //            heatValue = heatValue < 0 ? 0 : heatValue;
-        //            heatValue = heatValue > 239 ? 239 : heatValue;
-        //            heatValue += 120;
-        //            var cc = Rainbow[(int)heatValue];
-        //            //cc = Rainbow[x + 40];
+                    // Преобразуем значение в цвет (градус от черного до красного)
+                    // Например, можно взять градиент от черного (0, 0, 0) до красного (heatValue, 0, 0) с учетом alpha-канала
+                    //pixels[(x + y * outputWidth) * 4 + 0] = cc.b; // Blue
+                    //pixels[(x + y * outputWidth) * 4 + 1] = cc.g;     // Green
+                    //pixels[(x + y * outputWidth) * 4 + 2] = cc.r;       // Red
+                    //pixels[(x + y * outputWidth) * 4 + 3] = 255;     // Alpha
 
-        //            // Преобразуем значение в цвет (градус от черного до красного)
-        //            // Например, можно взять градиент от черного (0, 0, 0) до красного (heatValue, 0, 0) с учетом alpha-канала
-        //            //pixels[(x + y * outputWidth) * 4 + 0] = cc.b; // Blue
-        //            //pixels[(x + y * outputWidth) * 4 + 1] = cc.g;     // Green
-        //            //pixels[(x + y * outputWidth) * 4 + 2] = cc.r;       // Red
-        //            //pixels[(x + y * outputWidth) * 4 + 3] = 255;     // Alpha
-
-        //            pixels[i++] = cc.b; // Blue
-        //            pixels[i++] = cc.g;     // Green
-        //            pixels[i++] = cc.r;       // Red
-        //            pixels[i++] = 255;     // Alpha
-        //        }
-        //    }
-
-        //    // Копируем пиксели в WriteableBitmap
-        //    writeableBitmap.WritePixels(new Int32Rect(0, 0, outputWidth, outputHeight), pixels, outputWidth * 4, 0);
-        //    HeatMap.Source = writeableBitmap; // Устанавливаем изображение в PictureBox
-        //}
+                    pixels[i++] = cc.b; // Blue
+                    pixels[i++] = cc.g;     // Green
+                    pixels[i++] = cc.r;       // Red
+                    pixels[i++] = 255;     // Alpha
+                }
+            }
+            Debug.WriteLine("still alive");
+            // Копируем пиксели в WriteableBitmap
+            writeableBitmap.WritePixels(new Int32Rect(0, 0, outputWidth, outputHeight), pixels, outputWidth * 4, 0);
+            HeatmapImage.Source = writeableBitmap; // Устанавливаем изображение в PictureBox
+        }
 
 
 
