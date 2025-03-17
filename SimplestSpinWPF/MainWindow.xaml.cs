@@ -160,6 +160,7 @@ namespace SimplestSpinWPF
         int checkNpixelsInCursor = 0;
         int tSum = 0;
         double tSred = 0;
+        int isPlot = 0;
 
         string _portName = "";
         volatile string CMD = "";
@@ -169,6 +170,7 @@ namespace SimplestSpinWPF
         double FI_norma = 1;
         double FI = 0;
         double deltaSum = 0;
+        double sumSred = 0;
         string FI_string = "";
 
         double FIR_MAX = 0;
@@ -594,6 +596,20 @@ namespace SimplestSpinWPF
             else
             {
                 CC.Source = FindColoredDifference(convertedImage, PrevConvertedImage, 0);
+            }
+
+            if(isPlot == 1)
+            {
+                if (framesCounter == nFramesBeforeSaving)
+                {
+                    GraphPoints.Add(new GraphPoint { sumSred = sumSred, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
+                    if (TailKiller == null)
+                    {
+                        TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); /*Thread.Sleep(1000);*/ } });
+                        TailKiller.Start();
+                        try { chart.Series[0].Clear(); } catch { }
+                    }
+                }
             }
 
             //Debug.WriteLine(framesCounter.ToString());
@@ -1465,6 +1481,8 @@ namespace SimplestSpinWPF
                     { bb[b] = res; bb[r] = res; }
                 }
                 deltaSum += dif;
+                //sumSred += deltaSum;
+                
             }
             //firstCursorPixel = 0;
             for (int cursorString = 0; cursorString < hCursor; cursorString += 1)
@@ -1561,13 +1579,7 @@ namespace SimplestSpinWPF
 
             FIcounter += 1;
 
-            GraphPoints.Add(new GraphPoint { deltaSum = deltaSum, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
-            if (TailKiller == null)
-            {
-                TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
-                TailKiller.Start();
-                try { chart.Series[0].Clear(); } catch { }
-            }
+
             //if (TailKiller.ThreadState != System.Threading.ThreadState.Running)
             //    try
             //    {
@@ -1616,14 +1628,14 @@ namespace SimplestSpinWPF
                 bleaching_red_Label.Content = bleaching_red_string;
                 bleaching_green_Label.Content = bleaching_green_string;
 
-
                 FIcounter = 0;
                 //FI = 0;
             }
             //sss = String.Format("{0:F1}", FI);
             //FIR_string = String.Format("{0:F1}", FI);
             //FIV_Label.Content = FI_string;
-
+            sumSred = deltaSum;
+            deltaSum = 0;
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
         }
@@ -1664,19 +1676,19 @@ namespace SimplestSpinWPF
         public void CutGraphPointsTail()
         {
             GraphPoint ppp = GraphPoints[GraphPoints.Count - 1];
-            if (double.IsNaN(ppp.deltaSum) || double.IsInfinity(ppp.deltaSum) || Math.Abs(ppp.deltaSum) > 10e20 || Math.Abs(ppp.deltaSum) < 10e-20)
-                ppp.deltaSum = 0;
+            if (double.IsNaN(ppp.sumSred) || double.IsInfinity(ppp.sumSred) || Math.Abs(ppp.sumSred) > 10e20 || Math.Abs(ppp.sumSred) < 10e-20)
+                ppp.sumSred = 0;
             double thePast = (DateTime.Now - ProgrammStarted).TotalMilliseconds - 600000;
             GraphPoints.RemoveAll((k) => { return k.millisecond < thePast; });
             if ((DateTime.Now - DebugGap).TotalMilliseconds > 3000)
             {
                 DebugGap = DateTime.Now;
                 if (GraphPoints.Count > 1)
-                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.deltaSum));
+                    DebugLabel.Dispatcher.Invoke(() => DebugLabel.Content = string.Format("{0}, {1:00.0}", ppp.millisecond, ppp.sumSred));
             }
 
             //Update chart
-            chart.Invoke(new Action(() => chart.Series[0].Add(ppp.millisecond, ppp.deltaSum)));
+            chart.Invoke(new Action(() => chart.Series[0].Add(ppp.millisecond, ppp.sumSred)));
         }
 
 
@@ -1686,6 +1698,7 @@ namespace SimplestSpinWPF
         {
             public double millisecond;
             public double deltaSum;
+            public double sumSred;
         }
         public List<GraphPoint> GraphPoints = new List<GraphPoint>();
         DateTime ProgrammStarted = DateTime.Now;
@@ -2326,14 +2339,20 @@ namespace SimplestSpinWPF
         private void ShowGraphButton_Click(object sender, RoutedEventArgs e)
         {
             if (GraphGrid.Visibility != System.Windows.Visibility.Visible)
+            {
                 GraphGrid.Visibility = System.Windows.Visibility.Visible;
+                isPlot = 1;
+            }
             else
+            {
                 GraphGrid.Visibility = System.Windows.Visibility.Hidden;
+                isPlot = 0;
+            }                
         }
 
         private void button6_Click(object sender, RoutedEventArgs e)
         {
-            chart.BackColor = Color.FromArgb(255, 0, 0, 0);
+            chart.BackColor = Color.FromArgb(255, 255, 255, 0);
         }
 
         private void button5_Click(object sender, RoutedEventArgs e)
