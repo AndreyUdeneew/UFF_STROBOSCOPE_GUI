@@ -169,7 +169,7 @@ namespace SimplestSpinWPF
 
         double FI_norma = 1;
         double FI = 0;
-        double deltaSum = 0;
+        int deltaSum = 0;
         double sumSred = 0;
         string FI_string = "";
 
@@ -600,16 +600,26 @@ namespace SimplestSpinWPF
 
             if(isPlot == 1)
             {
-                if (framesCounter == nFramesBeforeSaving)
+                TimerValueString = String.Format("{0}", d.Elapsed);
+                Stopwatch_Label.Content = TimerValueString;
+                //d.Restart();
+                if (startFrames == 0)
                 {
+
+                }
+                if (framesCounter == nFramesBeforeSaving/5)
+                {
+                    
                     GraphPoints.Add(new GraphPoint { sumSred = sumSred, millisecond = (DateTime.Now - ProgrammStarted).TotalMilliseconds });
                     if (TailKiller == null)
                     {
-                        TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); /*Thread.Sleep(1000);*/ } });
+                        TailKiller = new System.Threading.Thread(() => { while (true) { CutGraphPointsTail(); Thread.Sleep(1000); } });
                         TailKiller.Start();
                         try { chart.Series[0].Clear(); } catch { }
                     }
+                    framesCounter = 0;
                 }
+                framesCounter += 1;
             }
 
             //Debug.WriteLine(framesCounter.ToString());
@@ -1299,7 +1309,7 @@ namespace SimplestSpinWPF
             FIcounter += 1;
             fixed (byte* DC = DivideCache, HSVC = HSVToRGBCache)
             {
-                deltaSum = 0;
+                //deltaSum = 0;
                 for (int b = 0, g = 1, r = 2, i = 0; b < L; b += 3, r += 3, g += 3, i++)
                 {
                     if (GreenFlu)
@@ -1431,7 +1441,7 @@ namespace SimplestSpinWPF
 
                     //if (dif < 0)
                     //    dif = -dif;
-
+                    deltaSum += dif;
 
                     res = bb[g];
                     dif <<= ampCur;
@@ -1480,7 +1490,7 @@ namespace SimplestSpinWPF
                     if (Grayed)
                     { bb[b] = res; bb[r] = res; }
                 }
-                deltaSum += dif;
+                
                 //sumSred += deltaSum;
                 
             }
@@ -1635,6 +1645,8 @@ namespace SimplestSpinWPF
             //FIR_string = String.Format("{0:F1}", FI);
             //FIV_Label.Content = FI_string;
             sumSred = deltaSum;
+            Debug.WriteLine(deltaSum);
+            Debug.WriteLine(sumSred);
             deltaSum = 0;
             wb.Unlock(); wb1.Unlock(); wb2.Unlock();
             return wb;
@@ -1697,7 +1709,7 @@ namespace SimplestSpinWPF
         public class GraphPoint
         {
             public double millisecond;
-            public double deltaSum;
+            //public double deltaSum;
             public double sumSred;
         }
         public List<GraphPoint> GraphPoints = new List<GraphPoint>();
@@ -1839,7 +1851,7 @@ namespace SimplestSpinWPF
             p.Close();
             try
             {
-                SpinCamColor.EndAcquisition();
+                    SpinCamColor.EndAcquisition();
             }
             catch { }
             try
@@ -2342,11 +2354,13 @@ namespace SimplestSpinWPF
             {
                 GraphGrid.Visibility = System.Windows.Visibility.Visible;
                 isPlot = 1;
+                d.Restart();
             }
             else
             {
                 GraphGrid.Visibility = System.Windows.Visibility.Hidden;
                 isPlot = 0;
+                d.Stop();
             }                
         }
 
